@@ -36,6 +36,7 @@ Basic principles:
     ```bash 
        pi install npm:mitsupi
        pi install git:github.com/jonjonrankin/pi-caveman
+       pi install npm:pi-codex-goal
     ```
 
 The extensions will be stored in the var/pi-agent subdirectory (see above)

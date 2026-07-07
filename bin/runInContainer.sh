@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 docker build -t $(basename $PWD):latest --build-arg TAKE_PROJECT_NAME=$(basename $PWD) .
 WORKSPACE=/workspaces/$(basename $PWD)
 set -v

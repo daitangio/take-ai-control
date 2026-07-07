@@ -1,4 +1,4 @@
-FROM node:22-slim AS node-donor
+FROM node:24-slim AS node-donor
 
 FROM python:3.14-slim-trixie
 ARG TAKE_PROJECT_NAME
