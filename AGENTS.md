@@ -12,7 +12,7 @@
 - The overall project aims to be very compact (*less is more* mantra)
 - Always ignore the var/ folder: nothing interesting is there.
 
-- At the end of LOG.md, create a work in progress log, where you note what you already did, what is missing. Always update LOG.md following the template
+- At the end of LOG.md, create a work in progress log, where you note what you already did, what is missing. Always update LOG.md following the template. Always include the name of the model used
 
 
 # RTK - Rust Token Killer (Codex CLI)

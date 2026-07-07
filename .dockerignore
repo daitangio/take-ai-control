@@ -1,0 +1,31 @@
+*.env
+*.db
+*.bak
+*.misc
+*.swp
+venv/
+__pycache__/
+
+.env*
+etc/pi-installer.sh
+
+# Ignore session for security reasons
+var/pi-sessions/*
+# Ignore pi-agent stuff
+var/pi-agent/auth.json
+var/pi-agent/bin/*
+
+# Avoid versioning of pi.dev plugin
+var/pi-agent/git/
+var/pi-agent/npm/
+
+var/pi-agent/settings.json
+var/pi-agent/models.json
+doc/*.html
+doc/*.txt
+node_modules
+*-secret*
+
+
+CLAUDE.md
+

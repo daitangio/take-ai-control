@@ -9,7 +9,7 @@ Folder Structure:
     |-- .devcontainer            <- Visual studio code dev contaienr python+node setup
     ├── LICENSE
     ├── README.md    
-    ├── etc                      <- Various configuration used by devcontainer Dockerfile to setup your environment
+    ├── etc                      <- scripts used to setup your environment
     └── var                      <- Contains configuration not meant to be versioned
         ├── pi-agent             <- Contains pi.dev configuration
         │   └── models.json      <- Models to be configured
@@ -20,14 +20,17 @@ Basic principles:
 
 - Isolated Dev container for stronger security
 - pi.dev installation retain sessions and config inside the var directory
-- Minimalistic setup
+- Minimalistic setup + non root user
+- As bonus, claude code and copilot installation
 
 ## Getting started
 
 - Clone or fork this project. 
 - Review .devcontaier/devcontainer.json
 - Define a devcontainer.env with all your API keys (i.e. DeepSeek, Claude etc)
-- Run Visual Studio Code DevContainer mode.
+- Two options: 
+    - run Visual Studio Code DevContainer mode.
+    - run ./bin/runInContainer.shn to get a throwaway container
 - Once you have your terminal, install your Pi.dev's preferred extensions (you need to do this just once):
 
     ```bash 
