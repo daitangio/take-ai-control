@@ -1,12 +1,12 @@
 #!/bin/sh
 set -e
-docker build -t $(basename $PWD):latest --build-arg TAKE_PROJECT_NAME=$(basename $PWD) .
-WORKSPACE=/workspaces/$(basename $PWD)
+PROJECT="$(basename "$PWD")"
+docker build -t "${PROJECT}:latest" --build-arg "TAKE_PROJECT_NAME=${PROJECT}" .
+WORKSPACE="/workspaces/${PROJECT}"
 set -v
-# /home/devocontainer
-docker run -ti --rm -v $PWD:${WORKSPACE}  \
-    -v $HOME/.copilot:/home/devcontainer/.copilot \
-    -v $HOME/.copilot-metrics:/home/devcontainer/.copilot-metrics \
-    --workdir $WORKSPACE \
+docker run -ti --rm -v "$PWD":"${WORKSPACE}" \
+    -v "$HOME/.copilot:/home/devcontainer/.copilot:ro" \
+    -v "$HOME/.copilot-metrics:/home/devcontainer/.copilot-metrics:ro" \
+    --workdir "${WORKSPACE}" \
     --env-file .devcontainer/devcontainer.env \
-    $(basename $PWD):latest bash
+    "${PROJECT}:latest" bash

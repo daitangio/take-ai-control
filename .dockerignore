@@ -7,6 +7,7 @@ venv/
 __pycache__/
 
 .env*
+.devcontainer/devcontainer.env
 etc/pi-installer.sh
 
 # Ignore session for security reasons

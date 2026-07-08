@@ -24,11 +24,12 @@ RUN npm install -g --ignore-scripts @earendil-works/pi-coding-agent
 # Install the RTK command to reduce token usage (install system-wide)
 COPY ./etc/rtk-installer.sh /tmp/
 ENV RTK_INSTALL_DIR="/usr/local/bin"
+ENV RTK_VERSION="v0.43.0"
 RUN /tmp/rtk-installer.sh
 
-# Install claude code too
+# NOTE: claude-code and copilot require postinstall scripts to download
+# platform-specific native binaries. --ignore-scripts would break them.
 RUN npm install -g @anthropic-ai/claude-code
-
 RUN npm install -g @github/copilot
 
 # Switch to non-root user
