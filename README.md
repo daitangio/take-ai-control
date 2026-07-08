@@ -1,12 +1,12 @@
 # Take AI Control Back
 
 This repository is a template to govern your AI chats with more grip than usual.
-It leverage on [PI.dev] coding agent and on an aggressive isolation done with Docker + VS Code
+It leverages on [PI.dev] coding agent and on an aggressive isolation done with Docker + VS Code
 
 Folder Structure:
 
     .
-    |-- .devcontainer            <- Visual studio code dev contaienr python+node setup
+    |-- .devcontainer            <- Visual studio code dev container python+node setup
     ├── LICENSE
     ├── README.md    
     ├── etc                      <- scripts used to setup your environment
@@ -26,11 +26,11 @@ Basic principles:
 ## Getting started
 
 - Clone or fork this project. 
-- Review .devcontaier/devcontainer.json
+- Review .devcontainer/devcontainer.json
 - Define a devcontainer.env with all your API keys (i.e. DeepSeek, Claude etc)
 - Two options: 
     - run Visual Studio Code DevContainer mode.
-    - run ./bin/runInContainer.shn to get a throwaway container
+    - run ./bin/runInContainer.sh to get a throwaway container
 - Once you have your terminal, install your Pi.dev's preferred extensions (you need to do this just once):
 
     ```bash 
