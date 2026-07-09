@@ -6,7 +6,7 @@ ARG TAKE_PROJECT_NAME
 RUN pip install --upgrade pip
 
 # Ensure basic pi.dev is installed
-RUN apt update && apt install -y git curl xz-utils sudo
+RUN apt update && apt install -y git curl xz-utils sudo jq
 
 # Create non-root user
 RUN groupadd --gid 1000 devcontainer \

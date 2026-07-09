@@ -11,3 +11,4 @@
 - 2026-07-08: Fixed issue #3 (host credentials mounted read-write) — .copilot volumes now mounted :ro. Fixed issue #4 (env file tracking) — added explicit .devcontainer/devcontainer.env to .gitignore and .dockerignore. Also quoted all shell variables in runInContainer.sh. (Kiro/Auto/Claude)
 
 - 2026-07-09: Added README sections documenting how to configure AWS Bedrock and DeepSeek as model providers in pi.dev, including API key generation steps and models.json examples. (Kiro/Auto)
+- 2026-07-09: Built pi-digest session analytics tool (etc/pi-digest.sh, bin/pi-digest, etc/pricing.json). Parses JSONL session logs and reports token usage, costs, model stats, weekly summaries. Added jq to Dockerfile. (Kiro/Auto)

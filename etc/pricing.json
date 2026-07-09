@@ -1,0 +1,12 @@
+{
+  "_comment": "Cost per 1K tokens (USD). Used as fallback when session data lacks cost info.",
+  "models": {
+    "claude-opus-4.5":       { "input": 0.015,  "output": 0.075 },
+    "claude-sonnet-4.6":     { "input": 0.003,  "output": 0.015 },
+    "claude-sonnet-4-5":     { "input": 0.003,  "output": 0.015 },
+    "deepseek-chat":         { "input": 0.00014,"output": 0.00028 },
+    "deepseek-reasoner":     { "input": 0.00055,"output": 0.0022 },
+    "us.anthropic.claude-sonnet-4-20250514-v1:0": { "input": 0.003, "output": 0.015 },
+    "us.meta.llama4-maverick-17b-instruct-v1:0":  { "input": 0.0003,"output": 0.0003 }
+  }
+}

@@ -136,4 +136,33 @@ If you want to explicitly declare models in your `models.json`:
 
 > **Tip:** You can combine multiple providers in the same `models.json` and switch between them at will during a session.
 
+---
+
+## pi-digest — Session Analytics
+
+A lightweight CLI tool that parses your pi.dev session logs and gives you visibility into token usage, costs, and model stats.
+
+### Usage
+
+```bash
+pi-digest                # Summarize the latest session
+pi-digest --all          # Summarize all sessions
+pi-digest --week         # Weekly overview with per-session breakdown
+pi-digest --model-stats  # Model usage rankings
+pi-digest --cost         # Detailed cost breakdown across all sessions
+```
+
+The tool reads JSONL files from `var/pi-sessions/` (or wherever `PI_CODING_AGENT_SESSION_DIR` points). No data leaves your machine.
+
+### Requirements
+
+- `jq` (installed in the container by default)
+
+### Environment variables
+
+| Variable | Description |
+|----------|-------------|
+| `PI_CODING_AGENT_SESSION_DIR` | Override session directory |
+| `PI_DIGEST_PRICING` | Override path to `pricing.json` |
+
 [PI.dev]: https://pi.dev

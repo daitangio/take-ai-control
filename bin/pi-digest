@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Wrapper so pi-digest is available on PATH inside the container
+exec "$(dirname "$0")/../etc/pi-digest.sh" "$@"
