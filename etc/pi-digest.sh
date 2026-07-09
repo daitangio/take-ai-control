@@ -217,6 +217,93 @@ cmd_model_stats() {
   echo ""
 }
 
+cmd_graph() {
+  local files
+  files=$(find "$SESSION_DIR" -name "*.jsonl" -type f)
+  if [ -z "$files" ]; then
+    die "No session files found in $SESSION_DIR"
+  fi
+
+  local bar_width=40
+
+  printf "\n${CYAN}━━━ Token Usage by Model ━━━${NC}\n\n"
+
+  # Per-model token totals
+  local model_data
+  model_data=$(find "$SESSION_DIR" -name "*.jsonl" -type f -print0 | sort -z | \
+    xargs -0 cat | \
+    jq -s '
+      [.[] | select(.type == "message" and .message.role == "assistant" and .message.usage != null)] |
+      group_by(.message.model) |
+      map({
+        model: (.[0].message.model // "unknown"),
+        tokens: ([.[].message.usage.totalTokens // 0] | add // 0),
+        cost: ([.[].message.usage.cost.total // 0] | add // 0)
+      }) | sort_by(-.tokens)
+    ')
+
+  local max_tokens
+  max_tokens=$(echo "$model_data" | jq '[.[].tokens] | max // 1')
+
+  echo "$model_data" | jq -r '.[] | "\(.model)\t\(.tokens)\t\(.cost)"' | \
+  while IFS=$'\t' read -r model tokens cost; do
+    local bar_len=$(( tokens * bar_width / max_tokens ))
+    [ "$bar_len" -lt 1 ] && [ "$tokens" -gt 0 ] && bar_len=1
+    local bar=""
+    for ((i=0; i<bar_len; i++)); do bar+="█"; done
+    printf "  ${BOLD}%-30s${NC} %s ${GREEN}%s${NC} tok  \$%s\n" "$model" "$bar" "$tokens" "$cost"
+  done
+
+  printf "\n${CYAN}━━━ Cost by Model ━━━${NC}\n\n"
+
+  local max_cost
+  max_cost=$(echo "$model_data" | jq '[.[].cost] | max // 0.0001')
+
+  echo "$model_data" | jq -r '.[] | "\(.model)\t\(.tokens)\t\(.cost)"' | \
+  while IFS=$'\t' read -r model tokens cost; do
+    # Scale bar by cost (use awk for float math)
+    local bar_len
+    bar_len=$(awk "BEGIN { printf \"%d\", ($cost / $max_cost) * $bar_width }")
+    [ "$bar_len" -lt 1 ] && [ "$(awk "BEGIN { print ($cost > 0) }")" = "1" ] && bar_len=1
+    local bar=""
+    for ((i=0; i<bar_len; i++)); do bar+="▓"; done
+    printf "  ${BOLD}%-30s${NC} %s ${YELLOW}\$%s${NC}\n" "$model" "$bar" "$cost"
+  done
+
+  printf "\n${CYAN}━━━ Tokens per Session ━━━${NC}\n\n"
+
+  local session_data
+  session_data=$(find "$SESSION_DIR" -name "*.jsonl" -type f -print0 | sort -z | \
+    xargs -0 -I{} sh -c '
+      f="$1"
+      jq -s "
+        (map(select(.type == \"session\")) | first) as \$sess |
+        (map(select(.type == \"model_change\")) | last) as \$model |
+        [.[] | select(.type == \"message\" and .message.role == \"assistant\" and .message.usage != null)] as \$msgs |
+        {
+          label: ((\$sess.timestamp // \"?\") | .[0:16]),
+          model: (\$model.modelId // \"?\"),
+          tokens: ([\$msgs[].message.usage.totalTokens // 0] | add // 0),
+          cost: ([\$msgs[].message.usage.cost.total // 0] | add // 0)
+        }
+      " "$f"
+    ' _ {} | jq -s '.')
+
+  local max_sess_tokens
+  max_sess_tokens=$(echo "$session_data" | jq '[.[].tokens] | max // 1')
+
+  echo "$session_data" | jq -r '.[] | "\(.label)\t\(.model)\t\(.tokens)\t\(.cost)"' | \
+  while IFS=$'\t' read -r label model tokens cost; do
+    local bar_len=$(( tokens * bar_width / max_sess_tokens ))
+    [ "$bar_len" -lt 1 ] && [ "$tokens" -gt 0 ] && bar_len=1
+    local bar=""
+    for ((i=0; i<bar_len; i++)); do bar+="░"; done
+    printf "  %s  %s ${GREEN}%5s${NC} tok  %-20s\n" "$label" "$bar" "$tokens" "$model"
+  done
+
+  echo ""
+}
+
 cmd_cost() {
   local files
   files=$(find "$SESSION_DIR" -name "*.jsonl" -type f)
@@ -285,6 +372,7 @@ ${BOLD}Commands:${NC}
   --week             Weekly overview with per-session breakdown
   --model-stats      Model usage rankings
   --cost             Detailed cost breakdown across all sessions
+  --graph            Terminal bar chart (tokens & cost by model + per session)
   --help             Show this help
 
 ${BOLD}Environment:${NC}
@@ -309,6 +397,7 @@ main() {
     --week|-w)        cmd_week ;;
     --model-stats|-m) cmd_model_stats ;;
     --cost|-c)        cmd_cost ;;
+    --graph|-g)       cmd_graph ;;
     --help|-h)        usage ;;
     *)                die "Unknown command: $cmd. Use --help for usage." ;;
   esac
