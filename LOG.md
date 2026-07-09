@@ -9,3 +9,5 @@
 - 2026-07-08: Pinned RTK version to v0.43.0 in Dockerfile for reproducible builds. (Kiro/Auto/Claude)
 - 2026-07-08: Investigated --ignore-scripts for claude-code and copilot: both require postinstall scripts to download platform-specific native binaries. Added comment documenting why the flag cannot be used. (Kiro/Auto/Claude)
 - 2026-07-08: Fixed issue #3 (host credentials mounted read-write) — .copilot volumes now mounted :ro. Fixed issue #4 (env file tracking) — added explicit .devcontainer/devcontainer.env to .gitignore and .dockerignore. Also quoted all shell variables in runInContainer.sh. (Kiro/Auto/Claude)
+
+- 2026-07-09: Added README sections documenting how to configure AWS Bedrock and DeepSeek as model providers in pi.dev, including API key generation steps and models.json examples. (Kiro/Auto)
