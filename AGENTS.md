@@ -48,3 +48,29 @@ rtk gain
 which rtk
 ```
 
+
+# Java — JDK 17 + Spring Boot + TDD
+
+Target JDK 17. Framework: Spring Boot. Build: Maven via the wrapper.
+
+## Commands
+
+Use `./mvnw` (plain `mvn` if no wrapper). Prefix every command with `rtk`.
+
+```bash
+rtk ./mvnw test      # run tests
+rtk ./mvnw verify    # full build + integration checks
+rtk ./mvnw spring-boot:run
+```
+
+## Test stack
+
+- JUnit 5 — test framework
+- Mockito — mocking
+- AssertJ — fluent assertions
+- Spring Boot slices — `@WebMvcTest` (web layer), `@DataJpaTest` (persistence)
+
+## TDD
+
+Red-green-refactor: write a failing test first, make it pass with the
+simplest code, then refactor. No implementation without a failing test.
