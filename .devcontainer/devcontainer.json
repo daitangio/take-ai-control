@@ -18,6 +18,13 @@
 		// "ghcr.io/devcontainers/features/python:1": {}
 		//,"ghcr.io/devcontainer-config/features/dot-config:4": {}
 	},
+	// Share copilot auth
+	"mounts": [                                                                                                                                            
+	{                                                                                                                                                    
+		"source": "${localEnv:HOME}/.copilot",                                                                                                                
+		"target": "/home/devcontainer/.copilot",                                                                                                                
+		"type": "bind"                                                                                                                                     
+	}],
 
 	// See https://code.visualstudio.com/remote/advancedcontainers/environment-variables
 	"runArgs": ["--env-file",".devcontainer/devcontainer.env"]
@@ -35,5 +42,14 @@
 	// "customizations": {},
 
 	// Connect as non-root user for stronger security. More info: https://aka.ms/dev-containers-non-root.
-	,"remoteUser": "devcontainer"
+	,
+	"remoteUser": "devcontainer",
+
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"TakumiI.markdowntable"
+			]
+		}
+	}
 }

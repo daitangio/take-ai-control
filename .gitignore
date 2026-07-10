@@ -10,6 +10,18 @@ __pycache__/
 .devcontainer/devcontainer.env
 etc/pi-installer.sh
 
+doc/*.html
+doc/*.txt
+node_modules
+*-secret*
+
+# OPT:
+CLAUDE.md
+
+package-lock.json
+
+.pi-subagents/*
+
 # Ignore session for security reasons
 var/pi-sessions/*
 # Ignore pi-agent stuff
@@ -22,12 +34,4 @@ var/pi-agent/npm/
 
 var/pi-agent/settings.json
 var/pi-agent/models.json
-doc/*.html
-doc/*.txt
-node_modules
-*-secret*
-
-# OPT:
-CLAUDE.md
-
-package-lock.json
+var/pi-agent/run-history.jsonl
