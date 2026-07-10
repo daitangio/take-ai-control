@@ -55,7 +55,10 @@ Also, this project has some ad hoc variants under the feature/ branches includin
 - feature/java for JAVA setup
 - feature/ai-sdlc-copilot
     Based on https://github.com/awslabs/aidlc-workflows#github-copilot
-
+- feature/ai-sdlc-pi
+    Based on https://github.com/awslabs/aidlc-workflows#github-copilot
+- feature/crc-cards-pi    
+    Very experimental super-light workflow based on CRC cards
 
 
 
