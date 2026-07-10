@@ -55,12 +55,21 @@ Also, this project has some ad hoc variants under the feature/ branches includin
 - feature/java for JAVA setup
 - feature/ai-sdlc-copilot
     Based on https://github.com/awslabs/aidlc-workflows#github-copilot
+- feature/ai-sdlc-pi
+    Based on https://github.com/awslabs/aidlc-workflows#github-copilot
+    the incipit workflow is appended in AGENTS.md
+
+# feature/ai-sdlc-pi
+
+For this workflow please uninstall caveman:
+
+    pi uninstall git:github.com/jonjonrankin/pi-caveman
 
 
-# feature/ai-sdlc-copilot
 
 This repository already contains version 1.0.1 of AWS AI-SDLC
-In copilot issue "/instructions" and verify the copilot-instructions.md is included
+
+
 
 Start any software development project by stating your intent starting with the phrase "Using AI-DLC, ..." in the chat
 
