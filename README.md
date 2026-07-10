@@ -57,6 +57,19 @@ Also, this project has some ad hoc variants under the feature/ branches includin
     Based on https://github.com/awslabs/aidlc-workflows#github-copilot
 
 
+# feature/ai-sdlc-copilot
+
+This repository already contains version 1.0.1 of AWS AI-SDLC
+In copilot issue "/instructions" and verify the copilot-instructions.md is included
+
+Start any software development project by stating your intent starting with the phrase "Using AI-DLC, ..." in the chat
+
+1) AI-DLC workflow automatically activates and guides you from there
+2) Answer structured questions that AI-DLC asks you
+3) Carefully review every plan that AI generates. Provide your oversight and validation
+4) Review the execution plan to see which stages will run
+5) Carefully review the artifacts and approve each stage to maintain control
+6) All the artifacts will be generated in the aidlc-docs/ directory
 
 
 
