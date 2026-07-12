@@ -15,7 +15,7 @@
 - At the end of LOG.md, create a work in progress log, where you note what you already did, what is missing. Always update LOG.md following the template. Always include the name of the model used
 
 
-# RTK - Rust Token Killer (Codex CLI)
+# RTK - Rust Token Killer
 
 **Usage**: Token-optimized CLI proxy for shell commands.
 
