@@ -1,0 +1,79 @@
+.card {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 8px 12px 8px 12px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  transition: background 0.15s;
+}
+
+.card:hover {
+  background: #f9fafb;
+}
+
+.card-text {
+  flex: 1;
+  font-size: 14px;
+  word-break: break-word;
+}
+
+.card-delete {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: #5e6c84;
+  font-size: 11px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.card:hover .card-delete {
+  opacity: 1;
+}
+
+.card-delete:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.card-edit-input {
+  flex: 1;
+  padding: 4px 8px;
+  border: 2px solid #0079bf;
+  border-radius: 4px;
+  font-size: 14px;
+  outline: none;
+}
+
+/* Drag-and-drop */
+
+.card-dragging {
+  opacity: 0.4;
+  box-shadow: none;
+}
+
+.card[draggable='true'] {
+  cursor: grab;
+}
+
+.card[draggable='true']:active {
+  cursor: grabbing;
+}
+
+.card-drop-before {
+  border-top: 3px solid #0079bf;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  margin-top: -3px;
+}

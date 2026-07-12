@@ -43,3 +43,5 @@ debug*.log
 var/claude-home/* 
 var/claude-home/.claude
 var/claude-home/.claude.json
+
+node_modules
