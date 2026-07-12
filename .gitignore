@@ -35,3 +35,11 @@ var/pi-agent/npm/
 var/pi-agent/settings.json
 var/pi-agent/models.json
 var/pi-agent/run-history.jsonl
+.DS_Store
+debug*.log
+
+
+# Temp: eval calude-code local install
+var/claude-home/* 
+var/claude-home/.claude
+var/claude-home/.claude.json

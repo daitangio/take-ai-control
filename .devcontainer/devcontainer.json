@@ -24,7 +24,18 @@
 		"source": "${localEnv:HOME}/.copilot",                                                                                                                
 		"target": "/home/devcontainer/.copilot",                                                                                                                
 		"type": "bind"                                                                                                                                     
-	}],
+	}
+	,{                                                                                                                                                    
+		"source": "${localEnv:HOME}/.claude",                                                                                                                
+		"target": "/home/devcontainer/.claude",                                                                                                                
+		"type": "bind"                                                                                                                                     
+	}
+	,{                                                                                                                                                    
+		"source": "${localEnv:HOME}/.claude.json",                                                                                                                
+		"target": "/home/devcontainer/.claude.json",                                                                                                                
+		"type": "bind"                                                                                                                                     
+	}    
+],
 
 	// See https://code.visualstudio.com/remote/advancedcontainers/environment-variables
 	"runArgs": ["--env-file",".devcontainer/devcontainer.env"]

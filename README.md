@@ -22,9 +22,8 @@ Basic principles:
 - Isolated Dev container for stronger security
 - pi.dev installation retain sessions and config inside the var directory
 - Minimalistic setup + non root user
-- As bonus, claude code and copilot installation. 
-  Currently copilot auth is shared
-  Claude code is only tested with deepseek integration
+- As bonus, claude code and copilot installation sharing the home (and potentially the auth of both)
+  Claude code is only tested with deepseek integration (see deep seek manual, use env variable in your devcontainer.env)
 
 ## Getting started
 
