@@ -1,0 +1,2 @@
+markitdown[pdf,docx,pptx,xlsx,xls,outlook]==0.1.6
+requests==2.32.5

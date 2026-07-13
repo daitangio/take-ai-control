@@ -1,0 +1,4 @@
+interface:
+  display_name: "Convert with MarkItDown"
+  short_description: "Convert documents and data files to Markdown"
+  default_prompt: "Use $convert-with-markitdown to convert this local document to Markdown."

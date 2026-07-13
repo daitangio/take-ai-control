@@ -36,17 +36,26 @@ Basic principles:
     - run ./bin/runInContainer.sh to get a throwaway container on the command line
       If you do not have claude code installed, use this method to ensure some empty folder are created
     - Use without container (but please avoid [pi.dev] in this scenario)
-- Once you have your terminal, install your Pi.dev's preferred extensions (you need to do this just once):
-  For instance try
-    ```bash
-       pi install git:github.com/jonjonrankin/pi-caveman
-       pi install npm:pi-subagents
-    ```
 
-The extensions will be stored in the var/pi-agent subdirectory (see above)
+### Using pi.dev
+Pi.dev is fantastic because it never will ask for command confirmation: but it is also a risk.
 
+Once you have your terminal, install your Pi.dev's preferred extensions (you need to do this just once):
+For instance try
+```bash
+    pi install git:github.com/jonjonrankin/pi-caveman
+    pi install npm:pi-subagents
+```
+The extensions will be stored in the var/pi-agent subdirectory (see above).
 After that, you can use [pi.dev] as you wish.
 Our suggestion is to get accustomed to pi.dev with a short session, then you can look forward on the chapter included in the doc directory  like [SUBAGENTS] (this part is a Work in progress WIP).
+
+## Provided Skills [WIP]
+
+A compact and curated list of skills is provided.
+Main goal is to readuce tokens:
+- AGENTS.md provide usage of rtk tool
+- Under .agents (symlinked to .claude for ClaudeCode) a mark-it-down converter is provided, to convert documents in a more compact and mangeable form.
 
 
 
