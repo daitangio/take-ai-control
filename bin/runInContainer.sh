@@ -4,8 +4,12 @@ PROJECT="$(basename "$PWD")"
 docker build -t "${PROJECT}:latest" --build-arg "TAKE_PROJECT_NAME=${PROJECT}" .
 WORKSPACE="/workspaces/${PROJECT}"
 set -v
-# TODO: mount .claude/   +  .claude.json 
-# from var/claude
+# mount .claude/   +  .claude.json 
+if [ ! -d $HOME/.claude ]; then
+    # Ensure exists yo avoid messing up 
+    mkdir $HOME/.claude
+    touch $HOME/.claude.json
+fi
 docker run -ti --rm -v "$PWD":"${WORKSPACE}" \
     -v "$HOME/.copilot:/home/devcontainer/.copilot" \
     -v "$HOME/.copilot-metrics:/home/devcontainer/.copilot-metrics" \

@@ -27,6 +27,10 @@ doc/*.txt
 node_modules
 *-secret*
 
+# Ensure docker ignore local env
+
+.venv
+.vscode
 
 CLAUDE.md
 

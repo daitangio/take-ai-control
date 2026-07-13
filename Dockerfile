@@ -32,6 +32,10 @@ RUN /tmp/rtk-installer.sh
 RUN npm install -g @anthropic-ai/claude-code
 RUN npm install -g @github/copilot
 
+# Addons for skills
+COPY ./.agents/skills/convert-with-markitdown/requirements.txt /tmp/markitdown-requirements.txt
+RUN pip install -r /tmp/markitdown-requirements.txt
+
 # Switch to non-root user
 USER devcontainer
 
