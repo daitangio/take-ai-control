@@ -1,5 +1,4 @@
-# Take AI Control Back
-
+# Take AI Control Back ⇐
 This repository is a template to govern your AI chats with more grip than usual.
 It leverages [PI.dev] coding agent and an aggressive isolation done with Docker + VS Code (Works on Linux and MacOS)
 
@@ -63,16 +62,16 @@ Main goal is to readuce tokens:
 
 Also, this project has some ad hoc variants under the feature/ branches including:
 
+- feature/ai-sdlc-{copilot,pi,claude}
+    Based on https://github.com/awslabs/aidlc-workflows#github-copilot
+    These variants provide true simple AI-SDLC workflow without the need of Kiro
 - feature/java for JAVA setup
-- feature/ai-sdlc-copilot
-    Based on https://github.com/awslabs/aidlc-workflows#github-copilot
-- feature/ai-sdlc-pi
-    Based on https://github.com/awslabs/aidlc-workflows#github-copilot
-- feature/crc-cards-pi    
-    Very experimental super-light workflow based on CRC cards
 
+## Demo project
 
+A section called "demo" is used to proof this setup.
 
+- Some demo/*
 
 [PI.dev]: https://pi.dev
 [SUBAGENTS]: doc/SUBAGENTS.md
