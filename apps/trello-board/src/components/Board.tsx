@@ -8,7 +8,7 @@ function Board() {
     lists: [
       {
         id: '1',
-        title: 'To Do',
+        title: 'To Do Emails',
         cards: [
           { id: 'c1', text: 'Welcome to Trella! Drag cards between lists' },
           { id: 'c2', text: 'Click a card to edit it' },
