@@ -28,11 +28,14 @@ Basic principles:
 ## Getting started
 
 - Clone or fork this project and use as template
-- Review .devcontainer/devcontainer.json
-- Define a devcontainer.env with all your API keys (i.e. DeepSeek, Claude etc) if you have already
-- Two options: 
-    - run Visual Studio Code DevContainer mode.
+- Define a .devcontainer/devcontainer.env with all your API keys (i.e. DeepSeek, Claude etc) if you have already
+  This file is common to all the containerized approaches
+- Three options:     
+    - run Visual Studio Code DevContainer mode. If so:
+        - Review .devcontainer/devcontainer.json
     - run ./bin/runInContainer.sh to get a throwaway container on the command line
+      If you do not have claude code installed, use this method to ensure some empty folder are created
+    - Use without container (but please avoid [pi.dev] in this scenario)
 - Once you have your terminal, install your Pi.dev's preferred extensions (you need to do this just once):
   For instance try
     ```bash
