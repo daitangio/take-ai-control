@@ -43,3 +43,4 @@ debug*.log
 var/claude-home/* 
 var/claude-home/.claude
 var/claude-home/.claude.json
+var/pi-agent/trust.json

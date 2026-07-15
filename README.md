@@ -6,8 +6,8 @@ Folder Structure:
 
     .
     |-- .devcontainer            <- Visual studio code dev container
-    |-- bin/runInContainer.sh    <- Zero lockin launcher for running outside vscode
-    ├── LICENSE
+    |-- bin/runInContainer.sh    <- Zero-lock-in launcher for running outside vscode
+    ├── .agents/skill            <- Basic Skills with compatibility between codex, claude and copilot
     ├── README.md    
     ├── etc                      <- scripts used to setup your environment
     └── var                      <- Contains configuration not meant to be versioned
@@ -19,10 +19,12 @@ Folder Structure:
 Basic principles:
 
 - Isolated Dev container for stronger security
-- pi.dev installation retain sessions and config inside the var directory
 - Minimalistic setup + non root user
+- Agents skills can be used on every major harnesses (codex, claude, copilot, [pi.dev])
+- [pi.dev] installation retain sessions and config inside the var directory
 - As bonus, claude code and copilot installation sharing the home (and potentially the auth of both)
-  Claude code is only tested with deepseek integration (see deep seek manual, use env variable in your devcontainer.env)
+  - Claude code is only tested with deepseek integration (see deep seek manual, use env variable in your devcontainer.env)
+- 
 
 ## Getting started
 
