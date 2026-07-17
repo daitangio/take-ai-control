@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <changeSet id="006-envers-audit" author="nello">
+    <!-- Hibernate Envers revision info table -->
+    <createTable tableName="revinfo">
+      <column name="rev" type="INTEGER" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="revtstmp" type="BIGINT"><constraints nullable="false"/></column>
+      <column name="author_email" type="VARCHAR(255)"/>
+    </createTable>
+
+    <!-- Audited tables for boards, lists, cards -->
+    <createTable tableName="boards_aud">
+      <column name="id" type="VARCHAR(36)"><constraints nullable="false"/></column>
+      <column name="rev" type="INTEGER"><constraints nullable="false"/></column>
+      <column name="revtype" type="TINYINT"/>
+      <column name="name" type="VARCHAR(255)"/>
+      <column name="owner_id" type="VARCHAR(36)"/>
+    </createTable>
+    <addPrimaryKey tableName="boards_aud" columnNames="id,rev"/>
+
+    <createTable tableName="board_lists_aud">
+      <column name="id" type="VARCHAR(36)"><constraints nullable="false"/></column>
+      <column name="rev" type="INTEGER"><constraints nullable="false"/></column>
+      <column name="revtype" type="TINYINT"/>
+      <column name="board_id" type="VARCHAR(36)"/>
+      <column name="name" type="VARCHAR(255)"/>
+      <column name="position" type="INTEGER"/>
+    </createTable>
+    <addPrimaryKey tableName="board_lists_aud" columnNames="id,rev"/>
+
+    <createTable tableName="cards_aud">
+      <column name="id" type="VARCHAR(36)"><constraints nullable="false"/></column>
+      <column name="rev" type="INTEGER"><constraints nullable="false"/></column>
+      <column name="revtype" type="TINYINT"/>
+      <column name="list_id" type="VARCHAR(36)"/>
+      <column name="title" type="VARCHAR(255)"/>
+      <column name="description" type="TEXT"/>
+      <column name="due_date" type="DATE"/>
+      <column name="assignee_id" type="VARCHAR(36)"/>
+      <column name="position" type="INTEGER"/>
+    </createTable>
+    <addPrimaryKey tableName="cards_aud" columnNames="id,rev"/>
+  </changeSet>
+</databaseChangeLog>

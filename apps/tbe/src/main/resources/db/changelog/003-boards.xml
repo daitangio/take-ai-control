@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+  <changeSet id="003-boards" author="nello">
+    <createTable tableName="boards">
+      <column name="id" type="VARCHAR(36)"><constraints primaryKey="true" nullable="false"/></column>
+      <column name="name" type="VARCHAR(255)"><constraints nullable="false"/></column>
+      <column name="owner_id" type="VARCHAR(36)"><constraints nullable="false"/></column>
+      <column name="created_at" type="TIMESTAMP"><constraints nullable="false"/></column>
+    </createTable>
+    <addForeignKeyConstraint baseTableName="boards" baseColumnNames="owner_id"
+      referencedTableName="users" referencedColumnNames="id"
+      constraintName="fk_boards_owner"/>
+
+    <createTable tableName="board_members">
+      <column name="board_id" type="VARCHAR(36)"><constraints nullable="false"/></column>
+      <column name="user_id" type="VARCHAR(36)"><constraints nullable="false"/></column>
+    </createTable>
+    <addPrimaryKey tableName="board_members" columnNames="board_id,user_id" constraintName="pk_board_members"/>
+    <addForeignKeyConstraint baseTableName="board_members" baseColumnNames="board_id"
+      referencedTableName="boards" referencedColumnNames="id"
+      constraintName="fk_bm_board"/>
+    <addForeignKeyConstraint baseTableName="board_members" baseColumnNames="user_id"
+      referencedTableName="users" referencedColumnNames="id"
+      constraintName="fk_bm_user"/>
+  </changeSet>
+</databaseChangeLog>
