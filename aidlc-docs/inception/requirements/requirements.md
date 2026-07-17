@@ -53,10 +53,10 @@
 ### NFR-1: Tech Stack — Backend
 - Language: **Java 25**
 - Framework: **Spring Boot** + **Hibernate 7.4**
-- Database: **SQLite** managed via **Liquibase**
+- Database: **H2** managed via **Liquibase**
 - Security: **Spring Security** (magic-link flow replacing basic auth default)
 - Testing: **JUnit 5**
-- Build: **Maven** (maven wrapper)
+- Build: **Maven** with maven wrapper to install
 - Location: `apps/tbe/`
 
 ### NFR-2: Tech Stack — Frontend
@@ -76,9 +76,7 @@
 
 ### NFR-5: Database Extra GG Guidelines
 - Prefer SQL DDL files to init datbase
-- Use STICT Sqlite3 tables to enforce types
-- sqlite3 v3.51+ is already installed in the system, feel free to use it to verify database status
-- For unit testing relay on in-memory sqlite3 database 
+- For unit testing relay on in-memory H2 database 
 
 ---
 
