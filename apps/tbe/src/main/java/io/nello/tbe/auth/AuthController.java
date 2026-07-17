@@ -18,15 +18,16 @@ public class AuthController {
     record RequestLinkBody(String email) {}
     record VerifyTokenBody(String token) {}
     record TokenResponse(String jwt) {}
+    record RequestLinkResponse(String devToken) {}
 
     @PostMapping("/request-link")
-    public ResponseEntity<Void> requestLink(@RequestBody RequestLinkBody body) {
+    public ResponseEntity<RequestLinkResponse> requestLink(@RequestBody RequestLinkBody body) {
         if (!validator.isAllowed(body.email())) {
             return ResponseEntity.status(403).build();
         }
         String raw = tokenService.createToken(body.email());
-        emailSender.sendMagicLink(body.email(), raw);
-        return ResponseEntity.ok().build();
+        String devToken = emailSender.sendMagicLink(body.email(), raw);
+        return ResponseEntity.ok(new RequestLinkResponse(devToken));
     }
 
     @PostMapping("/verify-token")

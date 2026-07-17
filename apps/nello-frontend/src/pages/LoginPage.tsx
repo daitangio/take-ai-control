@@ -12,7 +12,11 @@ export default function LoginPage() {
     e.preventDefault()
     setError('')
     try {
-      await authApi.requestLink(email)
+      const { devToken } = await authApi.requestLink(email)
+      if (devToken) {
+        navigate(`/auth/callback?token=${devToken}`)
+        return
+      }
       setSent(true)
     } catch {
       setError('Email domain not allowed or server error.')
