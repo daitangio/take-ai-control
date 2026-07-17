@@ -1,9 +1,9 @@
 package io.nello.tbe.audit;
 
-import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import org.hibernate.envers.RevisionNumber;
+import org.hibernate.envers.RevisionTimestamp;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +11,10 @@ import lombok.Setter;
 @Table(name = "revinfo")
 @RevisionEntity(NelloRevisionListener.class)
 @Getter @Setter
-public class NelloRevision extends DefaultRevisionEntity {
+public class NelloRevision {
+    @Id @GeneratedValue @RevisionNumber
+    private int id;
+    @RevisionTimestamp
+    private long timestamp;
     private String authorEmail;
 }

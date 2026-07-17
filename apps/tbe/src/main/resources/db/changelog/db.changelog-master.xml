@@ -5,10 +5,5 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
-  <include file="db/changelog/001-users.xml"/>
-  <include file="db/changelog/002-magic-link-tokens.xml"/>
-  <include file="db/changelog/003-boards.xml"/>
-  <include file="db/changelog/004-lists.xml"/>
-  <include file="db/changelog/005-cards.xml"/>
-  <include file="db/changelog/006-envers-audit.xml"/>
+  <include file="db/changelog/*.sql"/>
 </databaseChangeLog>
