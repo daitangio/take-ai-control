@@ -24,4 +24,7 @@ Ha sistemato tutto ma alla mia c'è un aspetto molto delicato: liquibase non sup
 
 Sistemato anche quello, costo totale di questo primo setup circa $6.82
 
-L'applicazione java ha diversi problemi, lo schema non è corretto e la struttura è mischiata
+L'applicazione java ha diversi problemi, lo schema non è corretto e la struttura è mischiata.
+
+In generale l'uso di Sqlite ha dato molti probelmi, ma l'approccio SDLC non sembra efficace in ogni caso.
+Riprovare a rifare da zero

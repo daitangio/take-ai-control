@@ -12,9 +12,11 @@ import lombok.Setter;
 @RevisionEntity(NelloRevisionListener.class)
 @Getter @Setter
 public class NelloRevision {
-    @Id @GeneratedValue @RevisionNumber
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @RevisionNumber
+    @Column(name = "rev")
     private int id;
     @RevisionTimestamp
+    @Column(name = "revtstmp")
     private long timestamp;
     private String authorEmail;
 }

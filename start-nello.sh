@@ -14,6 +14,6 @@ echo "Starting nello frontend ..."
 cd "$ROOT/apps/nello-frontend"
 npm run dev &
 
-trap "echo 'Stopping...'; kill $BACKEND_PID 2>/dev/null; exit 0" INT TERM
+trap "echo 'Stopping...' $BACKEND_PID ; kill -9 $BACKEND_PID 2>/dev/null; exit 0" INT TERM
 
-wait $BACKEND_PID $FRONTEND_PID
+wait $BACKEND_PID
