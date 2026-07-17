@@ -19,7 +19,6 @@
 
   <properties>
     <java.version>25</java.version>
-    <hibernate.version>7.0.0.Final</hibernate.version>
     <lombok.version>1.18.38</lombok.version>
   </properties>
 

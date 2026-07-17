@@ -20,3 +20,19 @@ L'impressione è che l'uso di versioni molto nuove delle librerie lo abbia messo
 
 ## Libquibase...
 Ha sistemato tutto ma alla mia c'è un aspetto molto delicato: liquibase non supporta sqlite3 granché bene
+
+
+[Error] ReferenceError: Can't find variable: global
+	node_modules/sockjs-client/lib/utils/browser-crypto.js (sockjs-client.js:9)
+	__require (chunk-5WRI5ZAA.js:8)
+	node_modules/sockjs-client/lib/utils/random.js (sockjs-client.js:31)
+	__require (chunk-5WRI5ZAA.js:8)
+	node_modules/sockjs-client/lib/utils/event.js (sockjs-client.js:59)
+	__require (chunk-5WRI5ZAA.js:8)
+	node_modules/sockjs-client/lib/transport/websocket.js (sockjs-client.js:1062)
+	__require (chunk-5WRI5ZAA.js:8)
+	node_modules/sockjs-client/lib/transport-list.js (sockjs-client.js:2631)
+	__require (chunk-5WRI5ZAA.js:8)
+	node_modules/sockjs-client/lib/entry.js (sockjs-client.js:3724)
+	__require (chunk-5WRI5ZAA.js:8)
+	Module Code (sockjs-client.js:3731)

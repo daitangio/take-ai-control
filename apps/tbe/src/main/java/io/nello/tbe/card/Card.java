@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -22,6 +23,7 @@ public class Card {
     @Column(nullable = false) private String title;
     @Column(columnDefinition = "TEXT") private String description;
     private LocalDate dueDate;
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assignee_id")
     private User assignee;
