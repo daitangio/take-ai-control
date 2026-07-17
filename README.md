@@ -98,9 +98,10 @@ Start any software development project by stating your intent starting with the 
 
 
 
-# Demo projects
+# Demo projects: about Nello demo project
 
-A section called "demo" is used to proof this setup.
+Start start-nello.sh
+Open http://localhost:5173
 
 
 [PI.dev]: https://pi.dev

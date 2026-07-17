@@ -54,6 +54,13 @@ CREATE TABLE IF NOT EXISTS revinfo (
     author_email VARCHAR(255)
 );
 
+-- Hibernate SequenceStyleGenerator table (emulates a sequence on SQLite)
+-- for @GeneratedValue on NelloRevision.id
+CREATE TABLE IF NOT EXISTS revinfo_seq (
+    next_val BIGINT
+);
+INSERT INTO revinfo_seq (next_val) VALUES (1);
+
 CREATE TABLE IF NOT EXISTS boards_aud (
     id       VARCHAR(36) NOT NULL,
     rev      INTEGER     NOT NULL REFERENCES revinfo(rev),
