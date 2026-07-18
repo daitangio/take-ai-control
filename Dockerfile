@@ -7,6 +7,7 @@ ARG DEV_GID=1000
 ARG PI_CODING_AGENT_VERSION=0.80.7
 ARG CLAUDE_CODE_VERSION=2.1.210
 ARG COPILOT_VERSION=1.0.70
+ARG OPEN_SPEC_VERSION=1.6.0
 FROM ${NODE_BASE_IMAGE} AS node-donor
 
 FROM ${PYTHON_BASE_IMAGE}
@@ -44,6 +45,10 @@ RUN npm install -g "@github/copilot@${COPILOT_VERSION}"
 # Addons for skills
 COPY ./.agents/skills/convert-with-markitdown/requirements.txt /tmp/markitdown-requirements.txt
 RUN pip install -r /tmp/markitdown-requirements.txt
+
+# Open spec 
+ENV OPENSPEC_TELEMETRY=0
+RUN npm install -g @fission-ai/openspec@${OPEN_SPEC_VERSION}
 
 # Switch to non-root user
 USER devcontainer
