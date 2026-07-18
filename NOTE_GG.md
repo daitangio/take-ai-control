@@ -40,5 +40,12 @@ Il sistema ha capito che doveva rivedere l'implementazione della parte java ed Ã
 
 La rigenerazione ha bruciato circa 197 crediti
 
+Per il frontend ho usato
 
-Da viedere anceh https://github.com/github/spec-kit
+> Using AI-DLC implement nello frontend part
+
+E ha bruciato 150 crediti
+
+
+
+Da viedere anche https://github.com/github/spec-kit
