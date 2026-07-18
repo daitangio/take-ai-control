@@ -3,6 +3,7 @@ set -e
 PROJECT="$(basename "$PWD")"
 DEV_UID="$(id -u)"
 DEV_GID="$(id -g)"
+set -x
 docker build -t "${PROJECT}:latest" \
     --build-arg "TAKE_PROJECT_NAME=${PROJECT}" \
     --build-arg "DEV_UID=${DEV_UID}" \
