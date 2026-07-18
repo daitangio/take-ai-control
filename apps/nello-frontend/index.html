@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>nello</title>
+    <!-- polyfill for sockjs-client / stompjs which reference Node's `global` -->
+    <script>var global = globalThis;</script>
   </head>
   <body>
     <div id="root"></div>

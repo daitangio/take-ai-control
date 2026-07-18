@@ -15,7 +15,7 @@ class EmailDomainValidatorTest {
     @BeforeEach
     void setUp() {
         AppProperties props = new AppProperties();
-        props.setAllowedEmailDomains(List.of("example\\.com", ".*\\.org"));
+        props.setAllowedEmailDomains(List.of(".*@example\\.com", ".*@.*\\.org"));
         validator = new EmailDomainValidator(props);
     }
 

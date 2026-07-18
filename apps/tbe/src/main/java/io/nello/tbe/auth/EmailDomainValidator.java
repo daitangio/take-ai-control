@@ -17,7 +17,6 @@ public class EmailDomainValidator {
         if (email == null || !email.contains("@")) return false;
         List<String> patterns = appProperties.getAllowedEmailDomains();
         if (patterns == null || patterns.isEmpty()) return false;
-        String domain = email.substring(email.indexOf('@') + 1);
-        return patterns.stream().anyMatch(p -> Pattern.matches(p, domain));
+        return patterns.stream().anyMatch(p -> Pattern.matches(p, email));
     }
 }

@@ -47,5 +47,8 @@ Per il frontend ho usato
 E ha bruciato 150 crediti
 
 
+Il requisito FR-1 non era rispettato, prché mancava  la propietà allowed_email_domains_list
+Gli ho chiesto di verificare FR-1, si è accorto del problema e lo ha sistemato.
+
 
 Da viedere anche https://github.com/github/spec-kit

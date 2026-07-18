@@ -1,5 +1,7 @@
 const JWT_KEY = "nello_jwt";
-export const BASE_URL = "";
+// In dev, VITE_API_URL points directly to the backend (proxy unreliable in some setups).
+// In production (same-origin deployment) this is empty.
+export const BASE_URL = import.meta.env.VITE_API_URL ?? "";
 
 export const getJwt = () =>
   typeof window === "undefined" ? null : window.localStorage.getItem(JWT_KEY);
