@@ -78,6 +78,9 @@
 - Prefer SQL DDL files to init datbase
 - For unit testing relay on in-memory H2 database 
 
+### NFR-6: Library to be included in Tech Stack — Backend
+- lombok.version: 1.18.38
+
 ---
 
 ## Key Constraints

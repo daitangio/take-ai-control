@@ -28,3 +28,17 @@ L'applicazione java ha diversi problemi, lo schema non è corretto e la struttur
 
 In generale l'uso di Sqlite ha dato molti probelmi, ma l'approccio SDLC non sembra efficace in ogni caso.
 Riprovare a rifare da zero
+
+
+Ho quindi 
+1) Cancellato tutto il codice 
+2) rivisto il file requirements.md e poi ho richiesto su nuova sessione:
+    > I modified AI-SDLC requirements. Review them and proceed
+
+Il sistema ha capito che doveva rivedere l'implementazione della parte java ed è partito in quella direzione
+
+
+La rigenerazione ha bruciato circa 197 crediti
+
+
+Da viedere anceh https://github.com/github/spec-kit

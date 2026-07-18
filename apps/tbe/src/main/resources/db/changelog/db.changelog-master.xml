@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd">
+
+  <include file="classpath:db/changelog/001-users.sql"/>
+  <include file="classpath:db/changelog/002-magic-link-tokens.sql"/>
+  <include file="classpath:db/changelog/003-boards.sql"/>
+  <include file="classpath:db/changelog/004-lists.sql"/>
+  <include file="classpath:db/changelog/005-cards.sql"/>
+  <include file="classpath:db/changelog/006-envers-audit.sql"/>
+
+</databaseChangeLog>
