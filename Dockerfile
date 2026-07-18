@@ -1,25 +1,28 @@
 ARG NODE_BASE_IMAGE="node:24-slim@sha256:53c0a90ba2b3b390c30ebc07cdf29d460efafb0edc685c6e7c0f25a5b9ba3a5f"
 ARG PYTHON_BASE_IMAGE="python:3.14-trixie"
 
+FROM ${NODE_BASE_IMAGE} AS node-donor
+
+
+FROM ${PYTHON_BASE_IMAGE}
+# ARGS MUST BE DELCARED AFTER FROM!
 ARG TAKE_PROJECT_NAME
 ARG DEV_UID=501
-ARG DEV_GID=1000
+ARG DEV_GID=20
 ARG PI_CODING_AGENT_VERSION=0.80.7
 ARG CLAUDE_CODE_VERSION=2.1.210
 ARG COPILOT_VERSION=1.0.70
 ARG OPEN_SPEC_VERSION=1.6.0
-FROM ${NODE_BASE_IMAGE} AS node-donor
-
-FROM ${PYTHON_BASE_IMAGE}
 RUN pip install --upgrade pip
 
 # Ensure basic pi.dev is installed
 RUN apt update && apt install -y git curl xz-utils sudo
 
+ENV DEV_UID=${DEV_UID}
+ENV DEV_GID=${DEV_GID}
+
 # Create non-root user
-RUN DEV_UID="${DEV_UID:-501}" \
-    && DEV_GID="${DEV_GID:-1000}" \
-    && if ! getent group "${DEV_GID}" >/dev/null; then groupadd --gid "${DEV_GID}" devcontainer; fi \
+RUN if ! getent group "${DEV_GID}" >/dev/null; then groupadd --gid "${DEV_GID}" devcontainer; fi \
     && useradd --shell /bin/bash --uid "${DEV_UID}" --gid "${DEV_GID}" -m devcontainer \
     && echo "devcontainer ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/devcontainer \
     && chmod 0440 /etc/sudoers.d/devcontainer
@@ -46,7 +49,7 @@ RUN npm install -g "@github/copilot@${COPILOT_VERSION}"
 COPY ./.agents/skills/convert-with-markitdown/requirements.txt /tmp/markitdown-requirements.txt
 RUN pip install -r /tmp/markitdown-requirements.txt
 
-# Open spec 
+# Open spec
 ENV OPENSPEC_TELEMETRY=0
 RUN npm install -g @fission-ai/openspec@${OPEN_SPEC_VERSION}
 
