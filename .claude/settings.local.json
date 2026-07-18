@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python *)",
+      "Bash(npx tsc *)",
+      "Bash(npx vite *)",
+      "Bash(java --version)"
+    ]
+  }
+}

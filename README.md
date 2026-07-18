@@ -69,22 +69,11 @@ Also, this project has some ad hoc variants under the feature/ branches includin
     These variants provide true simple AI-SDLC workflow without the need of Kiro
 - feature/java for JAVA setup
 
-## Branch OpenSpec
+## Demo project: nello
 
-OpenSpec is a light spec framework, see https://github.com/Fission-AI/OpenSpec
-This branch does not enable it so you NEED to run someting like
+A trello-based replacement using [OpenSpec] with claude code and pi
 
-> openspec init --help
-
-and decide for which tool you want it.
-Refer to the demo/*-openspec branches for examples
-
-
-## Demo project
-
-A section called "demo" is used to proof this setup.
-
-- Some demo/*
 
 [PI.dev]: https://pi.dev
 [SUBAGENTS]: doc/SUBAGENTS.md
+[OpenSpec]: https://github.com/Fission-AI/OpenSpec
