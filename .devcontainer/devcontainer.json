@@ -10,8 +10,10 @@
 		"dockerfile": "../Dockerfile",
 		"args":{
 			"TAKE_PROJECT_NAME":"${localWorkspaceFolderBasename}",
-			"DEV_UID":"${localEnv:UID}",
-			"DEV_GID":"${localEnv:GID}"
+			// ${localEnv:UID} is not working under mac.
+			// so we comment them by default and we relay on ARG defaults
+			//"DEV_UID":"${localEnv:UID}",
+			//"DEV_GID":"${localEnv:GID}"
 		}
 	},
 	"features": {
