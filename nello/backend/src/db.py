@@ -45,7 +45,7 @@ def init_db() -> None:
     db_path = Path(DATABASE_PATH)
     db_path.parent.mkdir(parents=True, exist_ok=True)
 
-    conn = sqlite3.connect(str(db_path))
+    conn = sqlite3.connect(str(db_path), check_same_thread=False)
     conn.executescript(SCHEMA_SQL)
     conn.commit()
     conn.close()
@@ -53,8 +53,14 @@ def init_db() -> None:
 
 
 def get_db() -> sqlite3.Connection:
-    """Yield a database connection. Use as a FastAPI dependency."""
-    conn = sqlite3.connect(DATABASE_PATH)
+    """Yield a database connection. Use as a FastAPI dependency.
+    GG: to fix a 'SQLite objects created in a thread can only be used in that same thread.'
+    AI put check_same_thread=False
+    but I am not fully convinced of this course of action but seems confirmed by
+    https://fastapi.tiangolo.com/tutorial/sql-databases/
+    
+    """
+    conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     try:
