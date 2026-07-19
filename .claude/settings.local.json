@@ -4,7 +4,8 @@
       "Bash(python *)",
       "Bash(npx tsc *)",
       "Bash(npx vite *)",
-      "Bash(java --version)"
+      "Bash(java --version)",
+      "Bash(OPENSPEC_TELEMETRY=0 npx *)"
     ]
   }
 }

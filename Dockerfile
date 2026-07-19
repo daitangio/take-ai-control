@@ -1,8 +1,8 @@
 ARG NODE_BASE_IMAGE="node:24-slim@sha256:53c0a90ba2b3b390c30ebc07cdf29d460efafb0edc685c6e7c0f25a5b9ba3a5f"
 ARG PYTHON_BASE_IMAGE="python:3.14-trixie"
 
-
 FROM ${NODE_BASE_IMAGE} AS node-donor
+
 
 FROM ${PYTHON_BASE_IMAGE}
 # ARGS MUST BE DELCARED AFTER FROM!
@@ -49,7 +49,7 @@ RUN npm install -g "@github/copilot@${COPILOT_VERSION}"
 COPY ./.agents/skills/convert-with-markitdown/requirements.txt /tmp/markitdown-requirements.txt
 RUN pip install -r /tmp/markitdown-requirements.txt
 
-# Open spec 
+# Open spec
 ENV OPENSPEC_TELEMETRY=0
 RUN npm install -g @fission-ai/openspec@${OPEN_SPEC_VERSION}
 
