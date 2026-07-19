@@ -90,7 +90,7 @@ Terminal 2:
 cd nello/backend && ./runBackend.sh
 
 
-
+The basic nello frontend + backend with claud+deep seek costs about $0.30 which is fair
 
 [PI.dev]: https://pi.dev
 [SUBAGENTS]: doc/SUBAGENTS.md

@@ -14,7 +14,8 @@
       "Bash(.venv/bin/python *)",
       "Bash(.venv/bin/pytest *)",
       "Bash(.venv/bin/pip show *)",
-      "Bash(/Users/jj/code/take-ai-back/nello/backend/.venv/bin/pytest *)"
+      "Bash(/Users/jj/code/take-ai-back/nello/backend/.venv/bin/pytest *)",
+      "Skill(openspec-sync-specs)"
     ]
   }
 }
