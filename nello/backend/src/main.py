@@ -2,9 +2,7 @@ import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
-from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.requests import Request
-from starlette.responses import Response
+from fastapi.middleware.cors import CORSMiddleware
 
 from .db import init_db
 from .auth.router import router as auth_router
@@ -20,21 +18,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-class CORSHandler(BaseHTTPMiddleware):
-    """Plain ASGI middleware that adds CORS headers to every response."""
-
-    async def dispatch(self, request: Request, call_next):
-        if request.method == "OPTIONS":
-            response = Response(status_code=200)
-        else:
-            response = await call_next(request)
-
-        response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
-        return response
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
@@ -43,7 +26,13 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="nello API", version="0.1.0", lifespan=lifespan)
 
-app.add_middleware(CORSHandler)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 app.include_router(boards_router, prefix="/api", tags=["boards"])
