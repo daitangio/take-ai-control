@@ -1,0 +1,346 @@
+/* ── List Column ───────────────────────────────── */
+
+.list-column {
+  display: flex;
+  flex-direction: column;
+  width: 272px;
+  min-width: 272px;
+  max-height: 100%;
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.list-header {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  gap: 6px;
+}
+
+.list-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  outline: none;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.list-name:focus {
+  background: #fff;
+  box-shadow: inset 0 0 0 2px var(--color-primary);
+}
+
+.list-name-static {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 2px 4px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.list-name-static:hover {
+  background: var(--color-hover);
+}
+
+.list-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 16px;
+  border-radius: 4px;
+}
+
+.list-delete-btn:hover {
+  background: rgba(220, 38, 38, 0.1);
+  color: var(--color-danger);
+}
+
+/* ── Cards ────────────────────────────────────── */
+
+.card-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 8px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 4px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.card-list--over {
+  background: var(--color-hover);
+}
+
+.card-tile {
+  padding: 8px 12px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.15s;
+}
+
+.card-tile:hover {
+  box-shadow: var(--shadow);
+}
+
+/* ── Card Composer ────────────────────────────── */
+
+.card-composer {
+  padding: 4px 8px 8px;
+}
+
+.card-composer-btn {
+  width: 100%;
+  padding: 6px 12px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  text-align: left;
+  cursor: pointer;
+}
+
+.card-composer-btn:hover {
+  background: var(--color-hover);
+  color: var(--color-text);
+}
+
+.card-composer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card-composer-input {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  resize: none;
+  min-height: 54px;
+}
+
+.card-composer-input:focus {
+  border-color: var(--color-primary);
+}
+
+.card-composer-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.card-composer-submit {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 4px;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 13px;
+}
+
+.card-composer-cancel {
+  padding: 6px 10px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 18px;
+  line-height: 1;
+  border-radius: 4px;
+}
+
+.card-composer-cancel:hover {
+  color: var(--color-text);
+}
+
+/* ── Add List ──────────────────────────────────── */
+
+.add-list {
+  min-width: 272px;
+  width: 272px;
+}
+
+.add-list-btn {
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+.add-list-btn:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--color-text);
+}
+
+.add-list-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.add-list-input {
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+}
+
+.add-list-input:focus {
+  border-color: var(--color-primary);
+}
+
+.add-list-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.add-list-submit {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 4px;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 13px;
+}
+
+.add-list-cancel {
+  padding: 6px 10px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 18px;
+  line-height: 1;
+  border-radius: 4px;
+}
+
+.add-list-cancel:hover {
+  color: var(--color-text);
+}
+
+/* ── Card Modal ────────────────────────────────── */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 80px;
+  z-index: 100;
+}
+
+.modal {
+  background: var(--color-surface);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  width: 480px;
+  max-width: 95vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-title-input {
+  font-size: 20px;
+  font-weight: 600;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  outline: none;
+  width: 100%;
+}
+
+.modal-title-input:focus {
+  border-color: var(--color-primary);
+}
+
+.modal-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modal-desc-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.modal-desc-input:focus {
+  border-color: var(--color-primary);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.modal-delete-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: var(--color-danger);
+  color: #fff;
+  font-size: 14px;
+}
+
+.modal-delete-btn:hover {
+  background: var(--color-danger-hover);
+}
+
+.modal-close-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: var(--color-hover);
+  color: var(--color-text);
+  font-size: 14px;
+}
+
+.modal-close-btn:hover {
+  background: var(--color-border);
+}

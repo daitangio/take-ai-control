@@ -73,6 +73,24 @@ Also, this project has some ad hoc variants under the feature/ branches includin
 
 A trello-based replacement using [OpenSpec] with claude code and pi
 
+Basic workflow:
+
+    proposal ──► specs ──► design ──► tasks ──► implement
+    ▲           ▲          ▲                    │
+    └───────────┴──────────┴────────────────────┘
+                update as you learn
+
+### Dev commands (nello/frontend)
+
+```bash
+cd nello/frontend
+npm install        # install dependencies
+npm run dev        # start Vite dev server
+npm run build      # typecheck + production build
+npm test           # run Vitest test suite
+```
+
+
 
 [PI.dev]: https://pi.dev
 [SUBAGENTS]: doc/SUBAGENTS.md

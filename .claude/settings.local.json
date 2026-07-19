@@ -5,7 +5,11 @@
       "Bash(npx tsc *)",
       "Bash(npx vite *)",
       "Bash(java --version)",
-      "Bash(OPENSPEC_TELEMETRY=0 npx *)"
+      "Bash(OPENSPEC_TELEMETRY=0 npx *)",
+      "Bash(mkdir -p nello)",
+      "Bash(npm create *)",
+      "Bash(npm run *)",
+      "Bash(npm test *)"
     ]
   }
 }

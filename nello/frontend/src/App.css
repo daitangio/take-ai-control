@@ -1,0 +1,36 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  height: 48px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.app-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.app-board {
+  flex: 1;
+  overflow-x: auto;
+  padding: 20px;
+}
+
+.board-content {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  height: 100%;
+  min-width: fit-content;
+}
