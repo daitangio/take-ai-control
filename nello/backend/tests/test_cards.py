@@ -67,7 +67,7 @@ class TestDeleteCard:
         # Verify it's no longer in the list
         board = client.get("/api/boards/b-1", headers=auth_header).json()
         todo = board["lists"][0]
-        assert todo["cardIds"] == []
+        assert todo["cards"] == []
 
 
 class TestMoveCard:
@@ -84,7 +84,7 @@ class TestMoveCard:
         assert resp.status_code == 200
 
         board = client.get("/api/boards/b-1", headers=auth_header).json()
-        todo_card_ids = board["lists"][0]["cardIds"]
+        todo_card_ids = [c["id"] for c in board["lists"][0]["cards"]]
         assert todo_card_ids == ["c-3", "c-1", "c-2"]
 
     def test_move_across_lists(self, client, auth_header):
@@ -97,8 +97,8 @@ class TestMoveCard:
         assert resp.status_code == 200
 
         board = client.get("/api/boards/b-1", headers=auth_header).json()
-        assert board["lists"][0]["cardIds"] == []  # Todo is empty
-        assert board["lists"][1]["cardIds"] == ["c-1"]  # Done has the card
+        assert board["lists"][0]["cards"] == []  # Todo is empty
+        assert [c["id"] for c in board["lists"][1]["cards"]] == ["c-1"]  # Done has the card
 
     def test_move_to_empty_list(self, client, auth_header):
         _setup_board_and_list(client, auth_header)
@@ -111,4 +111,4 @@ class TestMoveCard:
         assert resp.status_code == 200
 
         board = client.get("/api/boards/b-1", headers=auth_header).json()
-        assert board["lists"][1]["cardIds"] == ["c-1"]
+        assert [c["id"] for c in board["lists"][1]["cards"]] == ["c-1"]

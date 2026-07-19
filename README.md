@@ -83,10 +83,11 @@ Basic workflow:
 ### Dev commands (nello/frontend)
 
 Terminal 1:
-cd nello/backend && .venv/bin/uvicorn src.main:app --reload
+cd nello/frontend && npm run dev
 
 Terminal 2:
-cd nello/frontend && npm run dev
+(Ensure to have activated the environment)
+cd nello/backend && ./runBackend.sh
 
 
 
