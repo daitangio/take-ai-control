@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useReducer, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useState, useReducer, useCallback, useRef, type ReactNode } from 'react';
 import type { Action, State } from './types';
 import { createInitialState } from './types';
 import { reducer } from './reducer';
@@ -49,10 +49,18 @@ function actionToApiCall(action: Action): Promise<unknown> {
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, null, createInitialState);
   const [toast, setToast] = useState<string | null>(null);
+  const loadingRef = useRef(false);
 
   const clearToast = useCallback(() => setToast(null), []);
 
   const loadBoards = useCallback(async () => {
+    // Guard against concurrent invocations (e.g. React StrictMode double-effect)
+    if (loadingRef.current) return;
+    loadingRef.current = true;
+
+    // Clear any stale state before repopulating
+    dispatch({ type: 'store/reset' });
+
     try {
       const boards = await api.getBoards();
       for (const board of boards) {
@@ -87,6 +95,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       console.debug('[nello:api] loadBoards failed:', err);
       setToast('Failed to load boards');
+    } finally {
+      loadingRef.current = false;
     }
   }, []);
 

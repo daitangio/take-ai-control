@@ -1,4 +1,4 @@
-import type { Action, State } from './types';
+import { createInitialState, type Action, type State } from './types';
 
 function isBlank(s: string): boolean {
   return s.trim().length === 0;
@@ -82,6 +82,10 @@ export function reducer(state: State, action: Action): State {
       if (!board) return state;
       const { listId, name } = action;
       const list = { id: listId, name: name.trim(), cardIds: [] as string[] };
+      // Idempotent: don't append if already present (prevents duplicates from concurrent loadBoards)
+      const nextListIds = board.listIds.includes(listId)
+        ? board.listIds
+        : [...board.listIds, listId];
       return {
         ...state,
         lists: { ...state.lists, [listId]: list },
@@ -89,7 +93,7 @@ export function reducer(state: State, action: Action): State {
           ...state.boards,
           [action.boardId]: {
             ...board,
-            listIds: [...board.listIds, listId],
+            listIds: nextListIds,
           },
         },
       };
@@ -162,6 +166,10 @@ export function reducer(state: State, action: Action): State {
       if (!list) return state;
       const { cardId, title } = action;
       const card = { id: cardId, title: title.trim(), description: '' };
+      // Idempotent: don't append if already present (prevents duplicates from concurrent loadBoards)
+      const nextCardIds = list.cardIds.includes(cardId)
+        ? list.cardIds
+        : [...list.cardIds, cardId];
       return {
         ...state,
         cards: { ...state.cards, [cardId]: card },
@@ -169,7 +177,7 @@ export function reducer(state: State, action: Action): State {
           ...state.lists,
           [action.listId]: {
             ...list,
-            cardIds: [...list.cardIds, cardId],
+            cardIds: nextCardIds,
           },
         },
       };
@@ -241,6 +249,9 @@ export function reducer(state: State, action: Action): State {
 
       return { ...state, lists: nextLists };
     }
+
+    case 'store/reset':
+      return createInitialState();
 
     default:
       return state;

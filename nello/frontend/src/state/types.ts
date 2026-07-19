@@ -54,4 +54,6 @@ export type Action =
   | { type: 'card/create'; cardId: CardId; listId: ListId; title: string }
   | { type: 'card/edit'; cardId: CardId; title: string; description: string }
   | { type: 'card/delete'; cardId: CardId }
-  | { type: 'card/move'; cardId: CardId; fromListId: ListId; toListId: ListId; index: number };
+  | { type: 'card/move'; cardId: CardId; fromListId: ListId; toListId: ListId; index: number }
+  // Meta
+  | { type: 'store/reset' };

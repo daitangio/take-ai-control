@@ -382,3 +382,64 @@ describe('card/move', () => {
     expect(next.lists.l0.cardIds).toEqual(['c1', 'c0']);
   });
 });
+
+// ── Meta actions ───────────────────────────────────────
+
+describe('store/reset', () => {
+  it('clears all boards, lists, cards, and activeBoardId', () => {
+    const state = s(2, 3, 4);
+    state.activeBoardId = 'b0';
+    const next = reducer(state, { type: 'store/reset' });
+    expect(next.boards).toEqual({});
+    expect(next.lists).toEqual({});
+    expect(next.cards).toEqual({});
+    expect(next.activeBoardId).toBeNull();
+  });
+});
+
+// ── Idempotency guards ─────────────────────────────────
+
+describe('list/create idempotency', () => {
+  it('does not append duplicate listId to board.listIds', () => {
+    // First create adds the list
+    const state = s(1);
+    const a = reducer(state, {
+      type: 'list/create',
+      listId: 'l0',
+      boardId: 'b0',
+      name: 'To Do',
+    });
+    expect(a.boards.b0.listIds).toEqual(['l0']);
+
+    // Second create with same listId should be idempotent
+    const b = reducer(a, {
+      type: 'list/create',
+      listId: 'l0',
+      boardId: 'b0',
+      name: 'To Do',
+    });
+    expect(b.boards.b0.listIds).toEqual(['l0']);
+  });
+});
+
+describe('card/create idempotency', () => {
+  it('does not append duplicate cardId to list.cardIds', () => {
+    const state = s(1, 1);
+    const a = reducer(state, {
+      type: 'card/create',
+      cardId: 'c0',
+      listId: 'l0',
+      title: 'Task',
+    });
+    expect(a.lists.l0.cardIds).toEqual(['c0']);
+
+    // Second create with same cardId should be idempotent
+    const b = reducer(a, {
+      type: 'card/create',
+      cardId: 'c0',
+      listId: 'l0',
+      title: 'Task',
+    });
+    expect(b.lists.l0.cardIds).toEqual(['c0']);
+  });
+});
