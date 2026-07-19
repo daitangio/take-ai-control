@@ -34,3 +34,138 @@
   height: 100%;
   min-width: fit-content;
 }
+
+/* ── Login ────────────────────────────── */
+
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: var(--color-bg);
+}
+
+.login-form {
+  background: var(--color-surface);
+  padding: 32px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.login-form h2 {
+  margin: 0;
+  text-align: center;
+  color: var(--color-primary);
+}
+
+.login-subtitle {
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  margin: 0 0 8px 0;
+}
+
+.login-form label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.login-form input {
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 14px;
+}
+
+.login-form button[type="submit"] {
+  padding: 10px;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.login-form button[type="submit"]:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.login-toggle {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.login-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: var(--color-danger);
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  word-break: break-all;
+}
+
+/* ── Toast ────────────────────────────── */
+
+.toast-container {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+}
+
+.toast {
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow-lg);
+}
+
+.toast-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: var(--color-danger);
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 2px;
+}
+
+/* ── Logout ───────────────────────────── */
+
+.logout-btn {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 4px 12px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  margin-right: 12px;
+}
+
+.logout-btn:hover {
+  background: var(--color-hover);
+}

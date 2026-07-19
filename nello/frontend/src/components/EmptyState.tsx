@@ -3,12 +3,12 @@ import { useStore } from '../state/StoreContext';
 import './Board.css';
 
 export function EmptyState() {
-  const { dispatch } = useStore();
+  const { apiDispatch } = useStore();
   const [name, setName] = useState('');
 
   const handleCreate = () => {
     if (name.trim()) {
-      dispatch({
+      apiDispatch({
         type: 'board/create',
         boardId: crypto.randomUUID(),
         name,

@@ -14,7 +14,7 @@ interface Props {
 }
 
 export function ListColumn({ listId, boardId, onCardClick }: Props) {
-  const { state, dispatch } = useStore();
+  const { state, apiDispatch } = useStore();
   const list = state.lists[listId];
   const [renaming, setRenaming] = useState(false);
   const [renameName, setRenameName] = useState('');
@@ -46,7 +46,7 @@ export function ListColumn({ listId, boardId, onCardClick }: Props) {
 
   const handleRename = () => {
     if (renameName.trim()) {
-      dispatch({ type: 'list/rename', listId, name: renameName });
+      apiDispatch({ type: 'list/rename', listId, name: renameName });
     }
     setRenaming(false);
   };
@@ -57,13 +57,13 @@ export function ListColumn({ listId, boardId, onCardClick }: Props) {
         `Delete list "${list.name}"${cardCount > 0 ? ` and its ${cardCount} card(s)` : ''}?`,
       )
     ) {
-      dispatch({ type: 'list/delete', listId });
+      apiDispatch({ type: 'list/delete', listId });
     }
   };
 
   const handleAddCard = () => {
     if (cardTitle.trim()) {
-      dispatch({
+      apiDispatch({
         type: 'card/create',
         cardId: crypto.randomUUID(),
         listId,

@@ -8,7 +8,7 @@ interface Props {
 }
 
 export function CardModal({ cardId, onClose }: Props) {
-  const { state, dispatch } = useStore();
+  const { state, apiDispatch } = useStore();
   const card: Card | undefined = state.cards[cardId];
   const [title, setTitle] = useState(card?.title ?? '');
   const [description, setDescription] = useState(card?.description ?? '');
@@ -20,7 +20,7 @@ export function CardModal({ cardId, onClose }: Props) {
 
   const save = () => {
     if (title.trim() && card) {
-      dispatch({
+      apiDispatch({
         type: 'card/edit',
         cardId: card.id,
         title,
@@ -32,7 +32,7 @@ export function CardModal({ cardId, onClose }: Props) {
   const handleDelete = () => {
     if (!card) return;
     if (window.confirm(`Delete card "${card.title}"?`)) {
-      dispatch({ type: 'card/delete', cardId: card.id });
+      apiDispatch({ type: 'card/delete', cardId: card.id });
       onClose();
     }
   };

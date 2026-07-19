@@ -15,7 +15,7 @@ import { CardModal } from './CardModal';
 import './ListColumn.css';
 
 export function BoardView() {
-  const { state, dispatch } = useStore();
+  const { state, apiDispatch } = useStore();
   const activeBoardId = state.activeBoardId;
   const board = activeBoardId ? state.boards[activeBoardId] : null;
 
@@ -31,7 +31,7 @@ export function BoardView() {
 
   const handleAddList = () => {
     if (listName.trim() && activeBoardId) {
-      dispatch({
+      apiDispatch({
         type: 'list/create',
         listId: crypto.randomUUID(),
         boardId: activeBoardId,
@@ -87,7 +87,7 @@ export function BoardView() {
         return;
       }
 
-      dispatch({
+      apiDispatch({
         type: 'card/move',
         cardId,
         fromListId,
@@ -111,7 +111,7 @@ export function BoardView() {
         const reordered = [...b.listIds];
         reordered.splice(oldIndex, 1);
         reordered.splice(newIndex, 0, listId);
-        dispatch({
+        apiDispatch({
           type: 'list/reorder',
           boardId: fromBoardId,
           listIds: reordered,

@@ -82,13 +82,12 @@ Basic workflow:
 
 ### Dev commands (nello/frontend)
 
-```bash
-cd nello/frontend
-npm install        # install dependencies
-npm run dev        # start Vite dev server
-npm run build      # typecheck + production build
-npm test           # run Vitest test suite
-```
+Terminal 1:
+cd nello/backend && .venv/bin/uvicorn src.main:app --reload
+
+Terminal 2:
+cd nello/frontend && npm run dev
+
 
 
 

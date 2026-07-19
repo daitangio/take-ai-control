@@ -3,7 +3,7 @@ import { useStore } from '../state/StoreContext';
 import './Board.css';
 
 export function BoardSwitcher() {
-  const { state, dispatch } = useStore();
+  const { state, dispatch, apiDispatch } = useStore();
   const boards = Object.values(state.boards);
   const activeId = state.activeBoardId;
 
@@ -14,7 +14,7 @@ export function BoardSwitcher() {
 
   const handleCreate = () => {
     if (createName.trim()) {
-      dispatch({
+      apiDispatch({
         type: 'board/create',
         boardId: crypto.randomUUID(),
         name: createName,
@@ -26,7 +26,7 @@ export function BoardSwitcher() {
 
   const handleRename = (boardId: string) => {
     if (editName.trim()) {
-      dispatch({ type: 'board/rename', boardId, name: editName });
+      apiDispatch({ type: 'board/rename', boardId, name: editName });
     }
     setEditingId(null);
     setEditName('');
@@ -34,7 +34,7 @@ export function BoardSwitcher() {
 
   const handleDelete = (boardId: string, name: string) => {
     if (window.confirm(`Delete board "${name}" and all its contents?`)) {
-      dispatch({ type: 'board/delete', boardId });
+      apiDispatch({ type: 'board/delete', boardId });
     }
   };
 
