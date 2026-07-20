@@ -5,6 +5,7 @@ import { AuthGuard } from './components/AuthGuard';
 import { BoardSwitcher } from './components/BoardSwitcher';
 import { EmptyState } from './components/EmptyState';
 import { BoardView } from './components/BoardView';
+import { HelpBox } from './components/HelpBox';
 import './App.css';
 
 function AppInner() {
@@ -47,6 +48,7 @@ function AppInner() {
           <BoardView />
         ) : null}
       </main>
+      <HelpBox />
     </div>
   );
 }

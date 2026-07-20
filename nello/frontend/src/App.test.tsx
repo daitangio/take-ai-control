@@ -3,9 +3,24 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from './App';
 import * as api from './api';
+import { HELP_CONTENT_VERSION, HELP_DISMISSAL_KEY } from './components/HelpBox';
+
+const storage = new Map<string, string>();
+const mockLocalStorage = {
+  getItem: (key: string) => storage.get(key) ?? null,
+  setItem: (key: string, value: string) => { storage.set(key, value); },
+  removeItem: (key: string) => { storage.delete(key); },
+  clear: () => { storage.clear(); },
+};
+
+Object.defineProperty(globalThis, 'localStorage', {
+  value: mockLocalStorage,
+  writable: true,
+});
 
 // Pre-set a token so AuthGuard bypasses the login screen
 beforeEach(() => {
+  storage.clear();
   api.setToken('test-token');
 
   // Mock API calls to succeed without a real backend
@@ -27,6 +42,46 @@ beforeEach(() => {
 });
 
 describe('App smoke tests', () => {
+  it('shows shared-board help after authentication', async () => {
+    render(<App />);
+
+    expect(await screen.findByRole('complementary', { name: 'Quick help' })).toBeDefined();
+    expect(screen.getByText(/ending its name with \$/)).toBeDefined();
+    expect(screen.getByText(/use the 👤 button/)).toBeDefined();
+  });
+
+  it('dismisses help for the current content version', async () => {
+    const user = userEvent.setup();
+    const { unmount } = render(<App />);
+
+    await user.click(await screen.findByRole('button', { name: 'Dismiss help' }));
+    expect(screen.queryByRole('complementary', { name: 'Quick help' })).toBeNull();
+    expect(localStorage.getItem(HELP_DISMISSAL_KEY)).toBe(HELP_CONTENT_VERSION);
+
+    unmount();
+    render(<App />);
+    expect(screen.queryByRole('complementary', { name: 'Quick help' })).toBeNull();
+  });
+
+  it('shows help again when the saved version is outdated', async () => {
+    localStorage.setItem(HELP_DISMISSAL_KEY, 'older-version');
+    render(<App />);
+
+    expect(await screen.findByRole('complementary', { name: 'Quick help' })).toBeDefined();
+  });
+
+  it('keeps help dismissed when local storage cannot be written', async () => {
+    const user = userEvent.setup();
+    const setItem = vi.spyOn(mockLocalStorage, 'setItem').mockImplementation(() => {
+      throw new Error('storage unavailable');
+    });
+    render(<App />);
+
+    await user.click(await screen.findByRole('button', { name: 'Dismiss help' }));
+    expect(screen.queryByRole('complementary', { name: 'Quick help' })).toBeNull();
+    setItem.mockRestore();
+  });
+
   it('shows empty state when no boards exist', async () => {
     render(<App />);
     // Wait for the async loadBoards effect to complete
@@ -52,6 +107,7 @@ describe('App smoke tests', () => {
     render(<App />);
     // With no token, user sees the login form instead of boards
     expect(screen.getByText(/Sign in to your boards/)).toBeDefined();
+    expect(screen.queryByRole('complementary', { name: 'Quick help' })).toBeNull();
   });
 
   it('uses API metadata after creating a shared board', async () => {

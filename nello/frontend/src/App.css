@@ -169,3 +169,63 @@
 .logout-btn:hover {
   background: var(--color-hover);
 }
+
+/* ── Help Box ─────────────────────────── */
+
+.help-box {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 90;
+  width: 320px;
+  max-width: calc(100vw - 32px);
+  padding: 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+}
+
+.help-box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.help-box-header h2 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.help-box-close {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.help-box-close:hover {
+  color: var(--color-text);
+}
+
+.help-box-list {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding-left: 18px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+@media (max-width: 480px) {
+  .help-box {
+    right: 16px;
+    left: 16px;
+    width: auto;
+    max-width: none;
+  }
+}
