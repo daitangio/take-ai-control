@@ -85,6 +85,10 @@
   background: var(--color-hover);
 }
 
+.card-list--empty {
+  min-height: 64px;
+}
+
 .card-tile {
   padding: 8px 12px;
   background: #fff;

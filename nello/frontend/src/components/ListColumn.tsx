@@ -61,7 +61,7 @@ export function ListColumn({ listId, boardId, onCardClick }: Props) {
     }
   };
 
-  const handleAddCard = () => {
+  const handleAddCard = (keepComposerOpen = false) => {
     if (cardTitle.trim()) {
       apiDispatch({
         type: 'card/create',
@@ -70,7 +70,7 @@ export function ListColumn({ listId, boardId, onCardClick }: Props) {
         title: cardTitle,
       });
       setCardTitle('');
-      setAddingCard(false);
+      if (!keepComposerOpen) setAddingCard(false);
     }
   };
 
@@ -131,7 +131,12 @@ export function ListColumn({ listId, boardId, onCardClick }: Props) {
 
       <div
         ref={setDroppableRef}
-        className={`card-list${isOver ? ' card-list--over' : ''}`}
+        className={`card-list${isOver ? ' card-list--over' : ''}${cardCount === 0 ? ' card-list--empty' : ''}`}
+        onClick={(e) => {
+          if (e.target === e.currentTarget && !addingCard) {
+            setAddingCard(true);
+          }
+        }}
       >
         <SortableContext
           items={list.cardIds}
@@ -158,7 +163,7 @@ export function ListColumn({ listId, boardId, onCardClick }: Props) {
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
-                  handleAddCard();
+                  handleAddCard(true);
                 }
                 if (e.key === 'Escape') {
                   setAddingCard(false);
@@ -172,7 +177,7 @@ export function ListColumn({ listId, boardId, onCardClick }: Props) {
               <button
                 type="button"
                 className="card-composer-submit"
-                onClick={handleAddCard}
+                onClick={() => handleAddCard()}
               >
                 Add Card
               </button>
