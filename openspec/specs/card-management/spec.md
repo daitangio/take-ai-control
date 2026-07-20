@@ -34,11 +34,23 @@ The system SHALL allow the user to add a card with a non-empty title to any list
 - **THEN** the card opens or the list title enters rename mode respectively, without opening the card composer
 
 ### Requirement: Card editing
-The system SHALL allow the user to open a card and edit its title and description. The title MUST remain non-empty; the description MAY be empty.
+The system SHALL allow the user to open a card and edit its title and description. The title MUST remain non-empty; the description MAY be empty. The system SHALL only send a PATCH request to the server when the card title or description has been modified by the user. Opening and closing a card without changes MUST NOT trigger any API call.
 
 #### Scenario: Edit card title and description
 - **WHEN** the user opens card "Write specs", changes the title to "Write delta specs" and saves a description
 - **THEN** the card shows the new title in its list and the description is retained when reopened
+
+#### Scenario: Card opened and closed without edits
+- **WHEN** the user opens a card modal and closes it without changing title or description
+- **THEN** no PATCH request is sent to the server
+
+#### Scenario: Card title edited and saved
+- **WHEN** the user opens a card modal, changes the title, and closes the modal
+- **THEN** a PATCH request is sent with the updated title and current description
+
+#### Scenario: Card description edited and saved
+- **WHEN** the user opens a card modal, changes the description, and blurs the textarea
+- **THEN** a PATCH request is sent with the current title and updated description
 
 ### Requirement: Card deletion
 The system SHALL allow the user to delete a card from its detail view after an explicit confirmation.

@@ -4,7 +4,7 @@ import { MemberDialog } from './MemberDialog';
 import './Board.css';
 
 export function BoardSwitcher() {
-  const { state, dispatch, apiDispatch } = useStore();
+  const { state, dispatch, apiDispatch, loadBoards } = useStore();
   const boards = Object.values(state.boards);
   const activeId = state.activeBoardId;
 
@@ -72,9 +72,9 @@ export function BoardSwitcher() {
               <button
                 type="button"
                 className="board-tab-name"
-                onClick={() =>
-                  dispatch({ type: 'board/switch', boardId: board.id })
-                }
+                onClick={() => {
+                  if (board.id !== activeId) loadBoards(board.id);
+                }}
                 style={{
                   background: 'none',
                   border: 'none',

@@ -20,6 +20,8 @@ export function CardModal({ cardId, onClose }: Props) {
 
   const save = () => {
     if (title.trim() && card) {
+      // GG: if card is not dirty DO NOT Send an edit
+      if (title === card.title && description === card.description) return;
       apiDispatch({
         type: 'card/edit',
         cardId: card.id,

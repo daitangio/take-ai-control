@@ -44,11 +44,15 @@ The system SHALL allow the user to delete a board after an explicit confirmation
 - **THEN** the board and its contents are unchanged
 
 ### Requirement: Board switching
-The system SHALL display all existing boards and allow the user to switch the active board.
+The system SHALL display all existing boards and allow the user to switch the active board. Switching to a different board SHALL reload board data from the server to ensure the displayed data reflects the latest state.
 
 #### Scenario: Switch active board
 - **WHEN** the user selects board "Home" while board "Work" is active
-- **THEN** the view shows the lists and cards of "Home"
+- **THEN** the system fetches fresh board data from the API and displays the lists and cards of "Home"
+
+#### Scenario: User clicks on the already-active board
+- **WHEN** the user clicks on the board tab that is already active
+- **THEN** no reload is triggered
 
 #### Scenario: No boards yet
 - **WHEN** the app is opened and no boards exist
