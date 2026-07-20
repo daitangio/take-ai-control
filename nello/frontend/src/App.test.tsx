@@ -11,12 +11,12 @@ beforeEach(() => {
   // Mock API calls to succeed without a real backend
   vi.spyOn(api, 'getBoards').mockResolvedValue([]);
   vi.spyOn(api, 'getBoard').mockResolvedValue({ id: '', name: '', lists: [] });
-  vi.spyOn(api, 'createBoard').mockResolvedValue({ id: 'b-1', name: 'Work', listIds: [] });
+  vi.spyOn(api, 'createBoard').mockResolvedValue({ id: 'b-1', name: 'Work', listIds: [], isShared: false, isOwner: true });
   vi.spyOn(api, 'createList').mockResolvedValue({ id: 'l-1', boardId: 'b-1', name: 'To Do', cardIds: [] });
-  vi.spyOn(api, 'createCard').mockResolvedValue({ id: 'c-1', listId: 'l-1', title: 'Write specs', description: '' });
-  vi.spyOn(api, 'updateBoard').mockResolvedValue({ id: '', name: '', listIds: [] });
+  vi.spyOn(api, 'createCard').mockResolvedValue({ id: 'c-1', listId: 'l-1', title: 'Write specs', description: '', modifiedBy: 'u-1' });
+  vi.spyOn(api, 'updateBoard').mockResolvedValue({ id: '', name: '', listIds: [], isShared: false, isOwner: true });
   vi.spyOn(api, 'updateList').mockResolvedValue({ id: '', boardId: '', name: '', cardIds: [] });
-  vi.spyOn(api, 'updateCard').mockResolvedValue({ id: '', listId: '', title: '', description: '' });
+  vi.spyOn(api, 'updateCard').mockResolvedValue({ id: '', listId: '', title: '', description: '', modifiedBy: 'u-1' });
   vi.spyOn(api, 'deleteBoard').mockResolvedValue(undefined);
   vi.spyOn(api, 'deleteList').mockResolvedValue(undefined);
   vi.spyOn(api, 'deleteCard').mockResolvedValue(undefined);
@@ -52,5 +52,48 @@ describe('App smoke tests', () => {
     render(<App />);
     // With no token, user sees the login form instead of boards
     expect(screen.getByText(/Sign in to your boards/)).toBeDefined();
+  });
+
+  it('uses API metadata after creating a shared board', async () => {
+    const user = userEvent.setup();
+    vi.mocked(api.createBoard).mockImplementation(async (id, name) => ({
+      id,
+      name,
+      listIds: [],
+      isShared: true,
+      isOwner: true,
+    }));
+    render(<App />);
+
+    await user.type(screen.getByPlaceholderText('Board name'), 'Team$');
+    await user.click(screen.getByText('Create Board'));
+
+    expect(await screen.findByTitle('Manage members')).toBeDefined();
+  });
+
+  it('restores server state after a failed optimistic mutation', async () => {
+    const user = userEvent.setup();
+    vi.mocked(api.createBoard).mockRejectedValueOnce(new Error('rejected'));
+    render(<App />);
+
+    await user.type(screen.getByPlaceholderText('Board name'), 'Rejected');
+    await user.click(screen.getByText('Create Board'));
+
+    expect(await screen.findByText('Failed to board create')).toBeDefined();
+    expect(screen.queryByRole('button', { name: 'Rejected' })).toBeNull();
+  });
+
+  it('hides owner-only board deletion from members', async () => {
+    vi.mocked(api.getBoards).mockResolvedValueOnce([{
+      id: 'b-shared',
+      name: 'Team$',
+      listIds: [],
+      isShared: true,
+      isOwner: false,
+    }]);
+    render(<App />);
+
+    expect(await screen.findByText('Team$')).toBeDefined();
+    expect(screen.queryByTitle('Delete board')).toBeNull();
   });
 });

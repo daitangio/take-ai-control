@@ -50,10 +50,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, null, createInitialState);
   const [toast, setToast] = useState<string | null>(null);
   const loadingRef = useRef(false);
+  const stateRef = useRef(state);
+  stateRef.current = state;
 
   const clearToast = useCallback(() => setToast(null), []);
 
-  const loadBoards = useCallback(async () => {
+  const loadBoards = useCallback(async (preferredBoardId?: string | null) => {
     // Guard against concurrent invocations (e.g. React StrictMode double-effect)
     if (loadingRef.current) return;
     loadingRef.current = true;
@@ -88,10 +90,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           }
         }
       }
-      // Switch to first board
-      const allBoards = Object.values(boards);
-      if (allBoards.length > 0) {
-        dispatch({ type: 'board/switch', boardId: allBoards[0].id });
+      const nextActive = boards.find((board) => board.id === preferredBoardId) ?? boards[0];
+      if (nextActive) {
+        dispatch({ type: 'board/switch', boardId: nextActive.id });
       }
     } catch (err) {
       console.debug('[nello:api] loadBoards failed:', err);
@@ -102,17 +103,40 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const apiDispatch = useCallback(async (action: Action) => {
+    const activeBefore = stateRef.current.activeBoardId;
     dispatch(action);
 
     if (action.type === 'board/switch') return;
 
     try {
-      await actionToApiCall(action);
+      const result = await actionToApiCall(action);
+      if (action.type === 'board/create' || action.type === 'board/rename') {
+        const board = result as api.BoardBrief;
+        dispatch({
+          type: 'board/rename',
+          boardId: board.id,
+          name: board.name,
+          isShared: board.isShared,
+          isOwner: board.isOwner,
+        });
+      } else if (action.type === 'card/create' || action.type === 'card/edit') {
+        const card = result as api.CardResponse;
+        dispatch({
+          type: 'card/edit',
+          cardId: card.id,
+          title: card.title,
+          description: card.description,
+          modifiedBy: card.modifiedBy ?? undefined,
+        });
+      } else if (action.type === 'card/move') {
+        await loadBoards(activeBefore);
+      }
     } catch (err) {
       console.debug('[nello:api]', action.type, 'failed:', err);
       setToast(`Failed to ${action.type.replace('/', ' ')}`);
+      if (api.getToken()) await loadBoards(activeBefore);
     }
-  }, []);
+  }, [loadBoards]);
 
   return (
     <StoreCtx.Provider value={{ state, dispatch, apiDispatch, loadBoards, toast, clearToast }}>

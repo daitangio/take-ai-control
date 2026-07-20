@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
-import { useStore } from '../state/StoreContext';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import * as api from '../api';
 
 interface Props {
@@ -8,14 +7,13 @@ interface Props {
 }
 
 export function MemberDialog({ boardId, onClose }: Props) {
-  const { toast } = useStore();
   const [members, setMembers] = useState<api.MemberResponse[]>([]);
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
 
-  const loadMembers = async () => {
+  const loadMembers = useCallback(async () => {
     try {
       const list = await api.listMembers(boardId);
       setMembers(list);
@@ -25,11 +23,11 @@ export function MemberDialog({ boardId, onClose }: Props) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [boardId]);
 
   useEffect(() => {
     loadMembers();
-  }, [boardId]);
+  }, [loadMembers]);
 
   const handleAdd = async () => {
     if (!email.trim()) return;

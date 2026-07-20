@@ -3,9 +3,16 @@ import {
   useContext,
   useState,
   useCallback,
+  useEffect,
   type ReactNode,
 } from "react";
-import { login, register, setToken, getToken } from "../api";
+import {
+  login,
+  register,
+  setToken,
+  getToken,
+  setUnauthorizedHandler,
+} from "../api";
 
 interface AuthState {
   token: string | null;
@@ -24,6 +31,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [email, setEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setUnauthorizedHandler(() => {
+      setTokenState(null);
+      setEmail(null);
+      setError("Your session expired. Please sign in again.");
+    });
+    return () => setUnauthorizedHandler(null);
+  }, []);
 
   const handleLogin = useCallback(async (e: string, p: string) => {
     setLoading(true);

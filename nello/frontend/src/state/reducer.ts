@@ -32,7 +32,12 @@ export function reducer(state: State, action: Action): State {
         ...state,
         boards: {
           ...state.boards,
-          [action.boardId]: { ...b, name: action.name.trim() },
+          [action.boardId]: {
+            ...b,
+            name: action.name.trim(),
+            isShared: action.isShared ?? b.isShared,
+            isOwner: action.isOwner ?? b.isOwner,
+          },
         },
       };
     }
@@ -201,6 +206,7 @@ export function reducer(state: State, action: Action): State {
             ...card,
             title: action.title.trim(),
             description: action.description,
+            modifiedBy: action.modifiedBy ?? card.modifiedBy,
           },
         },
       };

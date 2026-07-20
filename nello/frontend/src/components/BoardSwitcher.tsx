@@ -86,17 +86,19 @@ export function BoardSwitcher() {
               >
                 {board.name}
               </button>
-              <button
-                type="button"
-                className="board-tab-delete"
-                title="Delete board"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDelete(board.id, board.name);
-                }}
-              >
-                ×
-              </button>
+              {board.isOwner !== false && (
+                <button
+                  type="button"
+                  className="board-tab-delete"
+                  title="Delete board"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(board.id, board.name);
+                  }}
+                >
+                  ×
+                </button>
+              )}
               <button
                 type="button"
                 className="board-tab-delete"

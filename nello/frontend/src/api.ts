@@ -8,6 +8,7 @@
 const BASE_URL = "/api";
 
 let token: string | null = null;
+let unauthorizedHandler: (() => void) | null = null;
 
 export function setToken(t: string | null) {
   token = t;
@@ -15,6 +16,10 @@ export function setToken(t: string | null) {
 
 export function getToken(): string | null {
   return token;
+}
+
+export function setUnauthorizedHandler(handler: (() => void) | null) {
+  unauthorizedHandler = handler;
 }
 
 async function fetchWithAuth<T>(
@@ -38,6 +43,7 @@ async function fetchWithAuth<T>(
   if (!res.ok) {
     if (res.status === 401) {
       setToken(null);
+      unauthorizedHandler?.();
     }
     const body = await res.text();
     const err = new Error(
