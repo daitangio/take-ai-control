@@ -21,6 +21,8 @@ def in_memory_db():
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     conn.executescript(SCHEMA_SQL)
+    # Apply migration: modified_by column (init_db does this via try/except)
+    conn.execute("ALTER TABLE card ADD COLUMN modified_by TEXT")
     conn.commit()
     yield conn
     conn.close()

@@ -78,12 +78,20 @@ export interface BoardBrief {
   id: string;
   name: string;
   listIds: string[];
+  isShared: boolean;
+  isOwner: boolean;
 }
 
 export interface CardBrief {
   id: string;
   title: string;
   description: string;
+  modifiedBy: string | null;
+}
+
+export interface MemberResponse {
+  id: string;
+  email: string;
 }
 
 export interface ListBrief {
@@ -165,6 +173,7 @@ export interface CardResponse {
   listId: string;
   title: string;
   description: string;
+  modifiedBy: string | null;
 }
 
 export function createCard(id: string, listId: string, title: string) {
@@ -194,4 +203,23 @@ export function moveCard(cardId: string, toListId: string, index: number) {
     method: "PUT",
     body: JSON.stringify({ toListId, index }),
   });
+}
+
+// ── Members ──────────────────────────────────────────
+
+export function addMember(boardId: string, email: string) {
+  return fetchWithAuth<MemberResponse>(`/boards/${boardId}/members`, {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+}
+
+export function removeMember(boardId: string, memberId: string) {
+  return fetchWithAuth<void>(`/boards/${boardId}/members/${memberId}`, {
+    method: "DELETE",
+  });
+}
+
+export function listMembers(boardId: string) {
+  return fetchWithAuth<MemberResponse[]>(`/boards/${boardId}/members`);
 }

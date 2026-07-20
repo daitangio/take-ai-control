@@ -1,23 +1,16 @@
 import logging
 
+from ..deps import check_board_access
+
 logger = logging.getLogger(__name__)
 
 
-def _check_board_owner(db, board_id: str, user_id: str) -> bool:
-    row = db.execute(
-        "SELECT id FROM board WHERE id = ? AND user_id = ?",
-        (board_id, user_id),
-    ).fetchone()
-    return row is not None
-
-
 def create_list(db, user_id: str, list_id: str, board_id: str, name: str) -> dict | None:
-    if not _check_board_owner(db, board_id, user_id):
+    if check_board_access(db, board_id, user_id) is None:
         return None
 
     name = name.strip()
 
-    # Get next position
     max_pos = db.execute(
         "SELECT COALESCE(MAX(position), -1) AS mx FROM list WHERE board_id = ?",
         (board_id,),
@@ -35,7 +28,6 @@ def create_list(db, user_id: str, list_id: str, board_id: str, name: str) -> dic
 def update_list(db, user_id: str, list_id: str, name: str) -> dict | None:
     name = name.strip()
 
-    # Verify ownership through board
     list_row = db.execute(
         """SELECT list.id, list.board_id, board.user_id
            FROM list JOIN board ON list.board_id = board.id
@@ -43,7 +35,10 @@ def update_list(db, user_id: str, list_id: str, name: str) -> dict | None:
         (list_id,),
     ).fetchone()
 
-    if list_row is None or list_row["user_id"] != user_id:
+    if list_row is None:
+        return None
+
+    if check_board_access(db, list_row["board_id"], user_id) is None:
         return None
 
     db.execute("UPDATE list SET name = ? WHERE id = ?", (name, list_id))
@@ -65,13 +60,16 @@ def update_list(db, user_id: str, list_id: str, name: str) -> dict | None:
 
 def delete_list(db, user_id: str, list_id: str) -> bool:
     list_row = db.execute(
-        """SELECT list.id, board.user_id
+        """SELECT list.id, board.id AS board_id, board.user_id
            FROM list JOIN board ON list.board_id = board.id
            WHERE list.id = ?""",
         (list_id,),
     ).fetchone()
 
-    if list_row is None or list_row["user_id"] != user_id:
+    if list_row is None:
+        return False
+
+    if check_board_access(db, list_row["board_id"], user_id) is None:
         return False
 
     db.execute("DELETE FROM list WHERE id = ?", (list_id,))
@@ -81,7 +79,7 @@ def delete_list(db, user_id: str, list_id: str) -> bool:
 
 
 def reorder_lists(db, user_id: str, board_id: str, list_ids: list[str]) -> bool:
-    if not _check_board_owner(db, board_id, user_id):
+    if check_board_access(db, board_id, user_id) is None:
         return False
 
     for i, lid in enumerate(list_ids):

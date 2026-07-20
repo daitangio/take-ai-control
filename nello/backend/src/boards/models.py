@@ -14,6 +14,8 @@ class BoardResponse(BaseModel):
     id: str
     name: str
     listIds: list[str]
+    isShared: bool
+    isOwner: bool
 
 
 class BoardDetailResponse(BaseModel):

@@ -1,36 +1,43 @@
 import logging
 
+from ..deps import check_board_access
+
 logger = logging.getLogger(__name__)
 
 
-def _check_list_owner(db, list_id: str, user_id: str) -> bool:
+def _list_board_id(db, list_id: str) -> str | None:
+    """Return the board_id for a given list_id, or None."""
     row = db.execute(
-        """SELECT board.user_id
-           FROM list JOIN board ON list.board_id = board.id
-           WHERE list.id = ?""",
-        (list_id,),
+        "SELECT board_id FROM list WHERE id = ?", (list_id,)
     ).fetchone()
-    return row is not None and row["user_id"] == user_id
+    return row["board_id"] if row else None
 
 
-def _check_card_owner(db, card_id: str, user_id: str) -> dict | None:
-    """Return the card row if owned by user, else None."""
+def _card_board_id(db, card_id: str) -> str | None:
+    """Return the board_id for a given card_id (via its list), or None."""
     row = db.execute(
-        """SELECT card.id, card.list_id, card.title, card.description, board.user_id
-           FROM card
-           JOIN list ON card.list_id = list.id
-           JOIN board ON list.board_id = board.id
+        """SELECT list.board_id
+           FROM card JOIN list ON card.list_id = list.id
+           WHERE card.id = ?""",
+        (card_id,),
+    ).fetchone()
+    return row["board_id"] if row else None
+
+
+def _card_row(db, card_id: str):
+    """Return the card row with board_id, or None."""
+    return db.execute(
+        """SELECT card.id, card.list_id, card.title, card.description, card.modified_by,
+                  list.board_id
+           FROM card JOIN list ON card.list_id = list.id
            WHERE card.id = ?""",
         (card_id,),
     ).fetchone()
 
-    if row is None or row["user_id"] != user_id:
-        return None
-    return row
-
 
 def create_card(db, user_id: str, card_id: str, list_id: str, title: str) -> dict | None:
-    if not _check_list_owner(db, list_id, user_id):
+    board_id = _list_board_id(db, list_id)
+    if board_id is None or check_board_access(db, board_id, user_id) is None:
         return None
 
     title = title.strip()
@@ -41,32 +48,32 @@ def create_card(db, user_id: str, card_id: str, list_id: str, title: str) -> dic
     ).fetchone()["mx"]
 
     db.execute(
-        "INSERT INTO card (id, list_id, title, position) VALUES (?, ?, ?, ?)",
-        (card_id, list_id, title, max_pos + 1),
+        "INSERT INTO card (id, list_id, title, position, modified_by) VALUES (?, ?, ?, ?, ?)",
+        (card_id, list_id, title, max_pos + 1, user_id),
     )
     db.commit()
     logger.debug("INSERT card id=%s list_id=%s title=%s user_id=%s", card_id, list_id, title, user_id)
-    return {"id": card_id, "listId": list_id, "title": title, "description": ""}
+    return {"id": card_id, "listId": list_id, "title": title, "description": "", "modifiedBy": user_id}
 
 
 def update_card(db, user_id: str, card_id: str, title: str, description: str) -> dict | None:
-    card = _check_card_owner(db, card_id, user_id)
-    if card is None:
+    card = _card_row(db, card_id)
+    if card is None or check_board_access(db, card["board_id"], user_id) is None:
         return None
 
     title = title.strip()
     db.execute(
-        "UPDATE card SET title = ?, description = ? WHERE id = ?",
-        (title, description, card_id),
+        "UPDATE card SET title = ?, description = ?, modified_by = ? WHERE id = ?",
+        (title, description, user_id, card_id),
     )
     db.commit()
     logger.debug("UPDATE card id=%s title=%s user_id=%s", card_id, title, user_id)
-    return {"id": card_id, "listId": card["list_id"], "title": title, "description": description}
+    return {"id": card_id, "listId": card["list_id"], "title": title, "description": description, "modifiedBy": user_id}
 
 
 def delete_card(db, user_id: str, card_id: str) -> bool:
-    card = _check_card_owner(db, card_id, user_id)
-    if card is None:
+    card = _card_row(db, card_id)
+    if card is None or check_board_access(db, card["board_id"], user_id) is None:
         return False
 
     db.execute("DELETE FROM card WHERE id = ?", (card_id,))
@@ -76,14 +83,14 @@ def delete_card(db, user_id: str, card_id: str) -> bool:
 
 
 def move_card(db, user_id: str, card_id: str, to_list_id: str, index: int) -> bool:
-    card = _check_card_owner(db, card_id, user_id)
-    if card is None:
+    card = _card_row(db, card_id)
+    if card is None or check_board_access(db, card["board_id"], user_id) is None:
         return False
 
-    if not _check_list_owner(db, to_list_id, user_id):
+    to_board_id = _list_board_id(db, to_list_id)
+    if to_board_id is None or check_board_access(db, to_board_id, user_id) is None:
         return False
 
-    # Remove from current list position and renumber
     old_list_id = card["list_id"]
     old_cards = db.execute(
         "SELECT id FROM card WHERE list_id = ? ORDER BY position ASC",
@@ -96,7 +103,6 @@ def move_card(db, user_id: str, card_id: str, to_list_id: str, index: int) -> bo
         else:
             db.execute("UPDATE card SET position = ? WHERE id = ?", (-1, cr["id"]))
 
-    # Insert at target position in destination list
     target_cards = list(db.execute(
         "SELECT id FROM card WHERE list_id = ? ORDER BY position ASC",
         (to_list_id,),
@@ -105,7 +111,7 @@ def move_card(db, user_id: str, card_id: str, to_list_id: str, index: int) -> bo
     clamped = max(0, min(index, len(target_cards)))
     target_cards.insert(clamped, {"id": card_id})
 
-    db.execute("UPDATE card SET list_id = ? WHERE id = ?", (to_list_id, card_id))
+    db.execute("UPDATE card SET list_id = ?, modified_by = ? WHERE id = ?", (to_list_id, user_id, card_id))
     for pos, cr in enumerate(target_cards):
         db.execute("UPDATE card SET position = ? WHERE id = ?", (pos, cr["id"]))
 

@@ -9,6 +9,7 @@ from .auth.router import router as auth_router
 from .boards.router import router as boards_router
 from .lists.router import router as lists_router
 from .cards.router import router as cards_router
+from .members.router import router as members_router
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -38,6 +39,7 @@ app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 app.include_router(boards_router, prefix="/api", tags=["boards"])
 app.include_router(lists_router, prefix="/api", tags=["lists"])
 app.include_router(cards_router, prefix="/api", tags=["cards"])
+app.include_router(members_router, prefix="/api", tags=["members"])
 
 
 @app.get("/api/health")

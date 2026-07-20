@@ -72,6 +72,11 @@ export function CardModal({ cardId, onClose }: Props) {
             placeholder="Add a description..."
           />
         </div>
+        {card.modifiedBy && (
+          <p style={{ fontSize: 12, color: 'var(--color-text-secondary)', marginTop: 8 }}>
+            Last modified by: {card.modifiedBy}
+          </p>
+        )}
         <div className="modal-actions">
           <button
             type="button"

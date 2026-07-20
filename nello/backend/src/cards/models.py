@@ -17,6 +17,7 @@ class CardResponse(BaseModel):
     listId: str
     title: str
     description: str
+    modifiedBy: str | None = None
 
 
 class CardMoveRequest(BaseModel):

@@ -64,7 +64,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     try {
       const boards = await api.getBoards();
       for (const board of boards) {
-        dispatch({ type: 'board/create', boardId: board.id, name: board.name });
+        dispatch({ type: 'board/create', boardId: board.id, name: board.name, isShared: board.isShared, isOwner: board.isOwner });
         const detail = await api.getBoard(board.id);
         for (const list of detail.lists) {
           dispatch({ type: 'list/create', listId: list.id, boardId: board.id, name: list.name });
@@ -74,6 +74,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
               cardId: card.id,
               listId: list.id,
               title: card.title,
+              modifiedBy: card.modifiedBy ?? undefined,
             });
             // Set description if present
             if (card.description) {

@@ -23,6 +23,7 @@ class CardBrief(BaseModel):
     id: str
     title: str
     description: str
+    modifiedBy: str | None = None
 
 
 class ListBrief(BaseModel):

@@ -16,7 +16,11 @@
       "Bash(.venv/bin/pip show *)",
       "Bash(/Users/jj/code/take-ai-back/nello/backend/.venv/bin/pytest *)",
       "Skill(openspec-sync-specs)",
-      "Bash(npx vitest *)"
+      "Bash(npx vitest *)",
+      "Bash(openspec new *)",
+      "Bash(openspec validate *)",
+      "Bash(openspec instructions *)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'State: {d[\\\\\"state\\\\\"]}'\\); print\\(f'Tasks: {d[\\\\\"progress\\\\\"][\\\\\"total\\\\\"]} total'\\); [print\\(f'  {t[\\\\\"id\\\\\"]}: {t[\\\\\"description\\\\\"]}'\\) for t in d['tasks']]\")"
     ]
   }
 }

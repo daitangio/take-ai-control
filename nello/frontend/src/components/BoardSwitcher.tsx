@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useStore } from '../state/StoreContext';
+import { MemberDialog } from './MemberDialog';
 import './Board.css';
 
 export function BoardSwitcher() {
@@ -11,6 +12,7 @@ export function BoardSwitcher() {
   const [createName, setCreateName] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
+  const [sharingBoardId, setSharingBoardId] = useState<string | null>(null);
 
   const handleCreate = () => {
     if (createName.trim()) {
@@ -107,6 +109,19 @@ export function BoardSwitcher() {
               >
                 ✎
               </button>
+              {board.isShared && board.isOwner && (
+                <button
+                  type="button"
+                  className="board-tab-delete"
+                  title="Manage members"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSharingBoardId(board.id);
+                  }}
+                >
+                  👤
+                </button>
+              )}
             </>
           )}
         </div>
@@ -157,6 +172,13 @@ export function BoardSwitcher() {
           </button>
         )}
       </div>
+
+      {sharingBoardId && (
+        <MemberDialog
+          boardId={sharingBoardId}
+          onClose={() => setSharingBoardId(null)}
+        />
+      )}
     </div>
   );
 }

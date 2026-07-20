@@ -6,6 +6,8 @@ export interface Board {
   id: BoardId;
   name: string;
   listIds: ListId[];
+  isShared?: boolean;
+  isOwner?: boolean;
 }
 
 export interface List {
@@ -18,6 +20,7 @@ export interface Card {
   id: CardId;
   title: string;
   description: string;
+  modifiedBy?: string;
 }
 
 export interface State {
@@ -41,7 +44,7 @@ export function createInitialState(): State {
 
 export type Action =
   // Board
-  | { type: 'board/create'; boardId: BoardId; name: string }
+  | { type: 'board/create'; boardId: BoardId; name: string; isShared?: boolean; isOwner?: boolean }
   | { type: 'board/rename'; boardId: BoardId; name: string }
   | { type: 'board/delete'; boardId: BoardId }
   | { type: 'board/switch'; boardId: BoardId }
@@ -51,7 +54,7 @@ export type Action =
   | { type: 'list/delete'; listId: ListId }
   | { type: 'list/reorder'; boardId: BoardId; listIds: ListId[] }
   // Card
-  | { type: 'card/create'; cardId: CardId; listId: ListId; title: string }
+  | { type: 'card/create'; cardId: CardId; listId: ListId; title: string; modifiedBy?: string }
   | { type: 'card/edit'; cardId: CardId; title: string; description: string }
   | { type: 'card/delete'; cardId: CardId }
   | { type: 'card/move'; cardId: CardId; fromListId: ListId; toListId: ListId; index: number }

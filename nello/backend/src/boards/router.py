@@ -45,11 +45,28 @@ def update(
     user: dict = Depends(get_current_user),
     db: sqlite3.Connection = Depends(get_db),
 ):
-    board = update_board(db, user["id"], board_id, req.name)
-    if board is None:
+    from ..deps import check_board_access
+    role = check_board_access(db, board_id, user["id"])
+    if role is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    current = db.execute("SELECT name FROM board WHERE id = ?", (board_id,)).fetchone()
+    new_name = req.name.strip()
+    if current["name"].endswith("$") and not new_name.endswith("$"):
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Shared boards must keep the '$' suffix",
+        )
+
+    board = update_board(db, user["id"], board_id, req.name)
     full = get_board(db, user["id"], board_id)
-    return {"id": full["id"], "name": full["name"], "listIds": [l["id"] for l in full["lists"]]}
+    return {
+        "id": full["id"],
+        "name": full["name"],
+        "listIds": [l["id"] for l in full["lists"]],
+        "isShared": full["name"].endswith("$"),
+        "isOwner": role == "owner",
+    }
 
 
 @router.delete("/boards/{board_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -58,6 +75,14 @@ def delete(
     user: dict = Depends(get_current_user),
     db: sqlite3.Connection = Depends(get_db),
 ):
-    if not delete_board(db, user["id"], board_id):
+    from ..deps import check_board_access
+    role = check_board_access(db, board_id, user["id"])
+    if role is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    if role != "owner":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only the board owner can delete the board",
+        )
+    delete_board(db, user["id"], board_id)
     return None

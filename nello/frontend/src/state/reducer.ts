@@ -10,7 +10,13 @@ export function reducer(state: State, action: Action): State {
     case 'board/create': {
       if (isBlank(action.name)) return state;
       const { boardId, name } = action;
-      const board = { id: boardId, name: name.trim(), listIds: [] as string[] };
+      const board = {
+        id: boardId,
+        name: name.trim(),
+        listIds: [] as string[],
+        isShared: action.isShared,
+        isOwner: action.isOwner,
+      };
       return {
         ...state,
         boards: { ...state.boards, [boardId]: board },
@@ -165,7 +171,7 @@ export function reducer(state: State, action: Action): State {
       const list = state.lists[action.listId];
       if (!list) return state;
       const { cardId, title } = action;
-      const card = { id: cardId, title: title.trim(), description: '' };
+      const card = { id: cardId, title: title.trim(), description: '', modifiedBy: action.modifiedBy };
       // Idempotent: don't append if already present (prevents duplicates from concurrent loadBoards)
       const nextCardIds = list.cardIds.includes(cardId)
         ? list.cardIds

@@ -37,6 +37,13 @@ CREATE TABLE IF NOT EXISTS card (
     position    INTEGER NOT NULL DEFAULT 0,
     created_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
+
+CREATE TABLE IF NOT EXISTS board_member (
+    board_id    TEXT NOT NULL REFERENCES board(id) ON DELETE CASCADE,
+    user_id     TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
+    added_at    TEXT NOT NULL DEFAULT (datetime('now')),
+    PRIMARY KEY (board_id, user_id)
+);
 """
 
 
@@ -47,6 +54,15 @@ def init_db() -> None:
 
     conn = sqlite3.connect(str(db_path), check_same_thread=False)
     conn.executescript(SCHEMA_SQL)
+
+    # Migration: add modified_by to card if it doesn't exist
+    try:
+        conn.execute("ALTER TABLE card ADD COLUMN modified_by TEXT")
+        conn.commit()
+        logger.info("Migration: added modified_by column to card")
+    except sqlite3.OperationalError:
+        pass  # Column already exists
+
     conn.commit()
     conn.close()
     logger.info("Database initialized at %s", db_path)

@@ -1,5 +1,7 @@
 import logging
 
+from ..deps import check_board_access
+
 logger = logging.getLogger(__name__)
 
 
@@ -11,13 +13,19 @@ def create_board(db, user_id: str, board_id: str, name: str) -> dict:
     )
     db.commit()
     logger.debug("INSERT board id=%s name=%s user_id=%s", board_id, name, user_id)
-    return {"id": board_id, "name": name, "listIds": []}
+    is_shared = name.endswith("$")
+    return {"id": board_id, "name": name, "listIds": [], "isShared": is_shared, "isOwner": True}
 
 
 def get_boards(db, user_id: str) -> list[dict]:
     rows = db.execute(
-        "SELECT id, name FROM board WHERE user_id = ? ORDER BY name ASC",
-        (user_id,),
+        """SELECT id, name, user_id FROM board WHERE user_id = ?
+           UNION
+           SELECT b.id, b.name, b.user_id FROM board b
+           JOIN board_member bm ON b.id = bm.board_id
+           WHERE bm.user_id = ?
+           ORDER BY name ASC""",
+        (user_id, user_id),
     ).fetchall()
 
     boards = []
@@ -30,18 +38,20 @@ def get_boards(db, user_id: str) -> list[dict]:
             "id": row["id"],
             "name": row["name"],
             "listIds": [lr["id"] for lr in list_rows],
+            "isShared": row["name"].endswith("$"),
+            "isOwner": row["user_id"] == user_id,
         })
     return boards
 
 
 def get_board(db, user_id: str, board_id: str) -> dict | None:
-    row = db.execute(
-        "SELECT id, name FROM board WHERE id = ? AND user_id = ?",
-        (board_id, user_id),
-    ).fetchone()
-
-    if row is None:
+    role = check_board_access(db, board_id, user_id)
+    if role is None:
         return None
+
+    row = db.execute(
+        "SELECT id, name, user_id FROM board WHERE id = ?", (board_id,)
+    ).fetchone()
 
     list_rows = db.execute(
         "SELECT id, name FROM list WHERE board_id = ? ORDER BY position ASC",
@@ -51,13 +61,16 @@ def get_board(db, user_id: str, board_id: str) -> dict | None:
     lists = []
     for lr in list_rows:
         card_rows = db.execute(
-            "SELECT id, title, description FROM card WHERE list_id = ? ORDER BY position ASC",
+            "SELECT id, title, description, modified_by FROM card WHERE list_id = ? ORDER BY position ASC",
             (lr["id"],),
         ).fetchall()
         lists.append({
             "id": lr["id"],
             "name": lr["name"],
-            "cards": [{"id": cr["id"], "title": cr["title"], "description": cr["description"]} for cr in card_rows],
+            "cards": [
+                {"id": cr["id"], "title": cr["title"], "description": cr["description"], "modifiedBy": cr["modified_by"]}
+                for cr in card_rows
+            ],
         })
 
     return {"id": row["id"], "name": row["name"], "lists": lists}
@@ -65,27 +78,28 @@ def get_board(db, user_id: str, board_id: str) -> dict | None:
 
 def update_board(db, user_id: str, board_id: str, name: str) -> dict | None:
     name = name.strip()
+    role = check_board_access(db, board_id, user_id)
+    if role is None:
+        return None
+
     row = db.execute(
-        "SELECT id FROM board WHERE id = ? AND user_id = ?",
-        (board_id, user_id),
+        "SELECT name FROM board WHERE id = ?", (board_id,)
     ).fetchone()
 
-    if row is None:
+    # Reject rename that removes $ from a shared board
+    if row["name"].endswith("$") and not name.endswith("$"):
+        logger.debug("REJECT rename board id=%s: cannot remove $ from shared board", board_id)
         return None
 
     db.execute("UPDATE board SET name = ? WHERE id = ?", (name, board_id))
     db.commit()
     logger.debug("UPDATE board id=%s name=%s user_id=%s", board_id, name, user_id)
-    return {"id": board_id, "name": name}
+    return {"id": board_id, "name": name, "isShared": name.endswith("$"), "isOwner": role == "owner"}
 
 
 def delete_board(db, user_id: str, board_id: str) -> bool:
-    row = db.execute(
-        "SELECT id FROM board WHERE id = ? AND user_id = ?",
-        (board_id, user_id),
-    ).fetchone()
-
-    if row is None:
+    role = check_board_access(db, board_id, user_id)
+    if role != "owner":
         return False
 
     db.execute("DELETE FROM board WHERE id = ?", (board_id,))
