@@ -26,9 +26,9 @@ export function BoardSwitcher() {
     }
   };
 
-  const handleRename = (boardId: string) => {
-    if (editName.trim()) {
-      apiDispatch({ type: 'board/rename', boardId, name: editName });
+  const handleRename = (boardId: string, currentName: string) => {
+    if (editName.trim() && editName.trim() !== currentName) {
+      apiDispatch({ type: 'board/rename', boardId, name: editName.trim() });
     }
     setEditingId(null);
     setEditName('');
@@ -57,9 +57,9 @@ export function BoardSwitcher() {
               className="board-tab-input"
               value={editName}
               onChange={(e) => setEditName(e.target.value)}
-              onBlur={() => handleRename(board.id)}
+              onBlur={() => handleRename(board.id, board.name)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') handleRename(board.id);
+                if (e.key === 'Enter') handleRename(board.id, board.name);
                 if (e.key === 'Escape') {
                   setEditingId(null);
                   setEditName('');

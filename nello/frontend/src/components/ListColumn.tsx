@@ -95,12 +95,14 @@ export function ListColumn({ listId, boardId, onCardClick }: Props) {
             onChange={(e) => setRenameName(e.target.value)}
             onBlur={handleRename}
             onKeyDown={(e) => {
+              e.stopPropagation();
               if (e.key === 'Enter') handleRename();
               if (e.key === 'Escape') {
                 setRenaming(false);
                 setRenameName('');
               }
             }}
+            onPointerDown={(e) => e.stopPropagation()}
             onClick={(e) => e.stopPropagation()}
             autoFocus
           />

@@ -12,6 +12,14 @@ export function CardModal({ cardId, onClose }: Props) {
   const card: Card | undefined = state.cards[cardId];
   const [title, setTitle] = useState(card?.title ?? '');
   const [description, setDescription] = useState(card?.description ?? '');
+
+  // Synchronize local state if the card updates from the server
+  useEffect(() => {
+    if (card) {
+      setTitle(card.title);
+      setDescription(card.description);
+    }
+  }, [card?.title, card?.description]);
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
