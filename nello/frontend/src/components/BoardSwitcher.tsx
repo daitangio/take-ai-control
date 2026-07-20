@@ -4,7 +4,7 @@ import { MemberDialog } from './MemberDialog';
 import './Board.css';
 
 export function BoardSwitcher() {
-  const { state, dispatch, apiDispatch, loadBoards } = useStore();
+  const { state, apiDispatch, loadBoards } = useStore();
   const boards = Object.values(state.boards);
   const activeId = state.activeBoardId;
 

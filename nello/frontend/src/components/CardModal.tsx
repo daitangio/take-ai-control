@@ -58,7 +58,6 @@ export function CardModal({ cardId, onClose }: Props) {
           onBlur={save}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              save();
               (e.target as HTMLInputElement).blur();
             }
           }}

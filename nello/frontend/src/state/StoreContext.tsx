@@ -8,7 +8,7 @@ interface StoreValue {
   state: State;
   dispatch: React.Dispatch<Action>;
   apiDispatch: (action: Action) => Promise<void>;
-  loadBoards: () => Promise<void>;
+  loadBoards: (preferredBoardId?: string | null) => Promise<void>;
   toast: string | null;
   clearToast: () => void;
 }

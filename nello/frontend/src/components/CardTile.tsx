@@ -49,7 +49,9 @@ export function CardTile({ cardId, listId, onClick }: Props) {
       role="button"
       tabIndex={0}
     >
-      <span className="card-tile__title">{card.title}</span>
+      <span 
+        title={`Edited by ${card.modifiedByEmail}`}
+        className="card-tile__title">{card.title}</span>
       {showEditorIcon && (
         <span
           className="card-tile__editor-icon"
