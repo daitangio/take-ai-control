@@ -78,7 +78,7 @@ def get_board(db, user_id: str, board_id: str) -> dict | None:
                     "title": cr["title"],
                     "description": cr["description"],
                     "modifiedBy": cr["modified_by"],
-                    "modifiedByEmail": cr["modified_by_email"] if cr["modified_by"] and cr["modified_by"] != user_id else None,
+                    "modifiedByEmail": cr["modified_by_email"],
                     "isModifiedByCurrentUser": (cr["modified_by"] == user_id) if cr["modified_by"] else None,
                 }
                 for cr in card_rows
