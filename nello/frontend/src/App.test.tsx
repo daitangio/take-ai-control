@@ -28,10 +28,10 @@ beforeEach(() => {
   vi.spyOn(api, 'getBoard').mockResolvedValue({ id: '', name: '', lists: [] });
   vi.spyOn(api, 'createBoard').mockResolvedValue({ id: 'b-1', name: 'Work', listIds: [], isShared: false, isOwner: true });
   vi.spyOn(api, 'createList').mockResolvedValue({ id: 'l-1', boardId: 'b-1', name: 'To Do', cardIds: [] });
-  vi.spyOn(api, 'createCard').mockResolvedValue({ id: 'c-1', listId: 'l-1', title: 'Write specs', description: '', modifiedBy: 'u-1' });
+  vi.spyOn(api, 'createCard').mockResolvedValue({ id: 'c-1', listId: 'l-1', title: 'Write specs', description: '', modifiedBy: 'u-1', modifiedByEmail: null, isModifiedByCurrentUser: true });
   vi.spyOn(api, 'updateBoard').mockResolvedValue({ id: '', name: '', listIds: [], isShared: false, isOwner: true });
   vi.spyOn(api, 'updateList').mockResolvedValue({ id: '', boardId: '', name: '', cardIds: [] });
-  vi.spyOn(api, 'updateCard').mockResolvedValue({ id: '', listId: '', title: '', description: '', modifiedBy: 'u-1' });
+  vi.spyOn(api, 'updateCard').mockResolvedValue({ id: '', listId: '', title: '', description: '', modifiedBy: 'u-1', modifiedByEmail: null, isModifiedByCurrentUser: true });
   vi.spyOn(api, 'deleteBoard').mockResolvedValue(undefined);
   vi.spyOn(api, 'deleteList').mockResolvedValue(undefined);
   vi.spyOn(api, 'deleteCard').mockResolvedValue(undefined);
@@ -110,6 +110,8 @@ describe('App smoke tests', () => {
       title,
       description: '',
       modifiedBy: 'u-1',
+      modifiedByEmail: null,
+      isModifiedByCurrentUser: true,
     }));
     render(<App />);
 
@@ -150,6 +152,8 @@ describe('App smoke tests', () => {
       title,
       description: '',
       modifiedBy: 'u-1',
+      modifiedByEmail: null,
+      isModifiedByCurrentUser: true,
     }));
     render(<App />);
 

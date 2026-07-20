@@ -32,6 +32,9 @@ export function CardTile({ cardId, listId, onClick }: Props) {
     opacity: isDragging ? 0.4 : undefined,
   };
 
+  const showEditorIcon =
+    card.isModifiedByCurrentUser === false && !!card.modifiedByEmail;
+
   return (
     <div
       ref={setNodeRef}
@@ -46,7 +49,16 @@ export function CardTile({ cardId, listId, onClick }: Props) {
       role="button"
       tabIndex={0}
     >
-      {card.title}
+      <span className="card-tile__title">{card.title}</span>
+      {showEditorIcon && (
+        <span
+          className="card-tile__editor-icon"
+          title={card.modifiedByEmail!}
+          aria-label={`Edited by ${card.modifiedByEmail}`}
+        >
+          ✎
+        </span>
+      )}
     </div>
   );
 }

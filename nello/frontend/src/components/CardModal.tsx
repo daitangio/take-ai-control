@@ -74,7 +74,7 @@ export function CardModal({ cardId, onClose }: Props) {
         </div>
         {card.modifiedBy && (
           <p style={{ fontSize: 12, color: 'var(--color-text-secondary)', marginTop: 8 }}>
-            Last modified by: {card.modifiedBy}
+            Last modified by: {card.modifiedByEmail || card.modifiedBy}
           </p>
         )}
         <div className="modal-actions">

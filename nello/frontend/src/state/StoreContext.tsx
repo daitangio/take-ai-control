@@ -77,6 +77,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
               listId: list.id,
               title: card.title,
               modifiedBy: card.modifiedBy ?? undefined,
+              modifiedByEmail: card.modifiedByEmail,
+              isModifiedByCurrentUser: card.isModifiedByCurrentUser,
             });
             // Set description if present
             if (card.description) {
@@ -127,6 +129,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           title: card.title,
           description: card.description,
           modifiedBy: card.modifiedBy ?? undefined,
+          modifiedByEmail: card.modifiedByEmail,
+          isModifiedByCurrentUser: card.isModifiedByCurrentUser,
         });
       } else if (action.type === 'card/move') {
         await loadBoards(activeBefore);

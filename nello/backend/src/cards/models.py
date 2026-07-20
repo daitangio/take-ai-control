@@ -18,6 +18,8 @@ class CardResponse(BaseModel):
     title: str
     description: str
     modifiedBy: str | None = None
+    modifiedByEmail: str | None = None
+    isModifiedByCurrentUser: bool | None = None
 
 
 class CardMoveRequest(BaseModel):

@@ -24,6 +24,19 @@ def _card_board_id(db, card_id: str) -> str | None:
     return row["board_id"] if row else None
 
 
+def _editor_metadata(db, modified_by: str | None, requester_id: str) -> dict:
+    """Return modifiedByEmail and isModifiedByCurrentUser for a card."""
+    if not modified_by:
+        return {"modifiedByEmail": None, "isModifiedByCurrentUser": None}
+    is_current = modified_by == requester_id
+    email = None
+    if not is_current:
+        row = db.execute("SELECT email FROM user WHERE id = ?", (modified_by,)).fetchone()
+        if row:
+            email = row["email"]
+    return {"modifiedByEmail": email, "isModifiedByCurrentUser": is_current}
+
+
 def _card_row(db, card_id: str):
     """Return the card row with board_id, or None."""
     return db.execute(
@@ -53,7 +66,8 @@ def create_card(db, user_id: str, card_id: str, list_id: str, title: str) -> dic
     )
     db.commit()
     logger.debug("INSERT card id=%s list_id=%s title=%s user_id=%s", card_id, list_id, title, user_id)
-    return {"id": card_id, "listId": list_id, "title": title, "description": "", "modifiedBy": user_id}
+    meta = _editor_metadata(db, user_id, user_id)
+    return {"id": card_id, "listId": list_id, "title": title, "description": "", "modifiedBy": user_id, **meta}
 
 
 def update_card(db, user_id: str, card_id: str, title: str, description: str) -> dict | None:
@@ -68,7 +82,8 @@ def update_card(db, user_id: str, card_id: str, title: str, description: str) ->
     )
     db.commit()
     logger.debug("UPDATE card id=%s title=%s user_id=%s", card_id, title, user_id)
-    return {"id": card_id, "listId": card["list_id"], "title": title, "description": description, "modifiedBy": user_id}
+    meta = _editor_metadata(db, user_id, user_id)
+    return {"id": card_id, "listId": card["list_id"], "title": title, "description": description, "modifiedBy": user_id, **meta}
 
 
 def delete_card(db, user_id: str, card_id: str) -> bool:

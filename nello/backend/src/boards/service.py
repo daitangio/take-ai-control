@@ -61,14 +61,26 @@ def get_board(db, user_id: str, board_id: str) -> dict | None:
     lists = []
     for lr in list_rows:
         card_rows = db.execute(
-            "SELECT id, title, description, modified_by FROM card WHERE list_id = ? ORDER BY position ASC",
+            """SELECT card.id, card.title, card.description, card.modified_by,
+                      u.email AS modified_by_email
+               FROM card
+               LEFT JOIN user u ON card.modified_by = u.id
+               WHERE card.list_id = ?
+               ORDER BY card.position ASC""",
             (lr["id"],),
         ).fetchall()
         lists.append({
             "id": lr["id"],
             "name": lr["name"],
             "cards": [
-                {"id": cr["id"], "title": cr["title"], "description": cr["description"], "modifiedBy": cr["modified_by"]}
+                {
+                    "id": cr["id"],
+                    "title": cr["title"],
+                    "description": cr["description"],
+                    "modifiedBy": cr["modified_by"],
+                    "modifiedByEmail": cr["modified_by_email"] if cr["modified_by"] and cr["modified_by"] != user_id else None,
+                    "isModifiedByCurrentUser": (cr["modified_by"] == user_id) if cr["modified_by"] else None,
+                }
                 for cr in card_rows
             ],
         })

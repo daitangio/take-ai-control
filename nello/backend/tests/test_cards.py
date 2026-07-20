@@ -112,3 +112,56 @@ class TestMoveCard:
 
         board = client.get("/api/boards/b-1", headers=auth_header).json()
         assert [c["id"] for c in board["lists"][1]["cards"]] == ["c-1"]
+
+
+class TestEditorMetadata:
+    """Tests for modifiedByEmail and isModifiedByCurrentUser in card responses."""
+
+    def test_own_editor_create(self, client, auth_header):
+        """Card created by current user: isModifiedByCurrentUser=True, no email exposed."""
+        _setup_board_and_list(client, auth_header)
+        resp = client.post("/api/cards", json={
+            "id": "card-1", "listId": "l-1", "title": "My card",
+        }, headers=auth_header)
+        assert resp.status_code == 201
+        data = resp.json()
+        assert data["isModifiedByCurrentUser"] is True
+        assert data["modifiedByEmail"] is None
+
+    def test_own_editor_in_board_detail(self, client, auth_header):
+        """Board detail: card edited by requester shows isModifiedByCurrentUser=True."""
+        _setup_board_and_list(client, auth_header)
+        client.post("/api/cards", json={"id": "card-1", "listId": "l-1", "title": "My card"}, headers=auth_header)
+        board = client.get("/api/boards/b-1", headers=auth_header).json()
+        card = board["lists"][0]["cards"][0]
+        assert card["isModifiedByCurrentUser"] is True
+        assert card["modifiedByEmail"] is None
+
+    def test_other_editor_in_board_detail(self, client, auth_header, other_auth_header):
+        """Board detail: card edited by another user shows their email."""
+        # Create a shared board with the primary user
+        client.post("/api/boards", json={"id": "b-shared", "name": "Shared$"}, headers=auth_header)
+        client.post("/api/lists", json={"id": "ls-1", "boardId": "b-shared", "name": "Todo"}, headers=auth_header)
+        # Add other user as member
+        client.post("/api/boards/b-shared/members", json={"email": "other@example.com"}, headers=auth_header)
+        # Other user creates a card
+        client.post("/api/cards", json={"id": "card-other", "listId": "ls-1", "title": "Their card"}, headers=other_auth_header)
+        # Primary user fetches board detail
+        board = client.get("/api/boards/b-shared", headers=auth_header).json()
+        card = board["lists"][0]["cards"][0]
+        assert card["isModifiedByCurrentUser"] is False
+        assert card["modifiedByEmail"] == "other@example.com"
+
+    def test_legacy_card_no_editor(self, client, auth_header, in_memory_db):
+        """Legacy card with NULL modified_by: no metadata exposed."""
+        _setup_board_and_list(client, auth_header)
+        # Insert a legacy card directly (no modified_by)
+        in_memory_db.execute(
+            "INSERT INTO card (id, list_id, title, position) VALUES (?, ?, ?, ?)",
+            ("legacy-1", "l-1", "Old card", 0),
+        )
+        in_memory_db.commit()
+        board = client.get("/api/boards/b-1", headers=auth_header).json()
+        card = next(c for c in board["lists"][0]["cards"] if c["id"] == "legacy-1")
+        assert card["isModifiedByCurrentUser"] is None
+        assert card["modifiedByEmail"] is None

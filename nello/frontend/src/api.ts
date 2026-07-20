@@ -93,6 +93,8 @@ export interface CardBrief {
   title: string;
   description: string;
   modifiedBy: string | null;
+  modifiedByEmail: string | null;
+  isModifiedByCurrentUser: boolean | null;
 }
 
 export interface MemberResponse {
@@ -180,6 +182,8 @@ export interface CardResponse {
   title: string;
   description: string;
   modifiedBy: string | null;
+  modifiedByEmail: string | null;
+  isModifiedByCurrentUser: boolean | null;
 }
 
 export function createCard(id: string, listId: string, title: string) {

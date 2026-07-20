@@ -176,7 +176,7 @@ export function reducer(state: State, action: Action): State {
       const list = state.lists[action.listId];
       if (!list) return state;
       const { cardId, title } = action;
-      const card = { id: cardId, title: title.trim(), description: '', modifiedBy: action.modifiedBy };
+      const card = { id: cardId, title: title.trim(), description: '', modifiedBy: action.modifiedBy, modifiedByEmail: action.modifiedByEmail, isModifiedByCurrentUser: action.isModifiedByCurrentUser };
       // Idempotent: don't append if already present (prevents duplicates from concurrent loadBoards)
       const nextCardIds = list.cardIds.includes(cardId)
         ? list.cardIds
@@ -207,6 +207,8 @@ export function reducer(state: State, action: Action): State {
             title: action.title.trim(),
             description: action.description,
             modifiedBy: action.modifiedBy ?? card.modifiedBy,
+            modifiedByEmail: action.modifiedByEmail !== undefined ? action.modifiedByEmail : card.modifiedByEmail,
+            isModifiedByCurrentUser: action.isModifiedByCurrentUser !== undefined ? action.isModifiedByCurrentUser : card.isModifiedByCurrentUser,
           },
         },
       };

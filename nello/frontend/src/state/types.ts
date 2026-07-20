@@ -21,6 +21,8 @@ export interface Card {
   title: string;
   description: string;
   modifiedBy?: string;
+  modifiedByEmail?: string | null;
+  isModifiedByCurrentUser?: boolean | null;
 }
 
 export interface State {
@@ -54,8 +56,8 @@ export type Action =
   | { type: 'list/delete'; listId: ListId }
   | { type: 'list/reorder'; boardId: BoardId; listIds: ListId[] }
   // Card
-  | { type: 'card/create'; cardId: CardId; listId: ListId; title: string; modifiedBy?: string }
-  | { type: 'card/edit'; cardId: CardId; title: string; description: string; modifiedBy?: string }
+  | { type: 'card/create'; cardId: CardId; listId: ListId; title: string; modifiedBy?: string; modifiedByEmail?: string | null; isModifiedByCurrentUser?: boolean | null }
+  | { type: 'card/edit'; cardId: CardId; title: string; description: string; modifiedBy?: string; modifiedByEmail?: string | null; isModifiedByCurrentUser?: boolean | null }
   | { type: 'card/delete'; cardId: CardId }
   | { type: 'card/move'; cardId: CardId; fromListId: ListId; toListId: ListId; index: number }
   // Meta
