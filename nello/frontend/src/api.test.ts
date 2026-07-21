@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { getBoards, getToken, setToken, setUnauthorizedHandler } from './api';
+import { archiveList, getBoards, getToken, setToken, setUnauthorizedHandler } from './api';
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -20,5 +20,23 @@ describe('API authentication', () => {
 
     expect(getToken()).toBeNull();
     expect(onUnauthorized).toHaveBeenCalledOnce();
+  });
+});
+
+describe('list API', () => {
+  it('archives a list through the dedicated endpoint', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 204 }));
+    vi.stubGlobal('fetch', fetchMock);
+    setToken('test-token');
+
+    await archiveList('list-1');
+
+    expect(fetchMock).toHaveBeenCalledWith('/api/lists/list-1/archive', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer test-token',
+      },
+    });
   });
 });

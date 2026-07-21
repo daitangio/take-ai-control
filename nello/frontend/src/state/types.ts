@@ -54,6 +54,7 @@ export type Action =
   | { type: 'list/create'; listId: ListId; boardId: BoardId; name: string }
   | { type: 'list/rename'; listId: ListId; name: string }
   | { type: 'list/delete'; listId: ListId }
+  | { type: 'list/archive'; listId: ListId }
   | { type: 'list/reorder'; boardId: BoardId; listIds: ListId[] }
   // Card
   | { type: 'card/create'; cardId: CardId; listId: ListId; title: string; modifiedBy?: string; modifiedByEmail?: string | null; isModifiedByCurrentUser?: boolean | null }

@@ -229,6 +229,26 @@ describe('list/delete', () => {
   });
 });
 
+describe('list/archive', () => {
+  it('removes a list from its board without deleting list or cards from state', () => {
+    const state = s(1, 1, 3);
+    const next = reducer(state, { type: 'list/archive', listId: 'l0' });
+
+    expect(next.boards.b0.listIds).toEqual([]);
+    expect(next.lists.l0).toEqual(state.lists.l0);
+    expect(next.cards.c0).toEqual(state.cards.c0);
+    expect(next.cards.c1).toEqual(state.cards.c1);
+    expect(next.cards.c2).toEqual(state.cards.c2);
+  });
+
+  it('no-ops on unknown list', () => {
+    const state = s(1, 1);
+    const next = reducer(state, { type: 'list/archive', listId: 'missing' });
+
+    expect(next).toBe(state);
+  });
+});
+
 describe('list/reorder', () => {
   it('reorders lists within a board', () => {
     const state = s(1, 3); // l0, l1, l2

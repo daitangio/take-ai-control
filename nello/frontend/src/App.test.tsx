@@ -34,6 +34,7 @@ beforeEach(() => {
   vi.spyOn(api, 'updateCard').mockResolvedValue({ id: '', listId: '', title: '', description: '', modifiedBy: 'u-1', modifiedByEmail: null, isModifiedByCurrentUser: true });
   vi.spyOn(api, 'deleteBoard').mockResolvedValue(undefined);
   vi.spyOn(api, 'deleteList').mockResolvedValue(undefined);
+  vi.spyOn(api, 'archiveList').mockResolvedValue(undefined);
   vi.spyOn(api, 'deleteCard').mockResolvedValue(undefined);
   vi.spyOn(api, 'reorderLists').mockResolvedValue(undefined);
   vi.spyOn(api, 'moveCard').mockResolvedValue(undefined);

@@ -31,6 +31,8 @@ function actionToApiCall(action: Action): Promise<unknown> {
       return api.updateList(action.listId, action.name);
     case 'list/delete':
       return api.deleteList(action.listId);
+    case 'list/archive':
+      return api.archiveList(action.listId);
     case 'list/reorder':
       return api.reorderLists(action.boardId, action.listIds);
     case 'card/create':

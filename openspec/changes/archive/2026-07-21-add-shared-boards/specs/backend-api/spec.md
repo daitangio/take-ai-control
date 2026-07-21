@@ -31,7 +31,7 @@ The system SHALL provide endpoints to create, read, update, and delete boards. B
 - **WHEN** an authenticated user sends `PATCH /api/boards/:id` with a name not ending in `$` for a board whose current name ends in `$`
 - **THEN** the system returns status 409
 
-#### Scenario: Delete a board (owner only)
+#### Scenario: Delete a board
 
 - **WHEN** an authenticated user sends `DELETE /api/boards/:id` for a board they own
 - **THEN** the board and all its lists and cards are deleted, returning status 204

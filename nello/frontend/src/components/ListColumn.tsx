@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -20,6 +20,8 @@ export function ListColumn({ listId, boardId, onCardClick }: Props) {
   const [renameName, setRenameName] = useState('');
   const [addingCard, setAddingCard] = useState(false);
   const [cardTitle, setCardTitle] = useState('');
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   // Sortable for list reordering
   const {
@@ -40,6 +42,27 @@ export function ListColumn({ listId, boardId, onCardClick }: Props) {
     data: { type: 'list', listId },
   });
 
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!menuRef.current?.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMenuOpen(false);
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [menuOpen]);
+
   if (!list) return null;
 
   const cardCount = list.cardIds.length;
@@ -51,14 +74,9 @@ export function ListColumn({ listId, boardId, onCardClick }: Props) {
     setRenaming(false);
   };
 
-  const handleDelete = () => {
-    if (
-      window.confirm(
-        `Delete list "${list.name}"${cardCount > 0 ? ` and its ${cardCount} card(s)` : ''}?`,
-      )
-    ) {
-      apiDispatch({ type: 'list/delete', listId });
-    }
+  const handleArchive = () => {
+    setMenuOpen(false);
+    apiDispatch({ type: 'list/archive', listId });
   };
 
   const handleAddCard = (keepComposerOpen = false) => {
@@ -119,17 +137,48 @@ export function ListColumn({ listId, boardId, onCardClick }: Props) {
           </span>
         )}
         <span className="list-size-jj">{list.cardIds.length}</span>
-        <button
-          type="button"
-          className="list-delete-btn"
-          title="Delete list"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleDelete();
-          }}
-        >
-          ×
-        </button>
+        <div className="list-menu" ref={menuRef}>
+          <button
+            type="button"
+            className="list-menu-btn"
+            aria-label={`List actions for ${list.name}`}
+            aria-haspopup="menu"
+            aria-expanded={menuOpen}
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              setMenuOpen((open) => !open);
+            }}
+            onKeyDown={(e) => {
+              e.stopPropagation();
+              if (e.key === 'Escape') setMenuOpen(false);
+            }}
+          >
+            ...
+          </button>
+          {menuOpen && (
+            <div
+              className="list-menu-popup"
+              role="menu"
+              aria-label={`Actions for ${list.name}`}
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => {
+                e.stopPropagation();
+                if (e.key === 'Escape') setMenuOpen(false);
+              }}
+            >
+              <button
+                type="button"
+                role="menuitem"
+                className="list-menu-item"
+                onClick={handleArchive}
+              >
+                Archive
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       <div

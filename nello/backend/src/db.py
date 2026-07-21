@@ -29,6 +29,13 @@ CREATE TABLE IF NOT EXISTS list (
     created_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS list_archive (
+    list_id     TEXT PRIMARY KEY REFERENCES list(id) ON DELETE CASCADE,
+    board_id    TEXT NOT NULL REFERENCES board(id) ON DELETE CASCADE,
+    archived_by TEXT REFERENCES user(id) ON DELETE SET NULL,
+    archived_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 CREATE TABLE IF NOT EXISTS card (
     id          TEXT PRIMARY KEY,
     list_id     TEXT NOT NULL REFERENCES list(id) ON DELETE CASCADE,

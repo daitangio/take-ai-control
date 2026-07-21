@@ -167,6 +167,10 @@ export function deleteList(listId: string) {
   return fetchWithAuth<void>(`/lists/${listId}`, { method: "DELETE" });
 }
 
+export function archiveList(listId: string) {
+  return fetchWithAuth<void>(`/lists/${listId}/archive`, { method: "POST" });
+}
+
 export function reorderLists(boardId: string, listIds: string[]) {
   return fetchWithAuth<void>(`/boards/${boardId}/lists/reorder`, {
     method: "PUT",

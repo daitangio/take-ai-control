@@ -158,6 +158,26 @@ export function reducer(state: State, action: Action): State {
       };
     }
 
+    case 'list/archive': {
+      if (!state.lists[action.listId]) return state;
+
+      const board = Object.values(state.boards).find((b) =>
+        b.listIds.includes(action.listId),
+      );
+      if (!board) return state;
+
+      return {
+        ...state,
+        boards: {
+          ...state.boards,
+          [board.id]: {
+            ...board,
+            listIds: board.listIds.filter((id) => id !== action.listId),
+          },
+        },
+      };
+    }
+
     case 'list/reorder': {
       const board = state.boards[action.boardId];
       if (!board) return state;

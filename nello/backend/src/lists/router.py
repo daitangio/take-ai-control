@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from ..deps import get_db, get_current_user
 from .models import ListCreate, ListUpdate, ListResponse, ReorderRequest
-from .service import create_list, update_list, delete_list, reorder_lists
+from .service import create_list, update_list, delete_list, archive_list, reorder_lists
 
 router = APIRouter()
 
@@ -41,6 +41,17 @@ def delete(
     db: sqlite3.Connection = Depends(get_db),
 ):
     if not delete_list(db, user["id"], list_id):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    return None
+
+
+@router.post("/lists/{list_id}/archive", status_code=status.HTTP_204_NO_CONTENT)
+def archive(
+    list_id: str,
+    user: dict = Depends(get_current_user),
+    db: sqlite3.Connection = Depends(get_db),
+):
+    if not archive_list(db, user["id"], list_id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return None
 

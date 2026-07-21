@@ -31,7 +31,11 @@ def get_boards(db, user_id: str) -> list[dict]:
     boards = []
     for row in rows:
         list_rows = db.execute(
-            "SELECT id FROM list WHERE board_id = ? ORDER BY position ASC",
+            """SELECT list.id
+               FROM list
+               LEFT JOIN list_archive ON list_archive.list_id = list.id
+               WHERE list.board_id = ? AND list_archive.list_id IS NULL
+               ORDER BY list.position ASC""",
             (row["id"],),
         ).fetchall()
         boards.append({
@@ -54,7 +58,11 @@ def get_board(db, user_id: str, board_id: str) -> dict | None:
     ).fetchone()
 
     list_rows = db.execute(
-        "SELECT id, name FROM list WHERE board_id = ? ORDER BY position ASC",
+        """SELECT list.id, list.name
+           FROM list
+           LEFT JOIN list_archive ON list_archive.list_id = list.id
+           WHERE list.board_id = ? AND list_archive.list_id IS NULL
+           ORDER BY list.position ASC""",
         (board_id,),
     ).fetchall()
 
@@ -78,7 +86,7 @@ def get_board(db, user_id: str, board_id: str) -> dict | None:
                     "title": cr["title"],
                     "description": cr["description"],
                     "modifiedBy": cr["modified_by"],
-                    "modifiedByEmail": cr["modified_by_email"],
+                    "modifiedByEmail": None if cr["modified_by"] == user_id else cr["modified_by_email"],
                     "isModifiedByCurrentUser": (cr["modified_by"] == user_id) if cr["modified_by"] else None,
                 }
                 for cr in card_rows
