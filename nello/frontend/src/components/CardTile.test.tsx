@@ -1,17 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { CardTile } from './CardTile';
+
+const mockApiDispatch = vi.fn().mockResolvedValue(undefined);
 
 // Mock StoreContext
 const mockState = {
   boards: {},
   lists: {},
-  cards: {} as Record<string, { id: string; title: string; description: string; modifiedBy?: string; modifiedByEmail?: string | null; isModifiedByCurrentUser?: boolean | null }>,
+  cards: {} as Record<string, { id: string; title: string; description: string; dueDate?: string | null; members?: { id: string; email: string }[]; modifiedBy?: string; modifiedByEmail?: string | null; isModifiedByCurrentUser?: boolean | null }>,
   activeBoardId: null,
 };
 
 vi.mock('../state/StoreContext', () => ({
-  useStore: () => ({ state: mockState, dispatch: vi.fn(), apiDispatch: vi.fn(), loadBoards: vi.fn(), toast: null, clearToast: vi.fn() }),
+  useStore: () => ({ state: mockState, dispatch: vi.fn(), apiDispatch: mockApiDispatch, loadBoards: vi.fn(), toast: null, clearToast: vi.fn() }),
 }));
 
 // Mock dnd-kit sortable
@@ -31,6 +34,7 @@ vi.mock('@dnd-kit/utilities', () => ({
 }));
 
 beforeEach(() => {
+  mockApiDispatch.mockClear();
   mockState.cards = {};
 });
 
@@ -96,5 +100,141 @@ describe('CardTile editor indicator', () => {
 
     const icon = screen.getByTitle('bob@team.io');
     expect(icon).toBeDefined();
+  });
+});
+
+describe('CardTile turbo menu', () => {
+  beforeEach(() => {
+    mockState.cards['c-1'] = {
+      id: 'c-1',
+      title: 'Task A',
+      description: 'Desc',
+      dueDate: null,
+      members: [],
+    };
+  });
+
+  it('keeps card body click separate from action button click', async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+    render(<CardTile cardId="c-1" listId="l-1" onClick={onClick} />);
+
+    await user.click(screen.getByRole('button', { name: 'Task A' }));
+    expect(onClick).toHaveBeenCalledOnce();
+
+    await user.click(screen.getByRole('button', { name: 'Card actions for Task A' }));
+    expect(onClick).toHaveBeenCalledOnce();
+    expect(screen.getByRole('menu', { name: 'Actions for Task A' })).toBeDefined();
+  });
+
+  it('opens details from the action menu', async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+    render(<CardTile cardId="c-1" listId="l-1" onClick={onClick} />);
+
+    await user.click(screen.getByRole('button', { name: 'Card actions for Task A' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Details' }));
+
+    expect(onClick).toHaveBeenCalledOnce();
+  });
+
+  it('opens the member popup callback from the action menu', async () => {
+    const user = userEvent.setup();
+    const onMembersClick = vi.fn();
+    render(<CardTile cardId="c-1" listId="l-1" onClick={() => {}} onMembersClick={onMembersClick} />);
+
+    await user.click(screen.getByRole('button', { name: 'Card actions for Task A' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Members' }));
+
+    expect(onMembersClick).toHaveBeenCalledOnce();
+  });
+
+  it('edits due date from the action menu', async () => {
+    const user = userEvent.setup();
+    render(<CardTile cardId="c-1" listId="l-1" onClick={() => {}} />);
+
+    await user.click(screen.getByRole('button', { name: 'Card actions for Task A' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Due date' }));
+    await user.type(screen.getByLabelText('Due date for Task A'), '2026-08-15');
+
+    expect(mockApiDispatch).toHaveBeenLastCalledWith({
+      type: 'card/edit',
+      cardId: 'c-1',
+      title: 'Task A',
+      description: 'Desc',
+      dueDate: '2026-08-15',
+    });
+  });
+
+  it('archives from the action menu', async () => {
+    const user = userEvent.setup();
+    const onArchived = vi.fn();
+    render(<CardTile cardId="c-1" listId="l-1" onClick={() => {}} onArchived={onArchived} />);
+
+    await user.click(screen.getByRole('button', { name: 'Card actions for Task A' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Archive' }));
+
+    expect(mockApiDispatch).toHaveBeenCalledWith({ type: 'card/archive', cardId: 'c-1' });
+    expect(onArchived).toHaveBeenCalledOnce();
+    expect(screen.queryByRole('menu')).toBeNull();
+  });
+
+  it('closes the action menu on Escape and outside click', async () => {
+    const user = userEvent.setup();
+    render(<CardTile cardId="c-1" listId="l-1" onClick={() => {}} />);
+
+    await user.click(screen.getByRole('button', { name: 'Card actions for Task A' }));
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('menu')).toBeNull();
+
+    await user.click(screen.getByRole('button', { name: 'Card actions for Task A' }));
+    expect(screen.getByRole('menu')).toBeDefined();
+    await user.click(document.body);
+    expect(screen.queryByRole('menu')).toBeNull();
+  });
+
+  it('closes an open menu when another card is clicked', async () => {
+    const user = userEvent.setup();
+    mockState.cards['c-2'] = {
+      id: 'c-2',
+      title: 'Task B',
+      description: '',
+    };
+
+    render(
+      <>
+        <CardTile cardId="c-1" listId="l-1" onClick={() => {}} />
+        <CardTile cardId="c-2" listId="l-1" onClick={() => {}} />
+      </>,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Card actions for Task A' }));
+    expect(screen.getByRole('menu', { name: 'Actions for Task A' })).toBeDefined();
+
+    await user.click(screen.getByRole('button', { name: 'Task B' }));
+
+    expect(screen.queryByRole('menu', { name: 'Actions for Task A' })).toBeNull();
+  });
+
+  it('closes another card menu before opening the next one', async () => {
+    const user = userEvent.setup();
+    mockState.cards['c-2'] = {
+      id: 'c-2',
+      title: 'Task B',
+      description: '',
+    };
+
+    render(
+      <>
+        <CardTile cardId="c-1" listId="l-1" onClick={() => {}} />
+        <CardTile cardId="c-2" listId="l-1" onClick={() => {}} />
+      </>,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Card actions for Task A' }));
+    await user.click(screen.getByRole('button', { name: 'Card actions for Task B' }));
+
+    expect(screen.queryByRole('menu', { name: 'Actions for Task A' })).toBeNull();
+    expect(screen.getByRole('menu', { name: 'Actions for Task B' })).toBeDefined();
   });
 });

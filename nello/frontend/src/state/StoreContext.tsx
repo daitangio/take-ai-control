@@ -38,9 +38,15 @@ function actionToApiCall(action: Action): Promise<unknown> {
     case 'card/create':
       return api.createCard(action.cardId, action.listId, action.title);
     case 'card/edit':
-      return api.updateCard(action.cardId, action.title, action.description);
+      return api.updateCard(action.cardId, action.title, action.description, action.dueDate);
     case 'card/delete':
       return api.deleteCard(action.cardId);
+    case 'card/archive':
+      return api.archiveCard(action.cardId);
+    case 'card/member/add':
+      return api.addCardMember(action.cardId, action.member.id);
+    case 'card/member/remove':
+      return api.removeCardMember(action.cardId, action.memberId);
     case 'card/move':
       return api.moveCard(action.cardId, action.toListId, action.index);
     default:
@@ -78,19 +84,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
               cardId: card.id,
               listId: list.id,
               title: card.title,
+              description: card.description,
+              dueDate: card.dueDate,
+              members: card.members,
               modifiedBy: card.modifiedBy ?? undefined,
               modifiedByEmail: card.modifiedByEmail,
               isModifiedByCurrentUser: card.isModifiedByCurrentUser,
             });
-            // Set description if present
-            if (card.description) {
-              dispatch({
-                type: 'card/edit',
-                cardId: card.id,
-                title: card.title,
-                description: card.description,
-              });
-            }
           }
         }
       }
@@ -130,10 +130,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           cardId: card.id,
           title: card.title,
           description: card.description,
+          dueDate: card.dueDate,
+          members: card.members,
           modifiedBy: card.modifiedBy ?? undefined,
           modifiedByEmail: card.modifiedByEmail,
           isModifiedByCurrentUser: card.isModifiedByCurrentUser,
         });
+      } else if (action.type === 'card/member/add') {
+        const member = result as api.MemberResponse;
+        dispatch({ type: 'card/member/add', cardId: action.cardId, member });
       } else if (action.type === 'card/move') {
         await loadBoards(activeBefore);
       }

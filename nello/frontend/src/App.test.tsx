@@ -28,14 +28,19 @@ beforeEach(() => {
   vi.spyOn(api, 'getBoard').mockResolvedValue({ id: '', name: '', lists: [] });
   vi.spyOn(api, 'createBoard').mockResolvedValue({ id: 'b-1', name: 'Work', listIds: [], isShared: false, isOwner: true });
   vi.spyOn(api, 'createList').mockResolvedValue({ id: 'l-1', boardId: 'b-1', name: 'To Do', cardIds: [] });
-  vi.spyOn(api, 'createCard').mockResolvedValue({ id: 'c-1', listId: 'l-1', title: 'Write specs', description: '', modifiedBy: 'u-1', modifiedByEmail: null, isModifiedByCurrentUser: true });
+  vi.spyOn(api, 'createCard').mockResolvedValue({ id: 'c-1', listId: 'l-1', title: 'Write specs', description: '', dueDate: null, members: [], modifiedBy: 'u-1', modifiedByEmail: null, isModifiedByCurrentUser: true });
   vi.spyOn(api, 'updateBoard').mockResolvedValue({ id: '', name: '', listIds: [], isShared: false, isOwner: true });
   vi.spyOn(api, 'updateList').mockResolvedValue({ id: '', boardId: '', name: '', cardIds: [] });
-  vi.spyOn(api, 'updateCard').mockResolvedValue({ id: '', listId: '', title: '', description: '', modifiedBy: 'u-1', modifiedByEmail: null, isModifiedByCurrentUser: true });
+  vi.spyOn(api, 'updateCard').mockResolvedValue({ id: '', listId: '', title: '', description: '', dueDate: null, members: [], modifiedBy: 'u-1', modifiedByEmail: null, isModifiedByCurrentUser: true });
   vi.spyOn(api, 'deleteBoard').mockResolvedValue(undefined);
   vi.spyOn(api, 'deleteList').mockResolvedValue(undefined);
   vi.spyOn(api, 'archiveList').mockResolvedValue(undefined);
   vi.spyOn(api, 'deleteCard').mockResolvedValue(undefined);
+  vi.spyOn(api, 'archiveCard').mockResolvedValue(undefined);
+  vi.spyOn(api, 'listCardMembers').mockResolvedValue([]);
+  vi.spyOn(api, 'listCardMemberOptions').mockResolvedValue([]);
+  vi.spyOn(api, 'addCardMember').mockResolvedValue({ id: 'u-2', email: 'other@example.com' });
+  vi.spyOn(api, 'removeCardMember').mockResolvedValue(undefined);
   vi.spyOn(api, 'reorderLists').mockResolvedValue(undefined);
   vi.spyOn(api, 'moveCard').mockResolvedValue(undefined);
   vi.spyOn(api, 'login').mockResolvedValue({ access_token: 't', token_type: 'bearer' });
@@ -110,6 +115,8 @@ describe('App smoke tests', () => {
       listId,
       title,
       description: '',
+      dueDate: null,
+      members: [],
       modifiedBy: 'u-1',
       modifiedByEmail: null,
       isModifiedByCurrentUser: true,
@@ -152,6 +159,8 @@ describe('App smoke tests', () => {
       listId,
       title,
       description: '',
+      dueDate: null,
+      members: [],
       modifiedBy: 'u-1',
       modifiedByEmail: null,
       isModifiedByCurrentUser: true,

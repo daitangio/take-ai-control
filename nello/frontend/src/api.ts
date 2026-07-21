@@ -92,6 +92,8 @@ export interface CardBrief {
   id: string;
   title: string;
   description: string;
+  dueDate: string | null;
+  members: MemberResponse[];
   modifiedBy: string | null;
   modifiedByEmail: string | null;
   isModifiedByCurrentUser: boolean | null;
@@ -185,6 +187,8 @@ export interface CardResponse {
   listId: string;
   title: string;
   description: string;
+  dueDate: string | null;
+  members: MemberResponse[];
   modifiedBy: string | null;
   modifiedByEmail: string | null;
   isModifiedByCurrentUser: boolean | null;
@@ -201,10 +205,13 @@ export function updateCard(
   cardId: string,
   title: string,
   description: string,
+  dueDate?: string | null,
 ) {
+  const body: { title: string; description: string; dueDate?: string | null } = { title, description };
+  if (dueDate !== undefined) body.dueDate = dueDate;
   return fetchWithAuth<CardResponse>(`/cards/${cardId}`, {
     method: "PATCH",
-    body: JSON.stringify({ title, description }),
+    body: JSON.stringify(body),
   });
 }
 
@@ -212,10 +219,35 @@ export function deleteCard(cardId: string) {
   return fetchWithAuth<void>(`/cards/${cardId}`, { method: "DELETE" });
 }
 
+export function archiveCard(cardId: string) {
+  return fetchWithAuth<void>(`/cards/${cardId}/archive`, { method: "POST" });
+}
+
 export function moveCard(cardId: string, toListId: string, index: number) {
   return fetchWithAuth<void>(`/cards/${cardId}/move`, {
     method: "PUT",
     body: JSON.stringify({ toListId, index }),
+  });
+}
+
+export function listCardMembers(cardId: string) {
+  return fetchWithAuth<MemberResponse[]>(`/cards/${cardId}/members`);
+}
+
+export function listCardMemberOptions(cardId: string) {
+  return fetchWithAuth<MemberResponse[]>(`/cards/${cardId}/member-options`);
+}
+
+export function addCardMember(cardId: string, userId: string) {
+  return fetchWithAuth<MemberResponse>(`/cards/${cardId}/members`, {
+    method: "POST",
+    body: JSON.stringify({ userId }),
+  });
+}
+
+export function removeCardMember(cardId: string, memberId: string) {
+  return fetchWithAuth<void>(`/cards/${cardId}/members/${memberId}`, {
+    method: "DELETE",
   });
 }
 

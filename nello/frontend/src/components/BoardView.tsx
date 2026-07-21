@@ -12,6 +12,7 @@ import { useDndSensors } from '../dnd/useDndSensors';
 import { ListColumn } from './ListColumn';
 import { CardTile } from './CardTile';
 import { CardModal } from './CardModal';
+import { CardMemberDialog } from './CardMemberDialog';
 import './ListColumn.css';
 
 export function BoardView() {
@@ -22,6 +23,7 @@ export function BoardView() {
   const [addingList, setAddingList] = useState(false);
   const [listName, setListName] = useState('');
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  const [membersCardId, setMembersCardId] = useState<string | null>(null);
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
   const [activeDragType, setActiveDragType] = useState<string | null>(null);
 
@@ -128,6 +130,11 @@ export function BoardView() {
       ? state.cards[activeDragId]
       : null;
 
+  const handleCardArchived = (cardId: string) => {
+    if (selectedCardId === cardId) setSelectedCardId(null);
+    if (membersCardId === cardId) setMembersCardId(null);
+  };
+
   return (
     <DndContext
       sensors={sensors}
@@ -146,6 +153,8 @@ export function BoardView() {
               listId={listId}
               boardId={board.id}
               onCardClick={(cardId) => setSelectedCardId(cardId)}
+              onCardMembersClick={(cardId) => setMembersCardId(cardId)}
+              onCardArchived={handleCardArchived}
             />
           ))}
         </SortableContext>
@@ -205,6 +214,7 @@ export function BoardView() {
             cardId={activeCard.id}
             listId=""
             onClick={() => {}}
+            enableActions={false}
           />
         ) : null}
       </DragOverlay>
@@ -213,6 +223,12 @@ export function BoardView() {
         <CardModal
           cardId={selectedCardId}
           onClose={() => setSelectedCardId(null)}
+        />
+      )}
+      {membersCardId && (
+        <CardMemberDialog
+          cardId={membersCardId}
+          onClose={() => setMembersCardId(null)}
         />
       )}
     </DndContext>

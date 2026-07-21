@@ -71,7 +71,7 @@ beforeEach(() => {
 describe('ListColumn action menu', () => {
   it('shows an archive action behind the list actions button', async () => {
     const user = userEvent.setup();
-    render(<ListColumn listId="l-1" boardId="b-1" onCardClick={() => {}} />);
+    render(<ListColumn listId="l-1" boardId="b-1" onCardClick={() => {}} onCardMembersClick={() => {}} onCardArchived={() => {}} />);
 
     expect(screen.queryByTitle('Delete list')).toBeNull();
     expect(screen.queryByRole('button', { name: /delete list/i })).toBeNull();
@@ -84,7 +84,7 @@ describe('ListColumn action menu', () => {
 
   it('archives the list and closes the menu', async () => {
     const user = userEvent.setup();
-    render(<ListColumn listId="l-1" boardId="b-1" onCardClick={() => {}} />);
+    render(<ListColumn listId="l-1" boardId="b-1" onCardClick={() => {}} onCardMembersClick={() => {}} onCardArchived={() => {}} />);
 
     await user.click(screen.getByRole('button', { name: 'List actions for Todo' }));
     await user.click(screen.getByRole('menuitem', { name: 'Archive' }));
@@ -95,7 +95,7 @@ describe('ListColumn action menu', () => {
 
   it('closes the menu on Escape and outside click', async () => {
     const user = userEvent.setup();
-    render(<ListColumn listId="l-1" boardId="b-1" onCardClick={() => {}} />);
+    render(<ListColumn listId="l-1" boardId="b-1" onCardClick={() => {}} onCardMembersClick={() => {}} onCardArchived={() => {}} />);
 
     await user.click(screen.getByRole('button', { name: 'List actions for Todo' }));
     await user.keyboard('{Escape}');
@@ -109,7 +109,7 @@ describe('ListColumn action menu', () => {
 
   it('does not let menu pointer interactions start list dragging', async () => {
     const user = userEvent.setup();
-    render(<ListColumn listId="l-1" boardId="b-1" onCardClick={() => {}} />);
+    render(<ListColumn listId="l-1" boardId="b-1" onCardClick={() => {}} onCardMembersClick={() => {}} onCardArchived={() => {}} />);
 
     await user.click(screen.getByRole('button', { name: 'List actions for Todo' }));
     await user.click(screen.getByRole('menuitem', { name: 'Archive' }));

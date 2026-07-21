@@ -1,6 +1,7 @@
 import logging
 
 from ..deps import check_board_access
+from ..cards.service import card_members
 
 logger = logging.getLogger(__name__)
 
@@ -69,11 +70,13 @@ def get_board(db, user_id: str, board_id: str) -> dict | None:
     lists = []
     for lr in list_rows:
         card_rows = db.execute(
-            """SELECT card.id, card.title, card.description, card.modified_by,
+            """SELECT card.id, card.title, card.description, card.due_date, card.modified_by,
                       u.email AS modified_by_email
                FROM card
                LEFT JOIN user u ON card.modified_by = u.id
+               LEFT JOIN card_archive ON card_archive.card_id = card.id
                WHERE card.list_id = ?
+                 AND card_archive.card_id IS NULL
                ORDER BY card.position ASC""",
             (lr["id"],),
         ).fetchall()
@@ -85,6 +88,8 @@ def get_board(db, user_id: str, board_id: str) -> dict | None:
                     "id": cr["id"],
                     "title": cr["title"],
                     "description": cr["description"],
+                    "dueDate": cr["due_date"],
+                    "members": card_members(db, cr["id"]),
                     "modifiedBy": cr["modified_by"],
                     "modifiedByEmail": None if cr["modified_by"] == user_id else cr["modified_by_email"],
                     "isModifiedByCurrentUser": (cr["modified_by"] == user_id) if cr["modified_by"] else None,

@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from src.main import app
-from src.db import SCHEMA_SQL, init_db
+from src.db import SCHEMA_SQL, apply_migrations
 from src import deps
 from src.auth.service import create_token
 
@@ -21,9 +21,7 @@ def in_memory_db():
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     conn.executescript(SCHEMA_SQL)
-    # Apply migration: modified_by column (init_db does this via try/except)
-    conn.execute("ALTER TABLE card ADD COLUMN modified_by TEXT")
-    conn.commit()
+    apply_migrations(conn)
     yield conn
     conn.close()
 

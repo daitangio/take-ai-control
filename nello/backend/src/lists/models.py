@@ -1,5 +1,7 @@
 from pydantic import BaseModel, Field
 
+from ..cards.models import MemberBrief
+
 
 class ListCreate(BaseModel):
     id: str
@@ -23,6 +25,8 @@ class CardBrief(BaseModel):
     id: str
     title: str
     description: str
+    dueDate: str | None = None
+    members: list[MemberBrief] = Field(default_factory=list)
     modifiedBy: str | None = None
     modifiedByEmail: str | None = None
     isModifiedByCurrentUser: bool | None = None

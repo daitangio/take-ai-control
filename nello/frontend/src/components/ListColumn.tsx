@@ -11,9 +11,11 @@ interface Props {
   listId: string;
   boardId: string;
   onCardClick: (cardId: string) => void;
+  onCardMembersClick: (cardId: string) => void;
+  onCardArchived: (cardId: string) => void;
 }
 
-export function ListColumn({ listId, boardId, onCardClick }: Props) {
+export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, onCardArchived }: Props) {
   const { state, apiDispatch } = useStore();
   const list = state.lists[listId];
   const [renaming, setRenaming] = useState(false);
@@ -200,6 +202,8 @@ export function ListColumn({ listId, boardId, onCardClick }: Props) {
               cardId={cardId}
               listId={listId}
               onClick={() => onCardClick(cardId)}
+              onMembersClick={() => onCardMembersClick(cardId)}
+              onArchived={() => onCardArchived(cardId)}
             />
           ))}
         </SortableContext>

@@ -196,7 +196,16 @@ export function reducer(state: State, action: Action): State {
       const list = state.lists[action.listId];
       if (!list) return state;
       const { cardId, title } = action;
-      const card = { id: cardId, title: title.trim(), description: '', modifiedBy: action.modifiedBy, modifiedByEmail: action.modifiedByEmail, isModifiedByCurrentUser: action.isModifiedByCurrentUser };
+      const card = {
+        id: cardId,
+        title: title.trim(),
+        description: action.description ?? '',
+        ...(action.dueDate !== undefined ? { dueDate: action.dueDate } : {}),
+        ...(action.members !== undefined ? { members: action.members } : {}),
+        modifiedBy: action.modifiedBy,
+        modifiedByEmail: action.modifiedByEmail,
+        isModifiedByCurrentUser: action.isModifiedByCurrentUser,
+      };
       // Idempotent: don't append if already present (prevents duplicates from concurrent loadBoards)
       const nextCardIds = list.cardIds.includes(cardId)
         ? list.cardIds
@@ -226,9 +235,57 @@ export function reducer(state: State, action: Action): State {
             ...card,
             title: action.title.trim(),
             description: action.description,
+            ...(action.dueDate !== undefined ? { dueDate: action.dueDate } : {}),
+            ...(action.members !== undefined ? { members: action.members } : {}),
             modifiedBy: action.modifiedBy ?? card.modifiedBy,
             modifiedByEmail: action.modifiedByEmail !== undefined ? action.modifiedByEmail : card.modifiedByEmail,
             isModifiedByCurrentUser: action.isModifiedByCurrentUser !== undefined ? action.isModifiedByCurrentUser : card.isModifiedByCurrentUser,
+          },
+        },
+      };
+    }
+
+    case 'card/archive': {
+      if (!state.cards[action.cardId]) return state;
+      const nextLists = { ...state.lists };
+      for (const listId of Object.keys(state.lists)) {
+        const list = state.lists[listId];
+        if (list.cardIds.includes(action.cardId)) {
+          nextLists[listId] = {
+            ...list,
+            cardIds: list.cardIds.filter((id) => id !== action.cardId),
+          };
+        }
+      }
+      return { ...state, lists: nextLists };
+    }
+
+    case 'card/member/add': {
+      const card = state.cards[action.cardId];
+      if (!card) return state;
+      const members = card.members ?? [];
+      const nextMembers = members.some((member) => member.id === action.member.id)
+        ? members
+        : [...members, action.member];
+      return {
+        ...state,
+        cards: {
+          ...state.cards,
+          [action.cardId]: { ...card, members: nextMembers },
+        },
+      };
+    }
+
+    case 'card/member/remove': {
+      const card = state.cards[action.cardId];
+      if (!card) return state;
+      return {
+        ...state,
+        cards: {
+          ...state.cards,
+          [action.cardId]: {
+            ...card,
+            members: (card.members ?? []).filter((member) => member.id !== action.memberId),
           },
         },
       };

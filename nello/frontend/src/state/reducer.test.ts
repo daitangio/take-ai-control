@@ -326,6 +326,21 @@ describe('card/edit', () => {
     });
     expect(next.cards.c0.title).toBe('Card 0');
   });
+
+  it('edits due date and members when provided', () => {
+    const state = s(1, 1, 1);
+    const next = reducer(state, {
+      type: 'card/edit',
+      cardId: 'c0',
+      title: 'Updated',
+      description: 'desc',
+      dueDate: '2026-08-15',
+      members: [{ id: 'u-1', email: 'a@example.com' }],
+    });
+
+    expect(next.cards.c0.dueDate).toBe('2026-08-15');
+    expect(next.cards.c0.members).toEqual([{ id: 'u-1', email: 'a@example.com' }]);
+  });
 });
 
 describe('card/delete', () => {
@@ -334,6 +349,46 @@ describe('card/delete', () => {
     const next = reducer(state, { type: 'card/delete', cardId: 'c0' });
     expect(next.cards.c0).toBeUndefined();
     expect(next.lists.l0.cardIds).toEqual(['c1']);
+  });
+});
+
+describe('card/archive', () => {
+  it('removes a card from its list without deleting the card from state', () => {
+    const state = s(1, 1, 2);
+    const next = reducer(state, { type: 'card/archive', cardId: 'c0' });
+
+    expect(next.lists.l0.cardIds).toEqual(['c1']);
+    expect(next.cards.c0).toEqual(state.cards.c0);
+  });
+});
+
+describe('card/member actions', () => {
+  it('adds a member idempotently', () => {
+    const state = s(1, 1, 1);
+    const once = reducer(state, {
+      type: 'card/member/add',
+      cardId: 'c0',
+      member: { id: 'u-1', email: 'a@example.com' },
+    });
+    const twice = reducer(once, {
+      type: 'card/member/add',
+      cardId: 'c0',
+      member: { id: 'u-1', email: 'a@example.com' },
+    });
+
+    expect(twice.cards.c0.members).toEqual([{ id: 'u-1', email: 'a@example.com' }]);
+  });
+
+  it('removes a member', () => {
+    const state = s(1, 1, 1);
+    state.cards.c0.members = [
+      { id: 'u-1', email: 'a@example.com' },
+      { id: 'u-2', email: 'b@example.com' },
+    ];
+
+    const next = reducer(state, { type: 'card/member/remove', cardId: 'c0', memberId: 'u-1' });
+
+    expect(next.cards.c0.members).toEqual([{ id: 'u-2', email: 'b@example.com' }]);
   });
 });
 

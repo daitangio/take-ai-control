@@ -17,6 +17,8 @@ class TestCreateCard:
         data = resp.json()
         assert data["title"] == "Write specs"
         assert data["description"] == ""
+        assert data["dueDate"] is None
+        assert data["members"] == []
         assert data["listId"] == "l-1"
 
     def test_create_card_empty_title(self, client, auth_header):
@@ -48,6 +50,54 @@ class TestUpdateCard:
         assert data["title"] == "Write delta specs"
         assert data["description"] == "Focus on edge cases"
 
+    def test_edit_card_due_date(self, client, auth_header):
+        _setup_board_and_list(client, auth_header)
+        client.post("/api/cards", json={"id": "card-1", "listId": "l-1", "title": "Task"}, headers=auth_header)
+
+        resp = client.patch("/api/cards/card-1", json={
+            "title": "Task",
+            "description": "",
+            "dueDate": "2026-08-15",
+        }, headers=auth_header)
+
+        assert resp.status_code == 200
+        assert resp.json()["dueDate"] == "2026-08-15"
+
+    def test_clear_card_due_date(self, client, auth_header):
+        _setup_board_and_list(client, auth_header)
+        client.post("/api/cards", json={"id": "card-1", "listId": "l-1", "title": "Task"}, headers=auth_header)
+        client.patch("/api/cards/card-1", json={
+            "title": "Task",
+            "description": "",
+            "dueDate": "2026-08-15",
+        }, headers=auth_header)
+
+        resp = client.patch("/api/cards/card-1", json={
+            "title": "Task",
+            "description": "",
+            "dueDate": None,
+        }, headers=auth_header)
+
+        assert resp.status_code == 200
+        assert resp.json()["dueDate"] is None
+
+    def test_edit_card_without_due_date_preserves_existing_due_date(self, client, auth_header):
+        _setup_board_and_list(client, auth_header)
+        client.post("/api/cards", json={"id": "card-1", "listId": "l-1", "title": "Task"}, headers=auth_header)
+        client.patch("/api/cards/card-1", json={
+            "title": "Task",
+            "description": "",
+            "dueDate": "2026-08-15",
+        }, headers=auth_header)
+
+        resp = client.patch("/api/cards/card-1", json={
+            "title": "Task renamed",
+            "description": "Still due",
+        }, headers=auth_header)
+
+        assert resp.status_code == 200
+        assert resp.json()["dueDate"] == "2026-08-15"
+
     def test_edit_card_empty_title(self, client, auth_header):
         _setup_board_and_list(client, auth_header)
         client.post("/api/cards", json={"id": "card-1", "listId": "l-1", "title": "Task"}, headers=auth_header)
@@ -68,6 +118,136 @@ class TestDeleteCard:
         board = client.get("/api/boards/b-1", headers=auth_header).json()
         todo = board["lists"][0]
         assert todo["cards"] == []
+
+
+class TestArchiveCard:
+    def test_archive_card_hides_it_without_deleting_rows(self, client, auth_header, in_memory_db):
+        _setup_board_and_list(client, auth_header)
+        client.post("/api/cards", json={"id": "card-1", "listId": "l-1", "title": "Task"}, headers=auth_header)
+        client.patch("/api/cards/card-1", json={
+            "title": "Task",
+            "description": "Keep me",
+            "dueDate": "2026-08-15",
+        }, headers=auth_header)
+        owner_id = in_memory_db.execute(
+            "SELECT id FROM user WHERE email = ?",
+            ("test@example.com",),
+        ).fetchone()["id"]
+        client.post("/api/cards/card-1/members", json={"userId": owner_id}, headers=auth_header)
+
+        resp = client.post("/api/cards/card-1/archive", headers=auth_header)
+
+        assert resp.status_code == 204
+        board = client.get("/api/boards/b-1", headers=auth_header).json()
+        assert board["lists"][0]["cards"] == []
+        card = in_memory_db.execute("SELECT title, description, due_date FROM card WHERE id = ?", ("card-1",)).fetchone()
+        assert card["title"] == "Task"
+        assert card["description"] == "Keep me"
+        assert card["due_date"] == "2026-08-15"
+        assert in_memory_db.execute(
+            "SELECT card_id FROM card_member WHERE card_id = ?",
+            ("card-1",),
+        ).fetchone() is not None
+
+    def test_archive_card_is_idempotent(self, client, auth_header, in_memory_db):
+        _setup_board_and_list(client, auth_header)
+        client.post("/api/cards", json={"id": "card-1", "listId": "l-1", "title": "Task"}, headers=auth_header)
+
+        assert client.post("/api/cards/card-1/archive", headers=auth_header).status_code == 204
+        assert client.post("/api/cards/card-1/archive", headers=auth_header).status_code == 204
+
+        count = in_memory_db.execute(
+            "SELECT COUNT(*) AS count FROM card_archive WHERE card_id = ?",
+            ("card-1",),
+        ).fetchone()["count"]
+        assert count == 1
+
+    def test_archive_other_users_card_returns_404(self, client, auth_header, other_auth_header):
+        _setup_board_and_list(client, other_auth_header)
+        client.post("/api/cards", json={"id": "card-1", "listId": "l-1", "title": "Task"}, headers=other_auth_header)
+
+        resp = client.post("/api/cards/card-1/archive", headers=auth_header)
+
+        assert resp.status_code == 404
+
+
+class TestCardMembers:
+    def test_assign_multiple_members_and_prevent_duplicates(self, client, auth_header, other_auth_header, in_memory_db):
+        client.post("/api/boards", json={"id": "shared-1", "name": "Team$"}, headers=auth_header)
+        client.post("/api/lists", json={"id": "l-1", "boardId": "shared-1", "name": "Todo"}, headers=auth_header)
+        client.post("/api/cards", json={"id": "card-1", "listId": "l-1", "title": "Task"}, headers=auth_header)
+        other_id = client.post("/api/boards/shared-1/members", json={
+            "email": "other@example.com",
+        }, headers=auth_header).json()["id"]
+        third_resp = client.post("/api/auth/register", json={
+            "email": "third@example.com",
+            "password": "secret789",
+        })
+        assert third_resp.status_code == 201
+        third_id = client.post("/api/boards/shared-1/members", json={
+            "email": "third@example.com",
+        }, headers=auth_header).json()["id"]
+
+        resp_one = client.post("/api/cards/card-1/members", json={"userId": other_id}, headers=auth_header)
+        resp_two = client.post("/api/cards/card-1/members", json={"userId": third_id}, headers=auth_header)
+        duplicate = client.post("/api/cards/card-1/members", json={"userId": other_id}, headers=auth_header)
+
+        assert resp_one.status_code == 201
+        assert resp_two.status_code == 201
+        assert duplicate.status_code == 201
+        members = client.get("/api/cards/card-1/members", headers=auth_header).json()
+        assert [m["email"] for m in members] == ["other@example.com", "third@example.com"]
+        count = in_memory_db.execute(
+            "SELECT COUNT(*) AS count FROM card_member WHERE card_id = ?",
+            ("card-1",),
+        ).fetchone()["count"]
+        assert count == 2
+        board_card = client.get("/api/boards/shared-1", headers=auth_header).json()["lists"][0]["cards"][0]
+        assert [m["email"] for m in board_card["members"]] == ["other@example.com", "third@example.com"]
+
+    def test_member_options_include_owner_and_board_members(self, client, auth_header, other_auth_header):
+        client.post("/api/boards", json={"id": "shared-1", "name": "Team$"}, headers=auth_header)
+        client.post("/api/lists", json={"id": "l-1", "boardId": "shared-1", "name": "Todo"}, headers=auth_header)
+        client.post("/api/cards", json={"id": "card-1", "listId": "l-1", "title": "Task"}, headers=auth_header)
+        client.post("/api/boards/shared-1/members", json={
+            "email": "other@example.com",
+        }, headers=auth_header)
+
+        resp = client.get("/api/cards/card-1/member-options", headers=auth_header)
+
+        assert resp.status_code == 200
+        assert [m["email"] for m in resp.json()] == ["other@example.com", "test@example.com"]
+
+    def test_reject_assignment_for_user_outside_board(self, client, auth_header, in_memory_db):
+        _setup_board_and_list(client, auth_header)
+        client.post("/api/cards", json={"id": "card-1", "listId": "l-1", "title": "Task"}, headers=auth_header)
+        client.post("/api/auth/register", json={
+            "email": "outsider@example.com",
+            "password": "secret789",
+        })
+        outsider_id = in_memory_db.execute(
+            "SELECT id FROM user WHERE email = ?",
+            ("outsider@example.com",),
+        ).fetchone()["id"]
+
+        resp = client.post("/api/cards/card-1/members", json={"userId": outsider_id}, headers=auth_header)
+
+        assert resp.status_code == 409
+        assert client.get("/api/cards/card-1/members", headers=auth_header).json() == []
+
+    def test_remove_card_member(self, client, auth_header, in_memory_db):
+        _setup_board_and_list(client, auth_header)
+        client.post("/api/cards", json={"id": "card-1", "listId": "l-1", "title": "Task"}, headers=auth_header)
+        owner_id = in_memory_db.execute(
+            "SELECT id FROM user WHERE email = ?",
+            ("test@example.com",),
+        ).fetchone()["id"]
+        client.post("/api/cards/card-1/members", json={"userId": owner_id}, headers=auth_header)
+
+        resp = client.delete(f"/api/cards/card-1/members/{owner_id}", headers=auth_header)
+
+        assert resp.status_code == 204
+        assert client.get("/api/cards/card-1/members", headers=auth_header).json() == []
 
 
 class TestMoveCard:

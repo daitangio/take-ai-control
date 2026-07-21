@@ -54,6 +54,18 @@ def remove_member(db, owner_id: str, board_id: str, member_id: str) -> bool:
         "DELETE FROM board_member WHERE board_id = ? AND user_id = ?",
         (board_id, member_id),
     )
+    if cursor.rowcount:
+        db.execute(
+            """DELETE FROM card_member
+               WHERE user_id = ?
+                 AND card_id IN (
+                   SELECT card.id
+                   FROM card
+                   JOIN list ON list.id = card.list_id
+                   WHERE list.board_id = ?
+                 )""",
+            (member_id, board_id),
+        )
     db.commit()
     if cursor.rowcount == 0:
         return False

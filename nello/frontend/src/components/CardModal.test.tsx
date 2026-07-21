@@ -8,7 +8,7 @@ const mockDispatch = vi.fn();
 const mockState = {
   boards: {},
   lists: {},
-  cards: {} as Record<string, { id: string; title: string; description: string }>,
+  cards: {} as Record<string, { id: string; title: string; description: string; dueDate?: string | null }>,
   activeBoardId: null,
 };
 
@@ -26,7 +26,7 @@ vi.mock('../state/StoreContext', () => ({
 beforeEach(() => {
   mockApiDispatch.mockClear();
   mockState.cards = {
-    'c-1': { id: 'c-1', title: 'Test Card', description: 'Some desc' },
+    'c-1': { id: 'c-1', title: 'Test Card', description: 'Some desc', dueDate: null },
   };
 });
 
@@ -74,6 +74,25 @@ describe('CardModal dirty check', () => {
         cardId: 'c-1',
         title: 'Test Card',
         description: 'Updated desc',
+      }),
+    );
+  });
+
+  it('calls apiDispatch when due date is changed', () => {
+    const onClose = vi.fn();
+    render(<CardModal cardId="c-1" onClose={onClose} />);
+
+    const dateInput = screen.getByLabelText('Due date');
+    fireEvent.change(dateInput, { target: { value: '2026-08-15' } });
+    fireEvent.click(screen.getByText('Close'));
+
+    expect(mockApiDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'card/edit',
+        cardId: 'c-1',
+        title: 'Test Card',
+        description: 'Some desc',
+        dueDate: '2026-08-15',
       }),
     );
   });

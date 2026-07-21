@@ -12,14 +12,16 @@ export function CardModal({ cardId, onClose }: Props) {
   const card: Card | undefined = state.cards[cardId];
   const [title, setTitle] = useState(card?.title ?? '');
   const [description, setDescription] = useState(card?.description ?? '');
+  const [dueDate, setDueDate] = useState(card?.dueDate ?? '');
 
   // Synchronize local state if the card updates from the server
   useEffect(() => {
     if (card) {
       setTitle(card.title);
       setDescription(card.description);
+      setDueDate(card.dueDate ?? '');
     }
-  }, [card?.title, card?.description]);
+  }, [card]);
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -29,12 +31,13 @@ export function CardModal({ cardId, onClose }: Props) {
   const save = () => {
     if (title.trim() && card) {
       // GG: if card is not dirty DO NOT Send an edit
-      if (title === card.title && description === card.description) return;
+      if (title === card.title && description === card.description && dueDate === (card.dueDate ?? '')) return;
       apiDispatch({
         type: 'card/edit',
         cardId: card.id,
         title,
         description,
+        dueDate: dueDate || null,
       });
     }
   };
@@ -79,6 +82,17 @@ export function CardModal({ cardId, onClose }: Props) {
             onChange={(e) => setDescription(e.target.value)}
             onBlur={save}
             placeholder="Add a description..."
+          />
+        </div>
+        <div>
+          <label className="modal-label" htmlFor="card-due-date-input">Due date</label>
+          <input
+            id="card-due-date-input"
+            type="date"
+            className="modal-date-input"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+            onBlur={save}
           />
         </div>
         {card.modifiedBy && (

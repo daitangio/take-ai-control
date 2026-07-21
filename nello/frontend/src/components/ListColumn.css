@@ -147,7 +147,8 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 12px;
+  position: relative;
+  padding: 6px 8px 6px 10px;
   background: #fff;
   border: 1px solid var(--color-border);
   border-radius: 6px;
@@ -157,15 +158,156 @@
   transition: box-shadow 0.15s;
 }
 
-.card-tile__title {
+.card-tile__main {
+  display: flex;
   flex: 1;
   min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 2px 0;
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.card-tile__title {
+  width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .card-tile__editor-icon {
   flex-shrink: 0;
   font-size: 12px;
   color: var(--color-text-secondary, #6b7280);
+}
+
+.card-tile__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.card-tile__menu {
+  position: relative;
+  flex-shrink: 0;
+  width: 26px;
+  height: 24px;
+}
+
+.card-tile__menu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1;
+  border-radius: 4px;
+}
+
+.card-tile__menu-btn:hover,
+.card-tile__menu-btn[aria-expanded="true"] {
+  background: var(--color-hover);
+  color: var(--color-text);
+}
+
+.card-tile__menu-popup {
+  z-index: 10000;
+  min-width: 132px;
+  padding: 4px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+}
+
+.card-tile__menu-item {
+  display: block;
+  width: 100%;
+  min-height: 30px;
+  padding: 6px 10px;
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 13px;
+  text-align: left;
+  border-radius: 4px;
+}
+
+.card-tile__menu-item:hover,
+.card-tile__menu-item:focus {
+  background: var(--color-hover);
+  outline: none;
+}
+
+.card-tile__menu-item--danger:active {
+  color: var(--color-danger);
+}
+
+.card-tile__due-editor {
+  display: flex;
+  gap: 4px;
+  padding: 4px 4px 6px;
+}
+
+.card-tile__due-editor input {
+  min-width: 0;
+  width: 116px;
+  padding: 3px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.card-tile__due-editor button {
+  padding: 3px 6px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+.card-member-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.card-member-list__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 14px;
+}
+
+.card-member-list__toggle {
+  padding: 4px 10px;
+  border: 1px solid var(--color-border);
+  background: #fff;
+  color: var(--color-text);
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.card-member-list__toggle--on {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
 }
 
 .card-tile:hover {
@@ -382,6 +524,19 @@
 }
 
 .modal-desc-input:focus {
+  border-color: var(--color-primary);
+}
+
+.modal-date-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+}
+
+.modal-date-input:focus {
   border-color: var(--color-primary);
 }
 

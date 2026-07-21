@@ -94,6 +94,25 @@ class TestRemoveMember:
         resp = client.delete(f"/api/boards/shared-1/members/{member_id}", headers=auth_header)
         assert resp.status_code == 204
 
+    def test_remove_member_clears_card_assignments(self, client, auth_header, other_auth_header, in_memory_db):
+        _create_shared_board(client, auth_header)
+        add_resp = client.post("/api/boards/shared-1/members", json={
+            "email": "other@example.com",
+        }, headers=auth_header)
+        member_id = add_resp.json()["id"]
+        client.post("/api/lists", json={"id": "l-1", "boardId": "shared-1", "name": "Todo"}, headers=auth_header)
+        client.post("/api/cards", json={"id": "c-1", "listId": "l-1", "title": "Task"}, headers=auth_header)
+        client.post("/api/cards/c-1/members", json={"userId": member_id}, headers=auth_header)
+
+        resp = client.delete(f"/api/boards/shared-1/members/{member_id}", headers=auth_header)
+
+        assert resp.status_code == 204
+        count = in_memory_db.execute(
+            "SELECT COUNT(*) AS count FROM card_member WHERE card_id = ?",
+            ("c-1",),
+        ).fetchone()["count"]
+        assert count == 0
+
     def test_remove_non_existent_member(self, client, auth_header):
         _create_shared_board(client, auth_header)
         resp = client.delete("/api/boards/shared-1/members/nonexistent-id", headers=auth_header)

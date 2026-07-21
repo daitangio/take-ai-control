@@ -54,6 +54,38 @@ CREATE TABLE IF NOT EXISTS board_member (
 """
 
 
+def _add_column_if_missing(conn: sqlite3.Connection, table: str, column_sql: str) -> None:
+    try:
+        conn.execute(f"ALTER TABLE {table} ADD COLUMN {column_sql}")
+    except sqlite3.OperationalError:
+        pass
+
+
+def apply_migrations(conn: sqlite3.Connection) -> None:
+    """Apply additive schema changes for existing SQLite databases."""
+    _add_column_if_missing(conn, "card", "modified_by TEXT")
+    _add_column_if_missing(conn, "card", "due_date TEXT")
+    conn.executescript(
+        """
+        CREATE TABLE IF NOT EXISTS card_archive (
+            card_id     TEXT PRIMARY KEY REFERENCES card(id) ON DELETE CASCADE,
+            list_id     TEXT NOT NULL REFERENCES list(id) ON DELETE CASCADE,
+            archived_by TEXT REFERENCES user(id) ON DELETE SET NULL,
+            archived_at TEXT NOT NULL DEFAULT (datetime('now'))
+        );
+
+        CREATE TABLE IF NOT EXISTS card_member (
+            card_id     TEXT NOT NULL REFERENCES card(id) ON DELETE CASCADE,
+            user_id     TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
+            assigned_at TEXT NOT NULL DEFAULT (datetime('now')),
+            assigned_by TEXT REFERENCES user(id) ON DELETE SET NULL,
+            PRIMARY KEY (card_id, user_id)
+        );
+        """
+    )
+    conn.commit()
+
+
 def init_db() -> None:
     """Create database file and tables if they don't exist."""
     db_path = Path(DATABASE_PATH)
@@ -61,16 +93,7 @@ def init_db() -> None:
 
     conn = sqlite3.connect(str(db_path), check_same_thread=False)
     conn.executescript(SCHEMA_SQL)
-
-    # Migration: add modified_by to card if it doesn't exist
-    try:
-        conn.execute("ALTER TABLE card ADD COLUMN modified_by TEXT")
-        conn.commit()
-        logger.info("Migration: added modified_by column to card")
-    except sqlite3.OperationalError:
-        pass  # Column already exists
-
-    conn.commit()
+    apply_migrations(conn)
     conn.close()
     logger.info("Database initialized at %s", db_path)
 
