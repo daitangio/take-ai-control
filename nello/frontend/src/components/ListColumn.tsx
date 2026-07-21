@@ -118,6 +118,7 @@ export function ListColumn({ listId, boardId, onCardClick }: Props) {
             {list.name}
           </span>
         )}
+        <span className="list-size-jj">{list.cardIds.length}</span>
         <button
           type="button"
           className="list-delete-btn"

@@ -48,6 +48,15 @@
   background: var(--color-hover);
 }
 
+.list-size-jj {
+  font-weight: 300;
+
+}
+
+.list-size-jj:hover {
+  font-weight: 400;
+}
+
 .list-delete-btn {
   display: inline-flex;
   align-items: center;
