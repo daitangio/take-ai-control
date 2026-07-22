@@ -11,18 +11,8 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-
-@router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
-def register(req: RegisterRequest, db: sqlite3.Connection = Depends(get_db)):
-    try:
-        user = register_user(db, req.email, req.password)
-    except ValueError:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Email already registered",
-        )
-    token = create_token(user["id"])
-    return TokenResponse(access_token=token)
+# Register API Disabled:
+# Registration will be done in a different way in the future and for the meantime it is manual
 
 
 @router.post("/login", response_model=TokenResponse)
@@ -33,5 +23,5 @@ def login(req: LoginRequest, db: sqlite3.Connection = Depends(get_db)):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password",
         )
-    token = create_token(user["id"])
+    token = create_token(user["id"])    
     return TokenResponse(access_token=token)

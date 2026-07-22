@@ -12,4 +12,5 @@ if [ -f be.log ]; then
     cat be.log >>$archived_log
 fi
 set -x
-.venv/bin/uvicorn src.main:app --port 6502 --reload 2>&1 | tee be.log
+# Go to nello root
+../../.venv/bin/uvicorn src.main:app --port 6502 --reload 2>&1 | tee be.log

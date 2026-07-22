@@ -12,9 +12,9 @@
 - The overall project aims to be very compact (*less is more* mantra)
 - Always ignore the var/ folder: nothing interesting is there.
 
-- At the end of LOG.md, create a work in progress log, where you note what you already did, what is missing. Always update LOG.md following the template. Always include the name of the model used
+- At the end of LOG.md, create a work in progress log, where you note what you already did, what is missing. Always update LOG.md following the template. Always include the name of the model used, version included.
 
-- Nello is composed of wto components: frontand and backend, you find them nuder nello/
+- Nello is composed of 2 components: frontand and backend, you find them nuder nello/
 - Nello frontend: Before saying "done", always run `rtk npm run build` as last step to be sure nothing was broken
 - Nello backend runs on port 6502
 - Nello backed log trace is on nello/backend/be.log
