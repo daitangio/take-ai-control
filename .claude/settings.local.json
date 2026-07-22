@@ -20,7 +20,8 @@
       "Bash(openspec new *)",
       "Bash(openspec validate *)",
       "Bash(openspec instructions *)",
-      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'State: {d[\\\\\"state\\\\\"]}'\\); print\\(f'Tasks: {d[\\\\\"progress\\\\\"][\\\\\"total\\\\\"]} total'\\); [print\\(f'  {t[\\\\\"id\\\\\"]}: {t[\\\\\"description\\\\\"]}'\\) for t in d['tasks']]\")"
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'State: {d[\\\\\"state\\\\\"]}'\\); print\\(f'Tasks: {d[\\\\\"progress\\\\\"][\\\\\"total\\\\\"]} total'\\); [print\\(f'  {t[\\\\\"id\\\\\"]}: {t[\\\\\"description\\\\\"]}'\\) for t in d['tasks']]\")",
+      "Bash(sqlite3 /Users/jj/code/take-ai-back/nello/backend/nello.db \".schema\")"
     ]
   }
 }

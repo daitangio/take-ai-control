@@ -1,0 +1,13 @@
+services:
+  backend:
+    cpus: 0.60
+    image: nello-jj:latest
+    ports:
+      - '6502:6502'
+    build:
+      context: ./backend
+    volumes:
+      # Bind a single file
+      - type: bind
+        source: /Users/jj/jjapp/nello-demo/nello.db
+        target: /app/nello/nello.db
