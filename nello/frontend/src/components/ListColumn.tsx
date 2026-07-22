@@ -13,9 +13,10 @@ interface Props {
   onCardClick: (cardId: string) => void;
   onCardMembersClick: (cardId: string) => void;
   onCardArchived: (cardId: string) => void;
+  searchQuery?: string;
 }
 
-export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, onCardArchived }: Props) {
+export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, onCardArchived, searchQuery = '' }: Props) {
   const { state, apiDispatch } = useStore();
   const list = state.lists[listId];
   const [renaming, setRenaming] = useState(false);
@@ -67,7 +68,24 @@ export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, o
 
   if (!list) return null;
 
-  const cardCount = list.cardIds.length;
+  // Filter cards based on search query
+  const visibleCardIds = list.cardIds.filter(cardId => {
+    if (!searchQuery) return true;
+    
+    // If the list name itself matches, show all cards
+    if (list.name.toLowerCase().includes(searchQuery)) return true;
+    
+    const card = state.cards[cardId];
+    if (!card) return false;
+    
+    return (
+      card.title.toLowerCase().includes(searchQuery) ||
+      card.description.toLowerCase().includes(searchQuery) ||
+      (card.modifiedBy && card.modifiedBy.toLowerCase().includes(searchQuery))
+    );
+  });
+
+  const cardCount = visibleCardIds.length;
 
   const handleRename = () => {
     if (renameName.trim()) {
@@ -193,10 +211,10 @@ export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, o
         }}
       >
         <SortableContext
-          items={list.cardIds}
+          items={visibleCardIds}
           strategy={verticalListSortingStrategy}
         >
-          {list.cardIds.map((cardId) => (
+          {visibleCardIds.map((cardId) => (
             <CardTile
               key={cardId}
               cardId={cardId}

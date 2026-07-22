@@ -16,7 +16,7 @@ import { CardMemberDialog } from './CardMemberDialog';
 import './ListColumn.css';
 
 export function BoardView() {
-  const { state, apiDispatch } = useStore();
+  const { state, apiDispatch, searchQuery } = useStore();
   const activeBoardId = state.activeBoardId;
   const board = activeBoardId ? state.boards[activeBoardId] : null;
 
@@ -135,6 +135,27 @@ export function BoardView() {
     if (membersCardId === cardId) setMembersCardId(null);
   };
 
+  const lowerQuery = searchQuery.toLowerCase();
+  
+  // Filter lists based on query
+  // A list matches if its name matches OR if any of its cards match
+  const visibleListIds = board.listIds.filter(listId => {
+    const list = state.lists[listId];
+    if (!list) return false;
+    
+    if (list.name.toLowerCase().includes(lowerQuery)) return true;
+    
+    return list.cardIds.some(cardId => {
+      const card = state.cards[cardId];
+      if (!card) return false;
+      return (
+        card.title.toLowerCase().includes(lowerQuery) ||
+        card.description.toLowerCase().includes(lowerQuery) ||
+        (card.modifiedBy && card.modifiedBy.toLowerCase().includes(lowerQuery))
+      );
+    });
+  });
+
   return (
     <DndContext
       sensors={sensors}
@@ -144,10 +165,10 @@ export function BoardView() {
     >
       <div className="board-content">
         <SortableContext
-          items={board.listIds}
+          items={visibleListIds}
           strategy={horizontalListSortingStrategy}
         >
-          {board.listIds.map((listId) => (
+          {visibleListIds.map((listId) => (
             <ListColumn
               key={listId}
               listId={listId}
@@ -155,6 +176,7 @@ export function BoardView() {
               onCardClick={(cardId) => setSelectedCardId(cardId)}
               onCardMembersClick={(cardId) => setMembersCardId(cardId)}
               onCardArchived={handleCardArchived}
+              searchQuery={lowerQuery}
             />
           ))}
         </SortableContext>
