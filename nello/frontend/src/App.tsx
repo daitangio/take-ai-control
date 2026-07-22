@@ -9,7 +9,7 @@ import { HelpBox } from './components/HelpBox';
 import './App.css';
 
 function AppInner() {
-  const { state, loadBoards, toast, clearToast } = useStore();
+  const { state, loadBoards, toast, clearToast, searchQuery, setSearchQuery } = useStore();
   const { token, logout } = useAuth();
 
   // Load boards when authenticated
@@ -40,6 +40,15 @@ function AppInner() {
           </button>
         )}
         {hasBoards && <BoardSwitcher />}
+        <div className="search-container">
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Filter..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
       </header>
       <main className="app-board">
         {!hasBoards ? (

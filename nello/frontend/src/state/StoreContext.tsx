@@ -11,6 +11,8 @@ interface StoreValue {
   loadBoards: (preferredBoardId?: string | null) => Promise<void>;
   toast: string | null;
   clearToast: () => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
 }
 
 const StoreCtx = createContext<StoreValue | null>(null);
@@ -57,6 +59,7 @@ function actionToApiCall(action: Action): Promise<unknown> {
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, null, createInitialState);
   const [toast, setToast] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const loadingRef = useRef(false);
   const stateRef = useRef(state);
   stateRef.current = state;
@@ -150,7 +153,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, [loadBoards]);
 
   return (
-    <StoreCtx.Provider value={{ state, dispatch, apiDispatch, loadBoards, toast, clearToast }}>
+    <StoreCtx.Provider value={{ state, dispatch, apiDispatch, loadBoards, toast, clearToast, searchQuery, setSearchQuery }}>
       {children}
     </StoreCtx.Provider>
   );

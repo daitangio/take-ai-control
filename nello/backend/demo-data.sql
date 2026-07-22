@@ -6,6 +6,7 @@ CREATE TABLE user (
     password    TEXT NOT NULL,
     created_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
+-- Pasword is... remember X-Files?...trustn00ne
 INSERT INTO user VALUES('alfa','alfa@gioorgi.com','$2b$12$KFGoRZwL9pcrHd0yv6tR5eDrVm5zOcZy4gH7t1LF4be4h.pqrzAdu','2026-07-20 08:30:43');
 INSERT INTO user VALUES('beta','beta@gioorgi.com','$2b$12$/nQ7NUZOkCjtA6r7fm9cBuPsETGCMPgB7TJ4m4giKhhoNDVke9y.q','2026-07-20 08:30:43');
 INSERT INTO user VALUES('gamma','gamma@gioorgi.com','$2b$12$bKZ8En1lWBnTDIE.3HSgZOqVwBF8iOB/J3FsdngVqhw1Nd4psVn/i','2026-07-20 08:30:43');
