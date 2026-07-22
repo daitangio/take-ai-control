@@ -1,0 +1,51 @@
+# =============================================================================
+# Headroom — woithout memory feature
+# =============================================================================
+# GG Edited, taken from https://github.com/headroomlabs-ai/headroom/blob/main/docker-compose.yml
+# plus https://headroom-docs.vercel.app/docs/installation
+
+# Ports exposed on the host:
+#   8787  proxy (OpenAI-compatible endpoint)
+# =============================================================================
+
+services:
+  # Headroom proxy — the OpenAI-compatible endpoint your client talks to.
+  # Built from the repo Dockerfile so it tracks your local checkout.
+  headroom-proxy:
+    build:
+      context: .
+    image: jj-headroom-zscaler:latest
+    # Bind to all interfaces inside the container so the published port is reachable.
+    command: ["--host", "0.0.0.0"]
+    environment:
+      - HEADROOM_HOST=0.0.0.0
+      - HOME=/home/nonroot
+      # Keep all Headroom read/write state on the named volume below.
+      - HEADROOM_WORKSPACE_DIR=/home/nonroot/.headroom
+      - HEADROOM_CONFIG_DIR=/home/nonroot/.headroom/config
+      # GG no E.T. phone home please
+      - HEADROOM_TELEMETRY=off
+      # if you want to use a custom OpenAI-compatible API endpoint,
+      # uncomment and set the following line with the desired URL
+      # - OPENAI_TARGET_API_URL=https://api.x.ai
+      # CLI-filtering dashboard figures require the `rtk` binary inside this
+      # container; it is not installed by this image. See docs/content/docs/docker-install.mdx.
+    ports:
+      - "8787:8787"
+    volumes:
+      - headroom_workspace:/home/nonroot/.headroom
+    # Readiness probe: the orchestrator polls /readyz so dependents and
+    # `docker compose up --wait` only see the proxy as healthy once it's serving.
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:8787/readyz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+
+
+# Named volumes — managed by Docker, survive `docker compose down` (use
+# `docker compose down -v` to delete the stored data as well).
+volumes:
+  headroom_workspace:    # persists dashboard savings/history, logs, config, memory state, session stats, and TOIN
