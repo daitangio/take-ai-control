@@ -49,3 +49,4 @@ nello/backend/be*.log
 nello/backend/nello.db.*
 nello/frontend/dist/*
 
+.tokensave
