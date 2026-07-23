@@ -44,3 +44,6 @@ var/claude-home/*
 var/claude-home/.claude
 var/claude-home/.claude.json
 var/pi-agent/trust.json
+headroom/zscaler-root-ca.pem
+nello-backend.log
+nello/backend/be.*log
