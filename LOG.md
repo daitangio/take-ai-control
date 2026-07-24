@@ -51,3 +51,12 @@
 - Moved `archive-lists` into `archive/2026-07-24-archive-lists`
 - Nothing missing for this step.
 Model: Gemini 3.1 Pro (gemini-3.1-pro-preview)
+## WIP: Archive Change frontend-search-filter
+- Executed openspec-archive-change for `frontend-search-filter`
+- Checked artifact and task completion (10/10 tasks completed)
+- Synced delta specs into main specs
+- Fixed minor TypeScript build warning in LoginForm.tsx
+- Moved `frontend-search-filter` into `archive/2026-07-24-frontend-search-filter`
+- Built frontend cleanly.
+- Nothing missing for this step.
+Model: Gemini 3.1 Pro (gemini-3.1-pro-preview)

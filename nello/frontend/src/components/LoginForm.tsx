@@ -2,11 +2,11 @@ import { useState, type FormEvent } from "react";
 import { useAuth } from "../state/AuthContext";
 
 export function LoginForm() {
-  const { login, register, loading, error } = useAuth();
+  const { login, loading, error } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   
-  const [toast, setToast] = useState<string | null>(null);
+  const [toast, _setToast] = useState<string | null>(null);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
