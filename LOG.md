@@ -43,3 +43,11 @@
 - 2026-07-21: WIP — implemented OpenSpec change `card-turbo-menu` — 28/28 tasks complete. Backend: added `card.due_date`, `card_archive`, `card_member`, card archive endpoint, due-date transport, card member endpoints/options, board-detail metadata, and board-member removal cleanup. Frontend: added card action popup, card member dialog, due-date editing/display, archive action, state/API wiring, and regression tests. Verified 77 backend tests, 85 frontend tests, OpenSpec validation, lint with two existing Fast Refresh warnings, and production build. Remaining: archive the completed OpenSpec change when ready. (Codex / GPT-5)
 - 2026-07-21: WIP — fixed `card-turbo-menu` popup clipping by rendering the card action popup through a body portal with fixed positioning, scroll/resize repositioning, outside-click handling across trigger and portal, and a high stacking layer. Verified frontend tests, OpenSpec validation, lint with two existing Fast Refresh warnings, and production build. Remaining: archive the completed OpenSpec change when ready. (Codex / GPT-5)
 - 2026-07-21: WIP — fixed `card-turbo-menu` menu coordination so clicking another card or opening another card action button closes any previously open card menu. Added regression coverage for both interactions. Verified 87 frontend tests, lint with two existing Fast Refresh warnings, and production build. Remaining: archive the completed OpenSpec change when ready. (Codex / GPT-5)
+## WIP: Archive Change
+- Executed openspec-archive-change for `archive-lists`
+- Checked artifact and task completion (all completed)
+- Found delta specs for backend-api, data-persistence, list-management
+- Synced delta specs into main specs
+- Moved `archive-lists` into `archive/2026-07-24-archive-lists`
+- Nothing missing for this step.
+Model: Gemini 3.1 Pro (gemini-3.1-pro-preview)
