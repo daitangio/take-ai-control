@@ -341,6 +341,10 @@ export function reducer(state: State, action: Action): State {
       return { ...state, lists: nextLists };
     }
 
+    case 'card/unarchive':
+      // No-op in reducer — StoreContext handles API call + board refetch
+      return state;
+
     case 'store/reset':
       return createInitialState();
 

@@ -13,10 +13,11 @@ interface Props {
   onCardClick: (cardId: string) => void;
   onCardMembersClick: (cardId: string) => void;
   onCardArchived: (cardId: string) => void;
+  onShowArchived?: (listId: string, listName: string) => void;
   searchQuery?: string;
 }
 
-export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, onCardArchived, searchQuery = '' }: Props) {
+export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, onCardArchived, onShowArchived, searchQuery = '' }: Props) {
   const { state, apiDispatch } = useStore();
   const list = state.lists[listId];
   const [renaming, setRenaming] = useState(false);
@@ -95,6 +96,7 @@ export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, o
   };
 
   const handleArchive = () => {
+    if (!window.confirm(`Archive list "${list.name}"?`)) return;
     setMenuOpen(false);
     apiDispatch({ type: 'list/archive', listId });
   };
@@ -188,13 +190,26 @@ export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, o
                 if (e.key === 'Escape') setMenuOpen(false);
               }}
             >
+              {onShowArchived && (
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="list-menu-item"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    onShowArchived(listId, list.name);
+                  }}
+                >
+                  Show archived items
+                </button>
+              )}
               <button
                 type="button"
                 role="menuitem"
                 className="list-menu-item"
                 onClick={handleArchive}
               >
-                Archive
+                Delete (Archive)
               </button>
             </div>
           )}

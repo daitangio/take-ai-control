@@ -71,5 +71,6 @@ export type Action =
   | { type: 'card/member/add'; cardId: CardId; member: Member }
   | { type: 'card/member/remove'; cardId: CardId; memberId: string }
   | { type: 'card/move'; cardId: CardId; fromListId: ListId; toListId: ListId; index: number }
+  | { type: 'card/unarchive'; cardId: CardId; targetListId: ListId }
   // Meta
   | { type: 'store/reset' };

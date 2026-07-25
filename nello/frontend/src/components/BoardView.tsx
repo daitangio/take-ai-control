@@ -13,6 +13,7 @@ import { ListColumn } from './ListColumn';
 import { CardTile } from './CardTile';
 import { CardModal } from './CardModal';
 import { CardMemberDialog } from './CardMemberDialog';
+import { ArchivedItemsDialog } from './ArchivedItemsDialog';
 import './ListColumn.css';
 
 export function BoardView() {
@@ -24,6 +25,8 @@ export function BoardView() {
   const [listName, setListName] = useState('');
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [membersCardId, setMembersCardId] = useState<string | null>(null);
+  const [archivedItemsListId, setArchivedItemsListId] = useState<string | null>(null);
+  const [archivedItemsListName, setArchivedItemsListName] = useState<string>('');
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
   const [activeDragType, setActiveDragType] = useState<string | null>(null);
 
@@ -176,6 +179,10 @@ export function BoardView() {
               onCardClick={(cardId) => setSelectedCardId(cardId)}
               onCardMembersClick={(cardId) => setMembersCardId(cardId)}
               onCardArchived={handleCardArchived}
+              onShowArchived={(listId, listName) => {
+                setArchivedItemsListId(listId);
+                setArchivedItemsListName(listName);
+              }}
               searchQuery={lowerQuery}
             />
           ))}
@@ -251,6 +258,14 @@ export function BoardView() {
         <CardMemberDialog
           cardId={membersCardId}
           onClose={() => setMembersCardId(null)}
+        />
+      )}
+      {archivedItemsListId && (
+        <ArchivedItemsDialog
+          boardId={board.id}
+          sourceListId={archivedItemsListId}
+          listName={archivedItemsListName}
+          onClose={() => setArchivedItemsListId(null)}
         />
       )}
     </DndContext>

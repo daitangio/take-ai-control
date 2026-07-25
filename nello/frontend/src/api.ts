@@ -251,6 +251,30 @@ export function removeCardMember(cardId: string, memberId: string) {
   });
 }
 
+// ── Archived Cards ───────────────────────────────────
+
+export interface ArchivedCard {
+  id: string;
+  title: string;
+  description: string;
+  dueDate: string | null;
+  originalListId: string;
+  archivedBy: string | null;
+  archivedByEmail: string | null;
+  archivedAt: string;
+}
+
+export function getArchivedCards(boardId: string) {
+  return fetchWithAuth<ArchivedCard[]>(`/boards/${boardId}/archived-cards`);
+}
+
+export function unarchiveCard(cardId: string, targetListId: string) {
+  return fetchWithAuth<void>(`/cards/${cardId}/unarchive`, {
+    method: "POST",
+    body: JSON.stringify({ targetListId }),
+  });
+}
+
 // ── Members ──────────────────────────────────────────
 
 export function addMember(boardId: string, email: string) {

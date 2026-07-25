@@ -217,6 +217,75 @@ def remove_card_member(db, user_id: str, card_id: str, member_id: str) -> bool:
     return cursor.rowcount > 0
 
 
+def list_archived_cards(db, user_id: str, board_id: str) -> list[dict] | None:
+    """Return all archived cards for a board with archival metadata."""
+    if check_board_access(db, board_id, user_id) is None:
+        return None
+
+    rows = db.execute(
+        """SELECT card.id, card.title, card.description, card.due_date,
+                  ca.list_id AS original_list_id,
+                  ca.archived_by, u.email AS archived_by_email, ca.archived_at
+           FROM card
+           JOIN card_archive ca ON ca.card_id = card.id
+           JOIN list ON list.id = ca.list_id
+           LEFT JOIN user u ON ca.archived_by = u.id
+           WHERE list.board_id = ?
+           ORDER BY ca.archived_at DESC""",
+        (board_id,),
+    ).fetchall()
+
+    return [
+        {
+            "id": row["id"],
+            "title": row["title"],
+            "description": row["description"],
+            "dueDate": row["due_date"],
+            "originalListId": row["original_list_id"],
+            "archivedBy": row["archived_by"],
+            "archivedByEmail": row["archived_by_email"],
+            "archivedAt": row["archived_at"],
+        }
+        for row in rows
+    ]
+
+
+def unarchive_card(db, user_id: str, card_id: str, target_list_id: str) -> bool:
+    """Remove the archive marker and move the card to the target list at the bottom."""
+    # Verify the card exists and is archived
+    archive_row = db.execute(
+        "SELECT card_id FROM card_archive WHERE card_id = ?", (card_id,)
+    ).fetchone()
+    if archive_row is None:
+        return False
+
+    # Verify user has access to the target list's board
+    target_board_id = _list_board_id(db, target_list_id)
+    if target_board_id is None or check_board_access(db, target_board_id, user_id) is None:
+        return False
+
+    # Remove the archive marker
+    db.execute("DELETE FROM card_archive WHERE card_id = ?", (card_id,))
+
+    # Move card to target list at the bottom
+    max_pos = db.execute(
+        "SELECT COALESCE(MAX(position), -1) AS mx FROM card WHERE list_id = ?",
+        (target_list_id,),
+    ).fetchone()["mx"]
+
+    db.execute(
+        "UPDATE card SET list_id = ?, position = ?, modified_by = ? WHERE id = ?",
+        (target_list_id, max_pos + 1, user_id, card_id),
+    )
+
+    db.commit()
+    logger.debug(
+        "UNARCHIVE card id=%s target_list=%s user_id=%s",
+        card_id, target_list_id, user_id,
+    )
+    return True
+
+
 def move_card(db, user_id: str, card_id: str, to_list_id: str, index: int) -> bool:
     card = _card_row(db, card_id)
     if card is None or check_board_access(db, card["board_id"], user_id) is None:

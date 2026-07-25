@@ -38,11 +38,12 @@ def main() -> None:
     conn = sqlite3.connect(str(db_path))
     conn.execute("PRAGMA foreign_keys = ON")
     try:
-        conn.execute(
-            "INSERT INTO user (id, email, password) VALUES (?, ?, ?)",
-            (user_id, args.email, hashed),
-        )
-        conn.commit()
+        print(f"INSERT INTO user (id, email, password) VALUES ('{user_id}', '{args.email}', '{hashed}')")
+        #conn.execute(
+        #    "INSERT INTO user (id, email, password) VALUES (?, ?, ?)",
+        #    (user_id, args.email, hashed),
+        #)
+        #conn.commit()
         print(f"User created: id={user_id} email={args.email}")
     except sqlite3.IntegrityError:
         print(f"Error: email '{args.email}' is already registered", file=sys.stderr)

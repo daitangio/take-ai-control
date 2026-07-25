@@ -37,3 +37,7 @@ class CardMoveRequest(BaseModel):
 
 class CardMemberRequest(BaseModel):
     userId: str
+
+
+class CardUnarchiveRequest(BaseModel):
+    targetListId: str

@@ -289,6 +289,141 @@ class TestMoveCard:
         assert [c["id"] for c in board["lists"][1]["cards"]] == ["c-1"]
 
 
+class TestArchivedCards:
+    def test_list_archived_cards_for_board(self, client, auth_header):
+        _setup_board_and_list(client, auth_header)
+        client.post("/api/cards", json={"id": "c-1", "listId": "l-1", "title": "Task 1"}, headers=auth_header)
+        client.post("/api/cards", json={"id": "c-2", "listId": "l-2", "title": "Task 2"}, headers=auth_header)
+        client.post("/api/cards/c-1/archive", headers=auth_header)
+        client.post("/api/cards/c-2/archive", headers=auth_header)
+
+        resp = client.get("/api/boards/b-1/archived-cards", headers=auth_header)
+
+        assert resp.status_code == 200
+        data = resp.json()
+        assert len(data) == 2
+        titles = {c["title"] for c in data}
+        assert titles == {"Task 1", "Task 2"}
+        assert data[0]["archivedByEmail"] == "test@example.com"
+        assert data[0]["archivedAt"] is not None
+
+    def test_list_archived_cards_empty_board(self, client, auth_header):
+        _setup_board_and_list(client, auth_header)
+
+        resp = client.get("/api/boards/b-1/archived-cards", headers=auth_header)
+
+        assert resp.status_code == 200
+        assert resp.json() == []
+
+    def test_list_archived_cards_no_access(self, client, auth_header, other_auth_header):
+        _setup_board_and_list(client, other_auth_header)
+
+        resp = client.get("/api/boards/b-1/archived-cards", headers=auth_header)
+
+        assert resp.status_code == 404
+
+    def test_list_archived_cards_deleted_user(self, client, auth_header, in_memory_db):
+        """archivedBy can be NULL if the archiving user was deleted."""
+        _setup_board_and_list(client, auth_header)
+        client.post("/api/cards", json={"id": "c-1", "listId": "l-1", "title": "Task"}, headers=auth_header)
+        client.post("/api/cards/c-1/archive", headers=auth_header)
+        # Simulate user deletion by setting archived_by to NULL
+        in_memory_db.execute("UPDATE card_archive SET archived_by = NULL WHERE card_id = ?", ("c-1",))
+        in_memory_db.commit()
+
+        resp = client.get("/api/boards/b-1/archived-cards", headers=auth_header)
+
+        assert resp.status_code == 200
+        card = resp.json()[0]
+        assert card["archivedBy"] is None
+        assert card["archivedByEmail"] is None
+
+
+class TestUnarchiveCard:
+    def test_unarchive_card_to_same_list(self, client, auth_header):
+        _setup_board_and_list(client, auth_header)
+        client.post("/api/cards", json={"id": "c-1", "listId": "l-1", "title": "Task"}, headers=auth_header)
+        client.post("/api/cards/c-1/archive", headers=auth_header)
+
+        resp = client.post("/api/cards/c-1/unarchive", json={"targetListId": "l-1"}, headers=auth_header)
+
+        assert resp.status_code == 204
+        # Card should be back in the board
+        board = client.get("/api/boards/b-1", headers=auth_header).json()
+        todo_cards = board["lists"][0]["cards"]
+        assert len(todo_cards) == 1
+        assert todo_cards[0]["id"] == "c-1"
+        assert todo_cards[0]["title"] == "Task"
+
+    def test_unarchive_card_to_different_list(self, client, auth_header):
+        _setup_board_and_list(client, auth_header)
+        client.post("/api/cards", json={"id": "c-1", "listId": "l-1", "title": "Task"}, headers=auth_header)
+        client.post("/api/cards/c-1/archive", headers=auth_header)
+
+        resp = client.post("/api/cards/c-1/unarchive", json={"targetListId": "l-2"}, headers=auth_header)
+
+        assert resp.status_code == 204
+        board = client.get("/api/boards/b-1", headers=auth_header).json()
+        # l-1 (Todo) should be empty
+        assert board["lists"][0]["cards"] == []
+        # l-2 (Done) should have the card
+        assert board["lists"][1]["cards"][0]["id"] == "c-1"
+
+    def test_unarchive_card_position_at_bottom(self, client, auth_header):
+        _setup_board_and_list(client, auth_header)
+        client.post("/api/cards", json={"id": "c-1", "listId": "l-1", "title": "Existing"}, headers=auth_header)
+        client.post("/api/cards", json={"id": "c-2", "listId": "l-1", "title": "Archived"}, headers=auth_header)
+        client.post("/api/cards/c-2/archive", headers=auth_header)
+
+        client.post("/api/cards/c-2/unarchive", json={"targetListId": "l-1"}, headers=auth_header)
+
+        board = client.get("/api/boards/b-1", headers=auth_header).json()
+        todo_card_ids = [c["id"] for c in board["lists"][0]["cards"]]
+        assert todo_card_ids == ["c-1", "c-2"]  # restored card at bottom
+
+    def test_unarchive_non_existent_card(self, client, auth_header):
+        _setup_board_and_list(client, auth_header)
+
+        resp = client.post("/api/cards/nonexistent/unarchive", json={"targetListId": "l-1"}, headers=auth_header)
+
+        assert resp.status_code == 404
+
+    def test_unarchive_non_archived_card(self, client, auth_header):
+        _setup_board_and_list(client, auth_header)
+        client.post("/api/cards", json={"id": "c-1", "listId": "l-1", "title": "Task"}, headers=auth_header)
+
+        resp = client.post("/api/cards/c-1/unarchive", json={"targetListId": "l-1"}, headers=auth_header)
+
+        assert resp.status_code == 404
+
+    def test_unarchive_to_non_existent_list(self, client, auth_header):
+        _setup_board_and_list(client, auth_header)
+        client.post("/api/cards", json={"id": "c-1", "listId": "l-1", "title": "Task"}, headers=auth_header)
+        client.post("/api/cards/c-1/archive", headers=auth_header)
+
+        resp = client.post("/api/cards/c-1/unarchive", json={"targetListId": "nonexistent"}, headers=auth_header)
+
+        assert resp.status_code == 404
+
+    def test_unarchive_no_access(self, client, auth_header, other_auth_header):
+        _setup_board_and_list(client, other_auth_header)
+        client.post("/api/cards", json={"id": "c-1", "listId": "l-1", "title": "Task"}, headers=other_auth_header)
+        client.post("/api/cards/c-1/archive", headers=other_auth_header)
+
+        resp = client.post("/api/cards/c-1/unarchive", json={"targetListId": "l-1"}, headers=auth_header)
+
+        assert resp.status_code == 404
+
+    def test_unarchive_is_idempotent(self, client, auth_header):
+        _setup_board_and_list(client, auth_header)
+        client.post("/api/cards", json={"id": "c-1", "listId": "l-1", "title": "Task"}, headers=auth_header)
+        client.post("/api/cards/c-1/archive", headers=auth_header)
+
+        assert client.post("/api/cards/c-1/unarchive", json={"targetListId": "l-1"}, headers=auth_header).status_code == 204
+        # Second unarchive should return 404 (card no longer archived)
+        assert client.post("/api/cards/c-1/unarchive", json={"targetListId": "l-1"}, headers=auth_header).status_code == 404
+
+
 class TestEditorMetadata:
     """Tests for modifiedByEmail and isModifiedByCurrentUser in card responses."""
 

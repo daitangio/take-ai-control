@@ -51,6 +51,8 @@ function actionToApiCall(action: Action): Promise<unknown> {
       return api.removeCardMember(action.cardId, action.memberId);
     case 'card/move':
       return api.moveCard(action.cardId, action.toListId, action.index);
+    case 'card/unarchive':
+      return api.unarchiveCard(action.cardId, action.targetListId);
     default:
       return Promise.resolve();
   }

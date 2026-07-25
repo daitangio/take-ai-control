@@ -3,8 +3,9 @@ import sqlite3
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from ..deps import get_db, get_current_user
-from .models import BoardCreate, BoardUpdate, BoardResponse, BoardDetailResponse
+from .models import BoardCreate, BoardUpdate, BoardResponse, BoardDetailResponse, ArchivedCardResponse
 from .service import create_board, get_boards, get_board, update_board, delete_board
+from ..cards.service import list_archived_cards
 
 router = APIRouter()
 
@@ -86,3 +87,15 @@ def delete(
         )
     delete_board(db, user["id"], board_id)
     return None
+
+
+@router.get("/boards/{board_id}/archived-cards", response_model=list[ArchivedCardResponse])
+def get_archived_cards(
+    board_id: str,
+    user: dict = Depends(get_current_user),
+    db: sqlite3.Connection = Depends(get_db),
+):
+    result = list_archived_cards(db, user["id"], board_id)
+    if result is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    return result

@@ -24,5 +24,16 @@ class BoardDetailResponse(BaseModel):
     lists: list["ListBrief"]
 
 
+class ArchivedCardResponse(BaseModel):
+    id: str
+    title: str
+    description: str
+    dueDate: str | None = None
+    originalListId: str
+    archivedBy: str | None = None
+    archivedByEmail: str | None = None
+    archivedAt: str
+
+
 from ..lists.models import ListBrief  # noqa: E402
 BoardDetailResponse.model_rebuild()

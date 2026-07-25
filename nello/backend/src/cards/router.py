@@ -3,13 +3,14 @@ import sqlite3
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from ..deps import get_db, get_current_user
-from .models import CardCreate, CardUpdate, CardResponse, CardMoveRequest, CardMemberRequest, MemberBrief
+from .models import CardCreate, CardUpdate, CardResponse, CardMoveRequest, CardMemberRequest, MemberBrief, CardUnarchiveRequest
 from .service import (
     create_card,
     update_card,
     delete_card,
     move_card,
     archive_card,
+    unarchive_card,
     list_card_members,
     list_card_member_options,
     add_card_member,
@@ -60,6 +61,18 @@ def archive(
     db: sqlite3.Connection = Depends(get_db),
 ):
     if not archive_card(db, user["id"], card_id):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    return None
+
+
+@router.post("/cards/{card_id}/unarchive", status_code=status.HTTP_204_NO_CONTENT)
+def unarchive(
+    card_id: str,
+    req: CardUnarchiveRequest,
+    user: dict = Depends(get_current_user),
+    db: sqlite3.Connection = Depends(get_db),
+):
+    if not unarchive_card(db, user["id"], card_id, req.targetListId):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return None
 
