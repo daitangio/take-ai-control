@@ -16,6 +16,7 @@ class CardUpdate(BaseModel):
     title: str = Field(min_length=1, pattern=r"\S")
     description: str = ""
     dueDate: str | None = Field(default=None, pattern=r"^\d{4}-\d{2}-\d{2}$")
+    color: str | None = None
 
 
 class CardResponse(BaseModel):
@@ -24,6 +25,7 @@ class CardResponse(BaseModel):
     title: str
     description: str
     dueDate: str | None = None
+    color: str | None = None
     members: list[MemberBrief] = Field(default_factory=list)
     modifiedBy: str | None = None
     modifiedByEmail: str | None = None

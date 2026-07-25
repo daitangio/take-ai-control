@@ -6,6 +6,17 @@ import { useStore } from '../state/StoreContext';
 
 const CARD_MENU_CLOSE_EVENT = 'nello:card-menu-close';
 
+const COLOR_MAP: Record<string, string> = {
+  red: '#fecaca',
+  orange: '#fed7aa',
+  green: '#bbf7d0',
+  blue: '#bfdbfe',
+  violet: '#ddd6fe',
+  gray: '#e5e7eb',
+};
+
+const COLOR_OPTIONS = ['red', 'orange', 'green', 'blue', 'violet', 'gray'] as const;
+
 interface Props {
   cardId: string;
   listId: string;
@@ -106,6 +117,7 @@ export function CardTile({ cardId, listId, onClick, onMembersClick, onArchived, 
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.4 : undefined,
+    background: card.color && COLOR_MAP[card.color] ? COLOR_MAP[card.color] : undefined,
   };
 
   const showEditorIcon =
@@ -129,6 +141,18 @@ export function CardTile({ cardId, listId, onClick, onMembersClick, onArchived, 
     onArchived?.();
   };
 
+  const setColor = (color: string | null) => {
+    closeMenu();
+    apiDispatch({
+      type: 'card/edit',
+      cardId: card.id,
+      title: card.title,
+      description: card.description,
+      dueDate: card.dueDate,
+      color,
+    });
+  };
+
   const actionPopup = menuOpen ? createPortal(
     <div
       ref={popupRef}
@@ -143,6 +167,29 @@ export function CardTile({ cardId, listId, onClick, onMembersClick, onArchived, 
         if (e.key === 'Escape') closeMenu();
       }}
     >
+      <div className="card-tile__color-row">
+        {COLOR_OPTIONS.map((colorName) => (
+          <button
+            key={colorName}
+            type="button"
+            className={`card-tile__color-swatch${card.color === colorName ? ' card-tile__color-swatch--active' : ''}`}
+            style={{ background: COLOR_MAP[colorName] }}
+            aria-label={`Set color ${colorName}`}
+            title={colorName.charAt(0).toUpperCase() + colorName.slice(1)}
+            onClick={() => setColor(colorName)}
+          />
+        ))}
+        <button
+          type="button"
+          className="card-tile__color-clear"
+          aria-label="Clear color"
+          title="Clear color"
+          onClick={() => setColor(null)}
+        >
+          ✕
+        </button>
+      </div>
+      <div className="card-tile__menu-separator" />
       <button
         type="button"
         role="menuitem"

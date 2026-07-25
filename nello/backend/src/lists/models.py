@@ -26,6 +26,7 @@ class CardBrief(BaseModel):
     title: str
     description: str
     dueDate: str | None = None
+    color: str | None = None
     members: list[MemberBrief] = Field(default_factory=list)
     modifiedBy: str | None = None
     modifiedByEmail: str | None = None

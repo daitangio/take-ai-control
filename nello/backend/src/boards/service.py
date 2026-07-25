@@ -70,7 +70,7 @@ def get_board(db, user_id: str, board_id: str) -> dict | None:
     lists = []
     for lr in list_rows:
         card_rows = db.execute(
-            """SELECT card.id, card.title, card.description, card.due_date, card.modified_by,
+            """SELECT card.id, card.title, card.description, card.due_date, card.color, card.modified_by,
                       u.email AS modified_by_email
                FROM card
                LEFT JOIN user u ON card.modified_by = u.id
@@ -89,6 +89,7 @@ def get_board(db, user_id: str, board_id: str) -> dict | None:
                     "title": cr["title"],
                     "description": cr["description"],
                     "dueDate": cr["due_date"],
+                    "color": cr["color"],
                     "members": card_members(db, cr["id"]),
                     "modifiedBy": cr["modified_by"],
                     "modifiedByEmail": cr["modified_by_email"],

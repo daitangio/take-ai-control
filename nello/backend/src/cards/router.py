@@ -40,6 +40,7 @@ def update(
     db: sqlite3.Connection = Depends(get_db),
 ):
     due_date_provided = "dueDate" in req.model_fields_set
+    color_provided = "color" in req.model_fields_set
     result = update_card(
         db,
         user["id"],
@@ -48,6 +49,8 @@ def update(
         req.description,
         req.dueDate,
         due_date_provided,
+        req.color,
+        color_provided,
     )
     if result is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)

@@ -40,7 +40,7 @@ def _editor_metadata(db, modified_by: str | None, requester_id: str) -> dict:
 def _card_row(db, card_id: str):
     """Return the card row with board_id, or None."""
     return db.execute(
-        """SELECT card.id, card.list_id, card.title, card.description, card.due_date, card.modified_by,
+        """SELECT card.id, card.list_id, card.title, card.description, card.due_date, card.color, card.modified_by,
                   list.board_id
            FROM card JOIN list ON card.list_id = list.id
            WHERE card.id = ?""",
@@ -85,6 +85,7 @@ def _card_response(db, requester_id: str, card) -> dict:
         "title": card["title"],
         "description": card["description"],
         "dueDate": card["due_date"],
+        "color": card["color"],
         "members": card_members(db, card["id"]),
         "modifiedBy": card["modified_by"],
         **meta,
@@ -121,16 +122,28 @@ def update_card(
     description: str,
     due_date: str | None = None,
     due_date_provided: bool = False,
+    color: str | None = None,
+    color_provided: bool = False,
 ) -> dict | None:
     card = _card_row(db, card_id)
     if card is None or check_board_access(db, card["board_id"], user_id) is None:
         return None
 
     title = title.strip()
-    if due_date_provided:
+    if due_date_provided and color_provided:
+        db.execute(
+            "UPDATE card SET title = ?, description = ?, due_date = ?, color = ?, modified_by = ? WHERE id = ?",
+            (title, description, due_date, color, user_id, card_id),
+        )
+    elif due_date_provided:
         db.execute(
             "UPDATE card SET title = ?, description = ?, due_date = ?, modified_by = ? WHERE id = ?",
             (title, description, due_date, user_id, card_id),
+        )
+    elif color_provided:
+        db.execute(
+            "UPDATE card SET title = ?, description = ?, color = ?, modified_by = ? WHERE id = ?",
+            (title, description, color, user_id, card_id),
         )
     else:
         db.execute(

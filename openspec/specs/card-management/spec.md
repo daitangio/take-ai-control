@@ -79,11 +79,11 @@ The system SHALL allow the user to move a card via drag & drop, both reordering 
 - **THEN** the card is moved to the chosen position without using a pointer
 
 ### Requirement: Card action popup
-The system SHALL provide a compact action button at the right side of each card tile. Activating the button SHALL open a card action popup with actions for Details, Members, Due date, and Archive.
+The system SHALL provide a compact action button at the right side of each card tile. Activating the button SHALL open a card action popup with a row of color swatches as the first item, followed by actions for Details, Members, Due date, and Archive.
 
 #### Scenario: Open card action popup
 - **WHEN** the user activates the right-side action button on a card
-- **THEN** the card action popup opens for that card
+- **THEN** the card action popup opens for that card with color swatches displayed first
 
 #### Scenario: Open details from popup
 - **WHEN** the user selects Details from the card action popup
@@ -100,6 +100,10 @@ The system SHALL provide a compact action button at the right side of each card 
 #### Scenario: Close card action popup
 - **WHEN** the user clicks outside the popup or presses Escape
 - **THEN** the card action popup closes
+
+#### Scenario: Set card color from popup
+- **WHEN** the user selects a color swatch from the card action popup
+- **THEN** the card's background color updates and the popup closes
 
 ### Requirement: Card due date
 The system SHALL allow a user with board access to set, change, or clear a date-only due date for a card. The due date MAY be empty.

@@ -2,6 +2,15 @@ import { useEffect, useState, useRef } from 'react';
 import { useStore } from '../state/StoreContext';
 import type { Card } from '../state/types';
 
+const COLOR_MAP: Record<string, string> = {
+  red: '#fecaca',
+  orange: '#fed7aa',
+  green: '#bbf7d0',
+  blue: '#bfdbfe',
+  violet: '#ddd6fe',
+  gray: '#e5e7eb',
+};
+
 interface Props {
   cardId: string;
   onClose: () => void;
@@ -64,6 +73,9 @@ export function CardModal({ cardId, onClose }: Props) {
       <div className="modal">
         <input
           className="modal-title-input"
+          style={{
+            background: card.color && COLOR_MAP[card.color] ? COLOR_MAP[card.color] : undefined,
+          }}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           onBlur={save}

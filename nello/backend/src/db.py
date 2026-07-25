@@ -65,6 +65,7 @@ def apply_migrations(conn: sqlite3.Connection) -> None:
     """Apply additive schema changes for existing SQLite databases."""
     _add_column_if_missing(conn, "card", "modified_by TEXT")
     _add_column_if_missing(conn, "card", "due_date TEXT")
+    _add_column_if_missing(conn, "card", "color TEXT")
     conn.executescript(
         """
         CREATE TABLE IF NOT EXISTS card_archive (

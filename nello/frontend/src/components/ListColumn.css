@@ -280,6 +280,61 @@
   border-radius: 4px;
 }
 
+/* ── Color Swatches ─────────────────────────── */
+
+.card-tile__color-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+}
+
+.card-tile__color-swatch {
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 0;
+  transition: border-color 0.15s, transform 0.1s;
+}
+
+.card-tile__color-swatch:hover {
+  border-color: var(--color-border);
+  transform: scale(1.15);
+}
+
+.card-tile__color-swatch--active {
+  border-color: var(--color-primary);
+}
+
+.card-tile__color-clear {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 0;
+  margin-left: 2px;
+}
+
+.card-tile__color-clear:hover {
+  background: var(--color-hover);
+  color: var(--color-text);
+}
+
+.card-tile__menu-separator {
+  height: 1px;
+  margin: 4px 6px;
+  background: var(--color-border);
+}
+
 .card-member-list {
   list-style: none;
   padding: 0;
