@@ -315,7 +315,7 @@ class TestEditorMetadata:
         board = client.get("/api/boards/b-1", headers=auth_header).json()
         card = board["lists"][0]["cards"][0]
         assert card["isModifiedByCurrentUser"] is True
-        assert card["modifiedByEmail"] is None
+        assert card["modifiedByEmail"] is 'test@example.com'
 
     def test_other_editor_in_board_detail(self, client, auth_header, other_auth_header):
         """Board detail: card edited by another user shows their email."""

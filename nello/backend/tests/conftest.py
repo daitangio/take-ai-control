@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from src.main import app
 from src.db import SCHEMA_SQL, apply_migrations
 from src import deps
-from src.auth.service import create_token
+from src.auth.service import create_token, register_user
 
 
 @pytest.fixture
@@ -22,6 +22,8 @@ def in_memory_db():
     conn.execute("PRAGMA foreign_keys = ON")
     conn.executescript(SCHEMA_SQL)
     apply_migrations(conn)
+    # register a fake user
+    register_user(conn, "test@example.com","secret123")
     yield conn
     conn.close()
 
@@ -41,15 +43,15 @@ def client(in_memory_db):
         yield tc
     app.dependency_overrides.clear()
 
+## GG To fix providing the register client only for tests
 
 @pytest.fixture
 def test_user(client):
-    """Register a test user and return the token + user info."""
-    resp = client.post("/api/auth/register", json={
+    resp = client.post("/api/auth/login", json={
         "email": "test@example.com",
         "password": "secret123",
     })
-    assert resp.status_code == 201
+    assert resp.status_code == 200
     data = resp.json()
     return {"token": data["access_token"], "email": "test@example.com"}
 

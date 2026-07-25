@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from ..deps import get_db
 from .models import RegisterRequest, LoginRequest, TokenResponse
-from .service import register_user, authenticate_user, create_token
+from .service import authenticate_user, create_token
 
 logger = logging.getLogger(__name__)
 
