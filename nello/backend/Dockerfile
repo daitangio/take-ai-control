@@ -6,4 +6,4 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY src src
 # /app/nello/nello.db
-CMD uvicorn src.main:app --port 6502 --reload
+CMD uvicorn src.main:app --host 0.0.0.0 --port 6502 --reload

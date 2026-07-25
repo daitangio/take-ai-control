@@ -1,13 +1,34 @@
 services:
   backend:
-    cpus: 0.60
-    image: nello-jj:latest
-    ports:
-      - '6502:6502'
+    cpus: 1.2
+    image: nello-jj-api:latest
+    # Ports 6502 is not exposed outside the compose friends
     build:
       context: ./backend
     volumes:
       # Bind a single file
-      - type: bind
-        source: /Users/jj/jjapp/nello-demo/nello.db
+      - type: bind        
+        source: $NELLO_HOME/nello.db
         target: /app/nello/nello.db
+  frontend:
+    cpus: 0.50
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: nello-jj-fe:latest
+    ports:
+      # Port to be in sync with external routing
+      - "6666:80"
+    depends_on:
+      - backend
+  backup:
+    cpus: 0.10
+    build:
+      context: ./backup-gurl
+    volumes:
+      - type: bind
+        source: $NELLO_HOME
+        target: /app/nello     
+    depends_on:
+      - backend
+      - frontend 
