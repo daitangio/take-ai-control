@@ -53,7 +53,7 @@ class TestAddMember:
         }, headers=auth_header)
         assert resp.status_code == 409
 
-    def test_non_owner_cannot_add_member(self, client, auth_header, other_auth_header):
+    def test_non_owner_cannot_add_member(self, client, auth_header, other_auth_header, in_memory_db):
         _create_shared_board(client, auth_header)
         # Add other user as member
         client.post("/api/boards/shared-1/members", json={
@@ -61,7 +61,9 @@ class TestAddMember:
         }, headers=auth_header)
 
         # Register a third user
-        third_resp = client.post("/api/auth/register", json={
+        from src.auth.service import register_user
+        register_user(in_memory_db, "third@example.com", "secret789")
+        third_resp = client.post("/api/auth/login", json={
             "email": "third@example.com",
             "password": "secret789",
         })
@@ -118,7 +120,7 @@ class TestRemoveMember:
         resp = client.delete("/api/boards/shared-1/members/nonexistent-id", headers=auth_header)
         assert resp.status_code == 404
 
-    def test_non_owner_cannot_remove_member(self, client, auth_header, other_auth_header):
+    def test_non_owner_cannot_remove_member(self, client, auth_header, other_auth_header, in_memory_db):
         _create_shared_board(client, auth_header)
         # Add other user as member
         add_resp = client.post("/api/boards/shared-1/members", json={
@@ -127,7 +129,9 @@ class TestRemoveMember:
         member_id = add_resp.json()["id"]
 
         # Register a third user and add them
-        third_resp = client.post("/api/auth/register", json={
+        from src.auth.service import register_user
+        register_user(in_memory_db, "third@example.com", "secret789")
+        third_resp = client.post("/api/auth/login", json={
             "email": "third@example.com",
             "password": "secret789",
         })

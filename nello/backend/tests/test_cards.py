@@ -179,11 +179,8 @@ class TestCardMembers:
         other_id = client.post("/api/boards/shared-1/members", json={
             "email": "other@example.com",
         }, headers=auth_header).json()["id"]
-        third_resp = client.post("/api/auth/register", json={
-            "email": "third@example.com",
-            "password": "secret789",
-        })
-        assert third_resp.status_code == 201
+        from src.auth.service import register_user
+        register_user(in_memory_db, "third@example.com", "secret789")
         third_id = client.post("/api/boards/shared-1/members", json={
             "email": "third@example.com",
         }, headers=auth_header).json()["id"]
@@ -221,10 +218,8 @@ class TestCardMembers:
     def test_reject_assignment_for_user_outside_board(self, client, auth_header, in_memory_db):
         _setup_board_and_list(client, auth_header)
         client.post("/api/cards", json={"id": "card-1", "listId": "l-1", "title": "Task"}, headers=auth_header)
-        client.post("/api/auth/register", json={
-            "email": "outsider@example.com",
-            "password": "secret789",
-        })
+        from src.auth.service import register_user
+        register_user(in_memory_db, "outsider@example.com", "secret789")
         outsider_id = in_memory_db.execute(
             "SELECT id FROM user WHERE email = ?",
             ("outsider@example.com",),
@@ -315,7 +310,7 @@ class TestEditorMetadata:
         board = client.get("/api/boards/b-1", headers=auth_header).json()
         card = board["lists"][0]["cards"][0]
         assert card["isModifiedByCurrentUser"] is True
-        assert card["modifiedByEmail"] is 'test@example.com'
+        assert card["modifiedByEmail"] == 'test@example.com'
 
     def test_other_editor_in_board_detail(self, client, auth_header, other_auth_header):
         """Board detail: card edited by another user shows their email."""

@@ -63,13 +63,14 @@ def auth_header(test_user):
 
 
 @pytest.fixture
-def other_user_token(client):
+def other_user_token(client, in_memory_db):
     """Register a second user and return their token."""
-    resp = client.post("/api/auth/register", json={
+    register_user(in_memory_db, "other@example.com", "secret456")
+    resp = client.post("/api/auth/login", json={
         "email": "other@example.com",
         "password": "secret456",
     })
-    assert resp.status_code == 201
+    assert resp.status_code == 200
     return resp.json()["access_token"]
 
 
