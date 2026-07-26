@@ -13,6 +13,7 @@ Replace the Python/FastAPI backend located in `nello/backend` with a modern, hig
 - Share generated TS types with the React frontend.
 - Utilize modern Node.js execution (using `tsx` for dev, `tsc` for production).
 - Re-implement all existing routes (`auth`, `boards`, `lists`, `cards`, `members`).
+- Migrate the backend nello/backend/Dockerfile
 
 ## Out of Scope
 - Changing the frontend React app (other than pointing it to the new shared types and endpoints, if necessary).
