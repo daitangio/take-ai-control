@@ -1,16 +1,15 @@
 #!/bin/sh
 set -e
-echo Dev mode
+echo "Dev mode (Node.js/Fastify)"
 if [ ! -f nello.db ]; then
-    echo Creating demo data
+    echo "Creating demo data"
     sqlite3 -batch -init demo-data.sql nello.db '.quit'
 fi
-# We archive old logs to be sure we do not have strange mixes
+# Archive old logs
 if [ -f be.log ]; then
-    archived_log=be-$(date +%Y-%m-%d).log
-    echo "==== Restart at $(date)" >>$archived_log
-    cat be.log >>$archived_log
+    archived_log="be-$(date +%Y-%m-%d).log"
+    echo "==== Restart at $(date)" >>"$archived_log"
+    cat be.log >>"$archived_log"
 fi
 set -x
-# Go to nello root
-../../.venv/bin/uvicorn src.main:app --port 6502 --reload 2>&1 | tee be.log
+npx tsx --watch src/index.ts 2>&1 | tee be.log

@@ -60,3 +60,9 @@ Model: Gemini 3.1 Pro (gemini-3.1-pro-preview)
 - Built frontend cleanly.
 - Nothing missing for this step.
 Model: Gemini 3.1 Pro (gemini-3.1-pro-preview)
+
+## WIP: Rewrite Backend to TypeScript
+
+- 2026-07-26: Implemented OpenSpec change `rewrite-backend-typescript` — 24/24 tasks complete. Replaced Python/FastAPI backend with TypeScript/Fastify+@libsql/client+Drizzle ORM. Moved old Python files to backup (later deleted). Created full schema.ts mirroring all 8 existing tables (`user`, `board`, `list`, `list_archive`, `card`, `card_archive`, `board_member`, `card_member`). Implemented all routes: auth (login only, matching Python), boards (CRUD + board members + archived cards), lists (CRUD + archive + reorder), cards (CRUD + archive/unarchive + move + card members), members (add/remove/list board members). Added JWT auth middleware, bcrypt password hashing, rate limiting. Created shared types (`src/types/api.ts`). Updated Dockerfile for multi-stage Node.js build and `runBackend.sh` for tsx execution. Backend compiles clean, boots on port 6502, health check responds. Frontend build passes clean. Remaining: archive change when ready. (Claude Code / deepseek-v4-pro)
+
+Model: DeepSeek V4 Pro (deepseek-ai/DeepSeek-V4-Pro)

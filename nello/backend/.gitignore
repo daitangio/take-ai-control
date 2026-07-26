@@ -1,3 +1,4 @@
 *.log
 be.log.backup
 nello.db*
+dist

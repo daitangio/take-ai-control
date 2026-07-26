@@ -1,9 +1,17 @@
-FROM python:3.14-trixie
-
+FROM node:22-bookworm-slim AS build
 
 WORKDIR /app/nello
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY tsconfig.json ./
 COPY src src
+RUN npm run build
+
+FROM node:22-bookworm-slim
+
+WORKDIR /app/nello
+COPY --from=build /app/nello/dist dist
+COPY --from=build /app/nello/node_modules node_modules
+COPY package.json ./
 # /app/nello/nello.db
-CMD uvicorn src.main:app --host 0.0.0.0 --port 6502 --reload
+CMD node dist/index.js

@@ -24,7 +24,11 @@
       "Bash(sqlite3 /Users/jj/code/take-ai-back/nello/backend/nello.db \".schema\")",
       "Bash(rtk openspec *)",
       "Bash(rtk find *)",
-      "Bash(rtk head *)"
+      "Bash(rtk head *)",
+      "Bash(rtk npx *)",
+      "Bash(rtk grep *)",
+      "Bash(timeout 8 npx tsx src/index.ts)",
+      "Bash(curl -s http://localhost:6502/api/health)"
     ]
   }
 }
