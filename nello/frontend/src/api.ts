@@ -224,7 +224,7 @@ export function deleteCard(cardId: string) {
 }
 
 export function archiveCard(cardId: string) {
-  return fetchWithAuth<void>(`/cards/${cardId}/archive`, { method: "POST" });
+  return fetchWithAuth<void>(`/cards/${cardId}/archive`, { method: "POST", body: JSON.stringify({ cardId }) });
 }
 
 export function moveCard(cardId: string, toListId: string, index: number) {

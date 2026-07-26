@@ -137,6 +137,7 @@ export function CardTile({ cardId, listId, onClick, onMembersClick, onArchived, 
 
   const archive = () => {
     closeMenu();
+    console.log('Archiving...');
     apiDispatch({ type: 'card/archive', cardId: card.id });
     onArchived?.();
   };
