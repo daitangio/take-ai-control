@@ -1,4 +1,4 @@
-FROM node:22-bookworm-slim AS build
+FROM node:26-trixie-slim AS build
 
 WORKDIR /app/nello
 COPY package.json package-lock.json ./
@@ -7,7 +7,7 @@ COPY tsconfig.json ./
 COPY src src
 RUN npm run build
 
-FROM node:22-bookworm-slim
+FROM node:26-trixie-slim
 
 WORKDIR /app/nello
 COPY --from=build /app/nello/dist dist
