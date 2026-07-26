@@ -4,7 +4,11 @@ import { db } from "../db/index.js";
 import { users, boardMembers, boards } from "../db/schema.js";
 import { eq, and } from "drizzle-orm";
 
-export interface AuthUser {
+
+/**
+ * GG: I prefer type to be sure they cannot "enriched"
+ */
+export type AuthUser = {
   id: string;
   email: string;
 }
