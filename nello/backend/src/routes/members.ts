@@ -103,21 +103,35 @@ export default async function memberRoutes(app: FastifyInstance) {
         return reply.code(403).send({ detail: "Only the board owner can remove members" });
       }
 
-      await db
+      // Verify the target user is a board member before deleting; the Python
+      // backend returned 404 when the member did not exist.
+      const [existing] = await db
+        .select({ userId: boardMembers.userId })
+        .from(boardMembers)
+        .where(and(eq(boardMembers.boardId, boardId), eq(boardMembers.userId, memberId)))
+        .limit(1);
+      if (!existing) {
+        return reply.code(404).send({ detail: "Member not found" });
+      }
+
+      const delResult = await db
         .delete(boardMembers)
         .where(and(eq(boardMembers.boardId, boardId), eq(boardMembers.userId, memberId)));
 
-      // Also remove from any cards in this board
-      const cardRows = await db
-        .select({ cardId: cards.id })
-        .from(cards)
-        .innerJoin(lists, eq(cards.listId, lists.id))
-        .where(eq(lists.boardId, boardId));
+      // Also remove from any cards in this board, but only if the membership row
+      // was actually removed (mirrors the original cascade-on-removal behavior).
+      if (delResult.rowsAffected > 0) {
+        const cardRows = await db
+          .select({ cardId: cards.id })
+          .from(cards)
+          .innerJoin(lists, eq(cards.listId, lists.id))
+          .where(eq(lists.boardId, boardId));
 
-      for (const cr of cardRows) {
-        await db
-          .delete(cardMembers)
-          .where(and(eq(cardMembers.cardId, cr.cardId), eq(cardMembers.userId, memberId)));
+        for (const cr of cardRows) {
+          await db
+            .delete(cardMembers)
+            .where(and(eq(cardMembers.cardId, cr.cardId), eq(cardMembers.userId, memberId)));
+        }
       }
 
       reply.code(204).send();

@@ -28,7 +28,18 @@
       "Bash(rtk npx *)",
       "Bash(rtk grep *)",
       "Bash(timeout 8 npx tsx src/index.ts)",
-      "Bash(curl -s http://localhost:6502/api/health)"
+      "Bash(curl -s http://localhost:6502/api/health)",
+      "Bash(rtk ls *)",
+      "Bash(rtk cat *)",
+      "Bash(rtk tail *)",
+      "Bash(python3 -c \"import json,sys;d=json.load\\(sys.stdin\\);print\\(d['instruction']\\);print\\('---TEMPLATE---'\\);print\\(d['template']\\)\")",
+      "Bash(rtk npm *)",
+      "Bash(rtk /Users/jj/code/take-ai-back/nello/backend/node_modules/.bin/vitest --version)",
+      "Bash(rtk ./node_modules/.bin/vitest run tests/smoke.test.ts)",
+      "Bash(rtk sed *)",
+      "Bash(rtk ./node_modules/.bin/vitest run)",
+      "Bash(python3 -c \"import json,sys;d=json.load\\(sys.stdin\\);print\\('progress:',d['progress']\\);print\\('state:',d['state']\\)\")",
+      "Bash(python3 -c \"import json,sys;d=json.load\\(sys.stdin\\);print\\('changeDir:',d['changeDir']\\);print\\('specs paths:',d['artifactPaths']['specs']['existingOutputPaths']\\)\")"
     ]
   }
 }

@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "fastify": "^5.0.0",
@@ -24,6 +26,7 @@
     "drizzle-kit": "^0.30.0",
     "@types/node": "^22.0.0",
     "@types/bcryptjs": "^2.4.0",
-    "@types/jsonwebtoken": "^9.0.0"
+    "@types/jsonwebtoken": "^9.0.0",
+    "vitest": "^2.1.0"
   }
 }

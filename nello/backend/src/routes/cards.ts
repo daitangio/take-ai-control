@@ -146,6 +146,9 @@ export default async function cardRoutes(app: FastifyInstance) {
       }
 
       const { title, description = "", dueDate, color } = request.body;
+      if (!title || !title.trim()) {
+        return reply.code(422).send({ detail: "Card title is required" });
+      }
       const hasBody = request.body as any;
       const hasDueDate = "dueDate" in hasBody;
       const hasColor = "color" in hasBody;

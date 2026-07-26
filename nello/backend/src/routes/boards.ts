@@ -116,7 +116,7 @@ export default async function boardRoutes(app: FastifyInstance) {
           .where(eq(cardMembers.cardId, cr.card.id));
 
         let modifiedByEmail: string | null = null;
-        if (cr.card.modifiedBy && cr.card.modifiedBy !== user.id) {
+        if (cr.card.modifiedBy) {
           const [u] = await db.select({ email: users.email }).from(users).where(eq(users.id, cr.card.modifiedBy)).limit(1);
           modifiedByEmail = u?.email ?? null;
         }
