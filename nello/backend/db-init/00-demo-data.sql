@@ -15,10 +15,8 @@ CREATE TABLE board (
     name        TEXT NOT NULL,
     created_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
-INSERT INTO board VALUES('417a506a-aa3d-4873-a5b4-334021dd640e','beta','ZBoard','2026-07-20 08:36:34');
 INSERT INTO board VALUES('ab3f9f54-6ad8-42d1-9842-3af3dddb2c89','alfa','SharedDemo$','2026-07-20 11:34:52');
--- Intro is a special board we use to introduce the user
-INSERT INTO board VALUES('intro','alfa','Nello Intro@','2026-07-26 10:22:20');
+INSERT INTO board VALUES('intro','alfa','Nello Intro$','2026-07-26 10:22:20');
 CREATE TABLE list (
     id          TEXT PRIMARY KEY,
     board_id    TEXT NOT NULL REFERENCES board(id) ON DELETE CASCADE,
@@ -77,9 +75,10 @@ INSERT INTO card VALUES('551d0bb0-a456-408d-a83b-ec1d2ac1cfa4','shared-boards-c5
 INSERT INTO card VALUES('93a0e4a5-b71d-47b6-bd0f-d1937973cd2f','filter-fab0b8d1','Client-Side filtering enable to dominate complex context','',0,'2026-07-26 10:31:48','alfa',NULL,NULL);
 INSERT INTO card VALUES('81c74a99-0bc5-4163-a890-fa2a2a9b1ddf','shared-boards-c5d71ad2','Shared members get a nice icon and ability to share','',1,'2026-07-26 10:35:59','alfa',NULL,'blue');
 INSERT INTO card VALUES('abca8ee1-431b-4b54-a0dc-a42489248b03','shared-boards-c5d71ad2','Remember: if you share a board you cannot de-share it','',2,'2026-07-26 10:37:06','alfa',NULL,'blue');
-INSERT INTO card VALUES('800f2d14-8da0-40d9-b21c-b11752a95d73','nello-feature-f03444b6','Every Card has detail and a due date','',4,'2026-07-26 10:37:31','alfa',NULL,'orange');
+INSERT INTO card VALUES('800f2d14-8da0-40d9-b21c-b11752a95d73','nello-feature-f03444b6','Every Card has detail and a due date','',5,'2026-07-26 10:37:31','alfa',NULL,'orange');
 INSERT INTO card VALUES('3af27321-b773-42e4-9155-9eddc9aff101','weelcome-to-nello-6ab048fe','This is a card.','',1,'2026-07-26 11:43:21','alfa',NULL,'red');
 INSERT INTO card VALUES('3119e09b-08ba-40df-a4a9-51bd6626d8ce','weelcome-to-nello-6ab048fe','A card can be moved between lists','',2,'2026-07-26 11:43:42','alfa',NULL,'red');
+INSERT INTO card VALUES('92267e52-21b5-46f3-bfb7-c6835999208d','shared-boards-c5d71ad2','Archived waiting for you','',3,'2026-07-26 20:08:29','alfa',NULL,'gray');
 CREATE TABLE board_member (
     board_id    TEXT NOT NULL REFERENCES board(id) ON DELETE CASCADE,
     user_id     TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
@@ -89,6 +88,8 @@ CREATE TABLE board_member (
 INSERT INTO board_member VALUES('ab3f9f54-6ad8-42d1-9842-3af3dddb2c89','beta','2026-07-20 11:35:28');
 INSERT INTO board_member VALUES('ab3f9f54-6ad8-42d1-9842-3af3dddb2c89','gamma','2026-07-20 11:35:33');
 INSERT INTO board_member VALUES('ab3f9f54-6ad8-42d1-9842-3af3dddb2c89','alfa','2026-07-21 19:17:03');
+INSERT INTO board_member VALUES('intro','beta','2026-07-26 19:45:18');
+INSERT INTO board_member VALUES('intro','gamma','2026-07-26 19:45:18');
 CREATE TABLE list_archive (
     list_id     TEXT PRIMARY KEY REFERENCES list(id) ON DELETE CASCADE,
     board_id    TEXT NOT NULL REFERENCES board(id) ON DELETE CASCADE,
@@ -103,6 +104,7 @@ CREATE TABLE card_archive (
             archived_at TEXT NOT NULL DEFAULT (datetime('now'))
         );
 INSERT INTO card_archive VALUES('2f5af671-74d3-4b02-b576-cbe1de1485a5','todo-architecture-c3e77a1d','alfa','2026-07-25 15:52:17');
+INSERT INTO card_archive VALUES('92267e52-21b5-46f3-bfb7-c6835999208d','shared-boards-c5d71ad2','alfa','2026-07-26 20:08:35');
 CREATE TABLE card_member (
             card_id     TEXT NOT NULL REFERENCES card(id) ON DELETE CASCADE,
             user_id     TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,

@@ -140,7 +140,7 @@ export function updateBoard(boardId: string, name: string) {
 }
 
 export function deleteBoard(boardId: string) {
-  return fetchWithAuth<void>(`/boards/${boardId}`, { method: "DELETE" });
+  return fetchWithAuth<void>(`/boards/${boardId}`, { method: "DELETE", body: JSON.stringify({ boardId }) });
 }
 
 // ── Lists ───────────────────────────────────────────
@@ -167,11 +167,11 @@ export function updateList(listId: string, name: string) {
 }
 
 export function deleteList(listId: string) {
-  return fetchWithAuth<void>(`/lists/${listId}`, { method: "DELETE" });
+  return fetchWithAuth<void>(`/lists/${listId}`, { method: "DELETE", body: JSON.stringify({listId}) });
 }
 
 export function archiveList(listId: string) {
-  return fetchWithAuth<void>(`/lists/${listId}/archive`, { method: "POST" });
+  return fetchWithAuth<void>(`/lists/${listId}/archive`, { method: "POST", body: JSON.stringify({listId}) });
 }
 
 export function reorderLists(boardId: string, listIds: string[]) {
@@ -220,7 +220,7 @@ export function updateCard(
 }
 
 export function deleteCard(cardId: string) {
-  return fetchWithAuth<void>(`/cards/${cardId}`, { method: "DELETE" });
+  return fetchWithAuth<void>(`/cards/${cardId}`, { method: "DELETE",  body: JSON.stringify({ cardId }) });
 }
 
 export function archiveCard(cardId: string) {
@@ -291,6 +291,7 @@ export function addMember(boardId: string, email: string) {
 export function removeMember(boardId: string, memberId: string) {
   return fetchWithAuth<void>(`/boards/${boardId}/members/${memberId}`, {
     method: "DELETE",
+    body: JSON.stringify({ memberId }) 
   });
 }
 
