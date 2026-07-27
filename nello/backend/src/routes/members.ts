@@ -1,5 +1,4 @@
 import type { FastifyInstance } from "fastify";
-import type { AuthUser } from "../middleware/auth.js";
 import { db } from "../db/index.js";
 import { boards, boardMembers, cardMembers, cards, lists, users } from "../db/schema.js";
 import { eq, and, asc } from "drizzle-orm";
@@ -12,7 +11,7 @@ interface AddMemberBody {
 export default async function memberRoutes(app: FastifyInstance) {
   // GET /boards/:id/members
   app.get<{ Params: { id: string } }>("/boards/:id/members", { preHandler: [authenticate] }, async (request, reply) => {
-    const user = (request as any).user as AuthUser;
+    const user = request.user;
     const boardId = request.params.id;
 
     if (!(await checkBoardAccess(boardId, user.id))) {
@@ -34,7 +33,7 @@ export default async function memberRoutes(app: FastifyInstance) {
     "/boards/:id/members",
     { preHandler: [authenticate] },
     async (request, reply) => {
-      const user = (request as any).user as AuthUser;
+      const user = request.user;
       const boardId = request.params.id;
       const { email } = request.body;
 
@@ -93,7 +92,7 @@ export default async function memberRoutes(app: FastifyInstance) {
     "/boards/:id/members/:memberId",
     { preHandler: [authenticate] },
     async (request, reply) => {
-      const user = (request as any).user as AuthUser;
+      const user = request.user;
       const boardId = request.params.id;
       const memberId = request.params.memberId;
 

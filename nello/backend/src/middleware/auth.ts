@@ -13,6 +13,12 @@ export type AuthUser = {
   email: string;
 }
 
+declare module "fastify" {
+  interface FastifyRequest {
+    user: AuthUser;
+  }
+}
+
 export async function authenticate(
   request: FastifyRequest,
   reply: FastifyReply,
@@ -41,7 +47,7 @@ export async function authenticate(
     return;
   }
 
-  (request as any).user = user;
+  request.user = user;
 }
 
 export async function checkBoardAccess(

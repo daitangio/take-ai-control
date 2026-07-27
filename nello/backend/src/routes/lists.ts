@@ -1,5 +1,4 @@
 import type { FastifyInstance } from "fastify";
-import type { AuthUser } from "../middleware/auth.js";
 import { db } from "../db/index.js";
 import { lists, listArchive, cards } from "../db/schema.js";
 import { eq, and, isNull, asc, sql } from "drizzle-orm";
@@ -22,7 +21,7 @@ interface ReorderBody {
 export default async function listRoutes(app: FastifyInstance) {
   // POST /lists
   app.post<{ Body: ListCreateBody }>("/lists", { preHandler: [authenticate] }, async (request, reply) => {
-    const user = (request as any).user as AuthUser;
+    const user = request.user;
     const { id, boardId, name } = request.body;
 
     if (!name || !name.trim()) {
@@ -58,7 +57,7 @@ export default async function listRoutes(app: FastifyInstance) {
 
   // PATCH /lists/:id
   app.patch<{ Params: { id: string }; Body: ListUpdateBody }>("/lists/:id", { preHandler: [authenticate] }, async (request, reply) => {
-    const user = (request as any).user as AuthUser;
+    const user = request.user;
     const listId = request.params.id;
     const { name } = request.body;
 
@@ -103,7 +102,7 @@ export default async function listRoutes(app: FastifyInstance) {
 
   // DELETE /lists/:id
   app.delete<{ Params: { id: string } }>("/lists/:id", { preHandler: [authenticate] }, async (request, reply) => {
-    const user = (request as any).user as AuthUser;
+    const user = request.user;
     const listId = request.params.id;
 
     const [listRow] = await db
@@ -123,7 +122,7 @@ export default async function listRoutes(app: FastifyInstance) {
 
   // POST /lists/:id/archive
   app.post<{ Params: { id: string } }>("/lists/:id/archive", { preHandler: [authenticate] }, async (request, reply) => {
-    const user = (request as any).user as AuthUser;
+    const user = request.user;
     const listId = request.params.id;
 
     const [listRow] = await db
@@ -150,7 +149,7 @@ export default async function listRoutes(app: FastifyInstance) {
     "/boards/:boardId/lists/reorder",
     { preHandler: [authenticate] },
     async (request, reply) => {
-      const user = (request as any).user as AuthUser;
+      const user = request.user;
       const boardId = request.params.boardId;
       const { listIds } = request.body;
 

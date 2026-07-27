@@ -1,5 +1,4 @@
 import type { FastifyInstance } from "fastify";
-import type { AuthUser } from "../middleware/auth.js";
 import { db } from "../db/index.js";
 import { users } from "../db/schema.js";
 import { eq } from "drizzle-orm";

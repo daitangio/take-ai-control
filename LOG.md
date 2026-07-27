@@ -74,3 +74,15 @@ Model: DeepSeek V4 Pro (deepseek-ai/DeepSeek-V4-Pro)
 - Deleted obsolete Python test files: `tests/__init__.py`, `conftest.py`, `test_auth.py`, `test_boards.py`, `test_cards.py`, `test_lists.py`, `test_members.py`. Remaining: archive the change when ready.
 
 Model: GLM-5.2 (zai-org/GLM-5.2)
+## WIP: Code Review backend codebase
+- 2026-07-27: Codebase review of `nello/backend/` directory. Inspected route files, schema definitions, and middleware. Identified several structural and performance issues:
+  1. N+1 queries in data fetching (`boards.ts`) where loops make sequential DB calls.
+  2. Missing database transactions in mutation routes (`cards.ts`) leading to potential data corruption.
+  3. Inefficient `db.update` execution inside loops for order changes (`cards.ts`).
+  4. Type safety bypass using `(request as any).user` rather than augmenting `FastifyRequest`.
+  5. Lack of global error handling for database failures.
+- No code was changed. 
+- Executed `rtk npm run build` on the backend to verify the initial state was intact. 
+- Output provided as requested.
+Model: Gemini 3.1 Pro (gemini-3.1-pro-preview)
+- 2026-07-27: Fixed issue #5 (TypeScript Type Safety Bypassed in Request Extension) by using TypeScript module augmentation to add `user: AuthUser` directly to `FastifyRequest` in `src/middleware/auth.ts`. Replaced all `(request as any).user as AuthUser` workarounds with strongly typed `request.user` across all route files. Removed redundant type imports. Build passes successfully. (Copilot CLI / Gemini 3.1 Pro)

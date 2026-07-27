@@ -1,5 +1,4 @@
 import type { FastifyInstance } from "fastify";
-import type { AuthUser } from "../middleware/auth.js";
 import { db } from "../db/index.js";
 import { cards, lists, cardArchive, cardMembers, users, boards as boardsTable, boardMembers } from "../db/schema.js";
 import { eq, and, asc, sql } from "drizzle-orm";
@@ -100,7 +99,7 @@ async function _cardResponse(requesterId: string, card: typeof cards.$inferSelec
 export default async function cardRoutes(app: FastifyInstance) {
   // POST /cards
   app.post<{ Body: CardCreateBody }>("/cards", { preHandler: [authenticate] }, async (request, reply) => {
-    const user = (request as any).user as AuthUser;
+    const user = request.user;
     const { id, listId, title } = request.body;
 
     if (!title || !title.trim()) {
@@ -134,7 +133,7 @@ export default async function cardRoutes(app: FastifyInstance) {
     "/cards/:id",
     { preHandler: [authenticate] },
     async (request, reply) => {
-      const user = (request as any).user as AuthUser;
+      const user = request.user;
       const cardId = request.params.id;
 
       const card = await _cardRow(cardId);
@@ -170,7 +169,7 @@ export default async function cardRoutes(app: FastifyInstance) {
 
   // DELETE /cards/:id
   app.delete<{ Params: { id: string } }>("/cards/:id", { preHandler: [authenticate] }, async (request, reply) => {
-    const user = (request as any).user as AuthUser;
+    const user = request.user;
     const cardId = request.params.id;
     const boardId = await _cardBoardId(cardId);
     if (!boardId || !(await checkBoardAccess(boardId, user.id))) {
@@ -182,7 +181,7 @@ export default async function cardRoutes(app: FastifyInstance) {
 
   // POST /cards/:id/archive
   app.post<{ Params: { id: string } }>("/cards/:id/archive", { preHandler: [authenticate] }, async (request, reply) => {
-    const user = (request as any).user as AuthUser;
+    const user = request.user;
     const cardId = request.params.id;
 
     const card = await _cardRow(cardId);
@@ -206,7 +205,7 @@ export default async function cardRoutes(app: FastifyInstance) {
     "/cards/:id/unarchive",
     { preHandler: [authenticate] },
     async (request, reply) => {
-      const user = (request as any).user as AuthUser;
+      const user = request.user;
       const cardId = request.params.id;
       const { targetListId } = request.body;
 
@@ -241,7 +240,7 @@ export default async function cardRoutes(app: FastifyInstance) {
 
   // GET /cards/:id/members
   app.get<{ Params: { id: string } }>("/cards/:id/members", { preHandler: [authenticate] }, async (request, reply) => {
-    const user = (request as any).user as AuthUser;
+    const user = request.user;
     const cardId = request.params.id;
     const boardId = await _cardBoardId(cardId);
     if (!boardId || !(await checkBoardAccess(boardId, user.id))) {
@@ -255,7 +254,7 @@ export default async function cardRoutes(app: FastifyInstance) {
     "/cards/:id/member-options",
     { preHandler: [authenticate] },
     async (request, reply) => {
-      const user = (request as any).user as AuthUser;
+      const user = request.user;
       const cardId = request.params.id;
       const boardId = await _cardBoardId(cardId);
       if (!boardId || !(await checkBoardAccess(boardId, user.id))) {
@@ -285,7 +284,7 @@ export default async function cardRoutes(app: FastifyInstance) {
     "/cards/:id/members",
     { preHandler: [authenticate] },
     async (request, reply) => {
-      const user = (request as any).user as AuthUser;
+      const user = request.user;
       const cardId = request.params.id;
       const { userId: memberId } = request.body;
 
@@ -318,7 +317,7 @@ export default async function cardRoutes(app: FastifyInstance) {
     "/cards/:id/members/:memberId",
     { preHandler: [authenticate] },
     async (request, reply) => {
-      const user = (request as any).user as AuthUser;
+      const user = request.user;
       const cardId = request.params.id;
       const memberId = request.params.memberId;
 
@@ -340,7 +339,7 @@ export default async function cardRoutes(app: FastifyInstance) {
     "/cards/:id/move",
     { preHandler: [authenticate] },
     async (request, reply) => {
-      const user = (request as any).user as AuthUser;
+      const user = request.user;
       const cardId = request.params.id;
       const { toListId, index } = request.body;
 

@@ -1,5 +1,4 @@
 import type { FastifyInstance } from "fastify";
-import type { AuthUser } from "../middleware/auth.js";
 import { db } from "../db/index.js";
 import { boards, lists, cards, listArchive, cardArchive, cardMembers, users, boardMembers } from "../db/schema.js";
 import { eq, and, isNull, asc, sql as sqlDrizzle } from "drizzle-orm";
@@ -17,7 +16,7 @@ interface BoardUpdateBody {
 export default async function boardRoutes(app: FastifyInstance) {
   // GET /boards
   app.get("/boards", { preHandler: [authenticate] }, async (request, reply) => {
-    const user = (request as any).user as AuthUser;
+    const user = request.user;
 
     // Own boards
     const ownBoards = await db
@@ -62,7 +61,7 @@ export default async function boardRoutes(app: FastifyInstance) {
 
   // POST /boards
   app.post<{ Body: BoardCreateBody }>("/boards", { preHandler: [authenticate] }, async (request, reply) => {
-    const user = (request as any).user as AuthUser;
+    const user = request.user;
     const { id, name } = request.body;
 
     if (!name || !name.trim()) {
@@ -83,7 +82,7 @@ export default async function boardRoutes(app: FastifyInstance) {
 
   // GET /boards/:id
   app.get<{ Params: { id: string } }>("/boards/:id", { preHandler: [authenticate] }, async (request, reply) => {
-    const user = (request as any).user as AuthUser;
+    const user = request.user;
     const boardId = request.params.id;
 
     const role = await checkBoardAccess(boardId, user.id);
@@ -146,7 +145,7 @@ export default async function boardRoutes(app: FastifyInstance) {
 
   // PATCH /boards/:id
   app.patch<{ Params: { id: string }; Body: BoardUpdateBody }>("/boards/:id", { preHandler: [authenticate] }, async (request, reply) => {
-    const user = (request as any).user as AuthUser;
+    const user = request.user;
     const boardId = request.params.id;
 
     const role = await checkBoardAccess(boardId, user.id);
@@ -180,7 +179,7 @@ export default async function boardRoutes(app: FastifyInstance) {
 
   // DELETE /boards/:id
   app.delete<{ Params: { id: string } }>("/boards/:id", { preHandler: [authenticate] }, async (request, reply) => {
-    const user = (request as any).user as AuthUser;
+    const user = request.user;
     const boardId = request.params.id;
 
     const role = await checkBoardAccess(boardId, user.id);
@@ -193,7 +192,7 @@ export default async function boardRoutes(app: FastifyInstance) {
 
   // GET /boards/:id/archived-cards
   app.get<{ Params: { id: string } }>("/boards/:id/archived-cards", { preHandler: [authenticate] }, async (request, reply) => {
-    const user = (request as any).user as AuthUser;
+    const user = request.user;
     const boardId = request.params.id;
 
     const role = await checkBoardAccess(boardId, user.id);
