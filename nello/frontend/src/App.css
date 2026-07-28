@@ -1,7 +1,8 @@
 .app {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .app-header {
@@ -24,7 +25,9 @@
 .app-board {
   flex: 1;
   overflow-x: auto;
+  overflow-y: hidden;
   padding: 20px;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ── Search ───────────────────────────── */
@@ -57,6 +60,7 @@
   align-items: flex-start;
   height: 100%;
   min-width: fit-content;
+  touch-action: pan-x pan-y;
 }
 
 /* ── Login ────────────────────────────── */
@@ -251,5 +255,109 @@
     left: 16px;
     width: auto;
     max-width: none;
+  }
+}
+
+@media (max-width: 1023px) {
+  .app-header {
+    padding: 0 16px;
+  }
+
+  .board-tabs {
+    margin-left: 16px;
+  }
+
+  .search-input {
+    width: 220px;
+  }
+
+  .search-input:focus {
+    width: 280px;
+  }
+}
+
+@media (max-width: 767px) {
+  .app-header {
+    height: auto;
+    min-height: 48px;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+
+  .logout-btn {
+    margin-left: auto;
+    margin-right: 0;
+    min-height: 36px;
+  }
+
+  .board-tabs {
+    order: 3;
+    flex: 0 0 100%;
+    width: 100%;
+    margin-left: 0;
+    padding-bottom: 2px;
+  }
+
+  .search-container {
+    order: 4;
+    flex: 0 0 100%;
+    margin-left: 0;
+    padding-left: 0;
+  }
+
+  .search-input,
+  .search-input:focus {
+    width: 100%;
+    min-height: 36px;
+  }
+
+  .app-board {
+    padding: 12px;
+  }
+
+  .login-container {
+    min-height: 100dvh;
+    padding: 16px;
+  }
+
+  .login-form {
+    padding: 24px;
+  }
+
+  .empty-state {
+    align-items: stretch;
+    justify-content: center;
+  }
+
+  .empty-state-text {
+    text-align: center;
+  }
+
+  .empty-state-form {
+    flex-direction: column;
+  }
+
+  .empty-state-input {
+    width: 100%;
+  }
+
+  .toast-container {
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    transform: none;
+  }
+
+  .toast {
+    justify-content: space-between;
+  }
+
+  .help-box {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    max-height: calc(100dvh - 24px);
+    overflow-y: auto;
   }
 }

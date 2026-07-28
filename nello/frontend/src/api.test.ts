@@ -37,6 +37,7 @@ describe('list API', () => {
         'Content-Type': 'application/json',
         Authorization: 'Bearer test-token',
       },
+      body: JSON.stringify({ listId: 'list-1' }),
     });
   });
 });
@@ -55,6 +56,7 @@ describe('card API', () => {
         'Content-Type': 'application/json',
         Authorization: 'Bearer test-token',
       },
+      body: JSON.stringify({ cardId: 'card-1' }),
     });
   });
 

@@ -48,6 +48,30 @@ beforeEach(() => {
 });
 
 describe('App smoke tests', () => {
+  it.each([375, 768])('keeps primary controls reachable at a %ipx viewport', async (width) => {
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: width });
+    window.dispatchEvent(new Event('resize'));
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.type(screen.getByPlaceholderText('Board name'), 'Work');
+    await user.click(screen.getByText('Create Board'));
+
+    expect(screen.getByRole('button', { name: 'Logout' })).toBeDefined();
+    expect(screen.getByRole('button', { name: 'Work' })).toBeDefined();
+    expect(screen.getByPlaceholderText('Filter...')).toBeDefined();
+  });
+
+  it('keeps the narrow login form controls reachable', () => {
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: 375 });
+    api.setToken(null);
+    render(<App />);
+
+    expect(screen.getByLabelText('Email')).toBeDefined();
+    expect(screen.getByLabelText('Password')).toBeDefined();
+    expect(screen.getByRole('button', { name: 'Login' })).toBeDefined();
+  });
+
   it('shows shared-board help after authentication', async () => {
     render(<App />);
 

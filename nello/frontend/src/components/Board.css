@@ -20,6 +20,7 @@
   color: var(--color-text-secondary);
   white-space: nowrap;
   transition: background 0.15s;
+  min-height: 32px;
 }
 
 .board-tab:hover {
@@ -56,8 +57,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   padding: 0;
   border: none;
   background: transparent;
@@ -87,6 +88,7 @@
   font-size: 13px;
   color: var(--color-text-secondary);
   white-space: nowrap;
+  min-height: 32px;
 }
 
 .board-create-btn:hover {
@@ -177,4 +179,31 @@
 
 .empty-state-input:focus {
   border-color: var(--color-primary);
+}
+
+@media (max-width: 767px) {
+  .board-tabs {
+    gap: 6px;
+    scrollbar-width: thin;
+  }
+
+  .board-tab,
+  .board-create-btn,
+  .board-create-submit,
+  .board-create-cancel {
+    min-height: 36px;
+  }
+
+  .board-create-form {
+    min-width: max-content;
+  }
+
+  .board-create-input {
+    width: 132px;
+  }
+
+  .empty-state-btn {
+    width: 100%;
+    min-height: 44px;
+  }
 }

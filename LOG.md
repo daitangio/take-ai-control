@@ -86,3 +86,16 @@ Model: GLM-5.2 (zai-org/GLM-5.2)
 - Output provided as requested.
 Model: Gemini 3.1 Pro (gemini-3.1-pro-preview)
 - 2026-07-27: Fixed issue #5 (TypeScript Type Safety Bypassed in Request Extension) by using TypeScript module augmentation to add `user: AuthUser` directly to `FastifyRequest` in `src/middleware/auth.ts`. Replaced all `(request as any).user as AuthUser` workarounds with strongly typed `request.user` across all route files. Removed redundant type imports. Build passes successfully. (Copilot CLI / Gemini 3.1 Pro)
+
+## WIP: Make Nello Frontend Responsive
+
+- 2026-07-28: Proposed OpenSpec change `make-nello-responsive`. Created proposal, design, `responsive-user-interface` capability spec, and 11 implementation tasks covering phone/tablet layouts, horizontal board navigation, touch-safe drag-and-drop, viewport-safe overlays, and validation.
+- Remaining: implement via `/opsx:apply`; the frontend build must be the final verification step.
+Model: Codex / GPT-5
+
+## WIP: Make Nello Frontend Responsive
+
+- 2026-07-28: Implemented 10 of 11 `make-nello-responsive` tasks. Added CSS-first phone/tablet breakpoints, responsive header and forms, horizontally navigable compact board columns, viewport-safe dialogs/help/toasts, touch-friendly controls and focus outlines, and delayed touch drag activation via `@dnd-kit`'s `TouchSensor`.
+- Added responsive control/login coverage; aligned stale archive test expectations with the current request payloads and "Delete (Archive)" label. Verified 90 frontend tests and lint (two pre-existing Fast Refresh warnings).
+- Remaining: manually verify phone/tablet/desktop touch scrolling and deliberate drag behavior when a browser-capable environment is available. The in-app browser was unavailable in this environment.
+Model: Codex / GPT-5-Terra medium

@@ -14,6 +14,12 @@
   --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
 *,
 *::before,
 *::after {
@@ -29,9 +35,15 @@ body {
 
 button {
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 input,
 textarea {
   font-family: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }

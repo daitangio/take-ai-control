@@ -58,6 +58,7 @@ vi.mock('@dnd-kit/utilities', () => ({
 }));
 
 beforeEach(() => {
+  vi.stubGlobal('confirm', vi.fn(() => true));
   mockApiDispatch.mockClear();
   dndMocks.onPointerDown.mockClear();
   mockState.boards = {
@@ -79,7 +80,7 @@ describe('ListColumn action menu', () => {
     await user.click(screen.getByRole('button', { name: 'List actions for Todo' }));
 
     expect(screen.getByRole('menu', { name: 'Actions for Todo' })).toBeDefined();
-    expect(screen.getByRole('menuitem', { name: 'Archive' })).toBeDefined();
+    expect(screen.getByRole('menuitem', { name: 'Delete (Archive)' })).toBeDefined();
   });
 
   it('archives the list and closes the menu', async () => {
@@ -87,7 +88,7 @@ describe('ListColumn action menu', () => {
     render(<ListColumn listId="l-1" boardId="b-1" onCardClick={() => {}} onCardMembersClick={() => {}} onCardArchived={() => {}} />);
 
     await user.click(screen.getByRole('button', { name: 'List actions for Todo' }));
-    await user.click(screen.getByRole('menuitem', { name: 'Archive' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Delete (Archive)' }));
 
     expect(mockApiDispatch).toHaveBeenCalledWith({ type: 'list/archive', listId: 'l-1' });
     expect(screen.queryByRole('menu')).toBeNull();
@@ -112,7 +113,7 @@ describe('ListColumn action menu', () => {
     render(<ListColumn listId="l-1" boardId="b-1" onCardClick={() => {}} onCardMembersClick={() => {}} onCardArchived={() => {}} />);
 
     await user.click(screen.getByRole('button', { name: 'List actions for Todo' }));
-    await user.click(screen.getByRole('menuitem', { name: 'Archive' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Delete (Archive)' }));
 
     expect(dndMocks.onPointerDown).not.toHaveBeenCalled();
   });

@@ -4,7 +4,7 @@ echo "Dev mode (Node.js/Fastify)"
 if [ ! -f nello.db ]; then
     echo "Creating demo data"
     sqlite3 -batch -init db-init/00-demo-data.sql nello.db '.quit'
-    # sqlite3 -batch -init db-init/90-demo-board.sql nello.db '.quit'
+    sqlite3 -batch -init db-init/20*.sql nello.db '.quit'
 fi
 # Archive old logs
 if [ -f be.log ]; then
