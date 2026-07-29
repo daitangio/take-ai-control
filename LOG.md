@@ -99,3 +99,22 @@ Model: Codex / GPT-5
 - Added responsive control/login coverage; aligned stale archive test expectations with the current request payloads and "Delete (Archive)" label. Verified 90 frontend tests and lint (two pre-existing Fast Refresh warnings).
 - Remaining: manually verify phone/tablet/desktop touch scrolling and deliberate drag behavior when a browser-capable environment is available. The in-app browser was unavailable in this environment.
 Model: Codex / GPT-5-Terra medium
+
+## WIP: Archive Change make-nello-responsive
+
+- 2026-07-29: Synced the new `responsive-user-interface` capability into the main OpenSpec catalog, including responsive layout, touch board interaction, and viewport-safe overlay requirements.
+- Validated both the change and its main spec, then archived the completed change to `openspec/changes/archive/2026-07-29-make-nello-responsive/`.
+- Nothing remaining for this change.
+Model: Codex / GPT-5-Terra medium
+
+## WIP: Make Nello Frontend Responsive
+
+- 2026-07-29: User manually verified horizontal touch scrolling and deliberate drag behavior at phone, tablet, and desktop viewport sizes; marked OpenSpec task 4.2 complete.
+- Remaining: sync the new `responsive-user-interface` spec to `openspec/specs/` and archive the completed change when approved.
+Model: Codex / GPT-5-Terra medium
+
+## WIP: Archive Change make-nello-responsive
+
+- 2026-07-29: Synced the new `responsive-user-interface` capability into the main OpenSpec catalog and archived the fully completed change at `openspec/changes/archive/2026-07-29-make-nello-responsive/`.
+- Validated both the change and the synced main specification. Nothing remains for this change.
+Model: Codex / GPT-5-Terra medium

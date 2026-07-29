@@ -18,5 +18,5 @@
 ## 4. Verification
 
 - [x] 4.1 Add or update responsive frontend tests for phone and tablet header, form, board, and overlay behavior.
-- [ ] 4.2 Manually verify touch scrolling and deliberate drag behavior at representative phone, tablet, and desktop viewport sizes.
+- [x] 4.2 Manually verify touch scrolling and deliberate drag behavior at representative phone, tablet, and desktop viewport sizes.
 - [x] 4.3 Run the frontend test suite and finish with `rtk npm run build` from `nello/frontend`.
