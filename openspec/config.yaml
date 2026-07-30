@@ -18,3 +18,7 @@ schema: spec-driven
 #       - Always include a "Non-goals" section
 #     tasks:
 #       - Break tasks into chunks of max 2 hours
+rules:
+  tasks:
+    - Always include unit tests in tasks
+    - Always include one human test task

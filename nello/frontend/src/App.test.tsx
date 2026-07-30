@@ -57,7 +57,7 @@ describe('App smoke tests', () => {
     await user.type(screen.getByPlaceholderText('Board name'), 'Work');
     await user.click(screen.getByText('Create Board'));
 
-    expect(screen.getByRole('button', { name: 'Logout' })).toBeDefined();
+    expect(screen.getByRole('button', { name: 'User Menu' })).toBeDefined();
     expect(screen.getByRole('button', { name: 'Work' })).toBeDefined();
     expect(screen.getByPlaceholderText('Filter...')).toBeDefined();
   });

@@ -118,3 +118,11 @@ Model: Codex / GPT-5-Terra medium
 - 2026-07-29: Synced the new `responsive-user-interface` capability into the main OpenSpec catalog and archived the fully completed change at `openspec/changes/archive/2026-07-29-make-nello-responsive/`.
 - Validated both the change and the synced main specification. Nothing remains for this change.
 Model: Codex / GPT-5-Terra medium
+
+## WIP: Add User Settings Page (Change Password)
+
+- 2026-07-30: Planned and implemented the `add-user-settings-page` change using OpenSpec tools.
+- Backend: Added `PUT /api/auth/password` endpoint with min-12 char validation, unit tests.
+- Frontend: Created `UserSettings` page, replaced top-right static logout button with a `UserMenu` dropdown containing Settings/Logout, updated frontend routing logic in `App.tsx`, covered with unit tests, verified build succeeds.
+- Nothing remaining for this change, ready to archive.
+Model: Copilot CLI / Gemini 3.1 Pro (model ID: gemini-3.1-pro-preview)

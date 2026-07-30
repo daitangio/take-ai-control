@@ -33,8 +33,6 @@
 /* ── Search ───────────────────────────── */
 
 .search-container {
-  margin-left: auto;
-  padding-left: 16px;
   display: flex;
   align-items: center;
 }
@@ -360,4 +358,142 @@
     max-height: calc(100dvh - 24px);
     overflow-y: auto;
   }
+}
+
+/* User Menu at far right*/
+.user-menu {
+  position: relative;
+}
+
+.user-menu-btn {
+  background: transparent;
+  border: none;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--color-text);
+  /** GG DEBUG background-color: red;; */
+}
+
+.user-menu-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.user-menu-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  min-width: 150px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-menu-item {
+  background: none;
+  border: none;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+}
+
+.user-menu-item:hover {
+  background: var(--color-hover);
+}
+
+.user-menu-item.logout-btn {
+  color: var(--color-danger, #dc3545);
+  border-top: 1px solid var(--color-border);
+}
+
+/* User Settings */
+.user-settings-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.user-settings-title {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.settings-form-group {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-form-group label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.settings-form-group input {
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+
+.settings-error {
+  color: var(--danger-color, #dc3545);
+  margin-bottom: 1rem;
+}
+
+.settings-success {
+  color: #28a745;
+  margin-bottom: 1rem;
+}
+
+.settings-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.btn-primary {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: #0056b3;
+}
+
+.btn-primary:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: var(--bg-hover);
+}
+
+.header-right {
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+  gap: 1rem;
 }

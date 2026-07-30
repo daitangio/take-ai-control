@@ -86,3 +86,70 @@ describe("Token", () => {
     expect(res.statusCode).toBe(200);
   });
 });
+
+describe("Password Change", () => {
+  let env: TestApp;
+  let auth: Record<string, string>;
+
+  beforeEach(async () => {
+    env = await buildTestApp();
+    auth = await authHeadersFor(env.app, env.db, "change@example.com", "secret123");
+  });
+
+  it("changes password with valid current password and new password length >= 12", async () => {
+    const res = await env.app.inject({
+      method: "PUT",
+      url: "/api/auth/password",
+      headers: auth,
+      payload: { currentPassword: "secret123", newPassword: "newlongpassword123" },
+    });
+    expect(res.statusCode).toBe(200);
+
+    // Verify login with new password
+    const loginRes = await env.app.inject({
+      method: "POST",
+      url: "/api/auth/login",
+      payload: { email: "change@example.com", password: "newlongpassword123" },
+    });
+    expect(loginRes.statusCode).toBe(200);
+  });
+
+  it("rejects password change if current password is incorrect", async () => {
+    const res = await env.app.inject({
+      method: "PUT",
+      url: "/api/auth/password",
+      headers: auth,
+      payload: { currentPassword: "wrongpassword", newPassword: "newlongpassword123" },
+    });
+    expect(res.statusCode).toBe(401);
+  });
+
+  it("rejects password change if new password is too short", async () => {
+    const res = await env.app.inject({
+      method: "PUT",
+      url: "/api/auth/password",
+      headers: auth,
+      payload: { currentPassword: "secret123", newPassword: "short" },
+    });
+    expect(res.statusCode).toBe(422);
+  });
+
+  it("rejects password change if missing fields", async () => {
+    const res = await env.app.inject({
+      method: "PUT",
+      url: "/api/auth/password",
+      headers: auth,
+      payload: { currentPassword: "secret123" },
+    });
+    expect(res.statusCode).toBe(422);
+  });
+
+  it("rejects password change for unauthenticated requests", async () => {
+    const res = await env.app.inject({
+      method: "PUT",
+      url: "/api/auth/password",
+      payload: { currentPassword: "secret123", newPassword: "newlongpassword123" },
+    });
+    expect(res.statusCode).toBe(401);
+  });
+});
