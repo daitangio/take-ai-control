@@ -2,6 +2,7 @@ FROM node:26-trixie-slim AS build
 
 WORKDIR /app/nello
 COPY package.json package-lock.json ./
+# GG ci=Clean install: you want to make sure you're doing a clean install of your dependencies.
 RUN npm ci
 COPY tsconfig.json ./
 COPY src src

@@ -18,7 +18,8 @@ node_modules
 # OPT:
 CLAUDE.md
 
-package-lock.json
+# Needed for clean build
+# package-lock.json
 
 .pi-subagents/*
 
