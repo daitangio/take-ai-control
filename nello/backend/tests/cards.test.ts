@@ -323,6 +323,24 @@ describe("MoveCard", () => {
     expect(board.lists[0].cards.map((c: any) => c.id)).toEqual(["c-3", "c-1", "c-2"]);
   });
 
+  it("moves a card down within the same list without duplicating it", async () => {
+    await _setupBoardAndList(env, auth);
+    await env.app.inject({ method: "POST", url: "/api/cards", headers: auth, payload: { id: "c-1", listId: "l-1", title: "First" } });
+    await env.app.inject({ method: "POST", url: "/api/cards", headers: auth, payload: { id: "c-2", listId: "l-1", title: "Second" } });
+    await env.app.inject({ method: "POST", url: "/api/cards", headers: auth, payload: { id: "c-3", listId: "l-1", title: "Third" } });
+
+    const res = await env.app.inject({
+      method: "PUT",
+      url: "/api/cards/c-1/move",
+      headers: auth,
+      payload: { toListId: "l-1", index: 2 },
+    });
+    expect(res.statusCode).toBe(200);
+
+    const board = asJson(await env.app.inject({ method: "GET", url: "/api/boards/b-1", headers: auth }));
+    expect(board.lists[0].cards.map((c: any) => c.id)).toEqual(["c-2", "c-3", "c-1"]);
+  });
+
   it("moves a card across lists", async () => {
     await _setupBoardAndList(env, auth);
     await env.app.inject({ method: "POST", url: "/api/cards", headers: auth, payload: { id: "c-1", listId: "l-1", title: "Moving" } });

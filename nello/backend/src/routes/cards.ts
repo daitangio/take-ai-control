@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { db } from "../db/index.js";
 import { cards, lists, cardArchive, cardMembers, users, boards as boardsTable, boardMembers } from "../db/schema.js";
-import { eq, and, asc, sql } from "drizzle-orm";
+import { eq, ne, and, asc, sql } from "drizzle-orm";
 import { authenticate, checkBoardAccess } from "../middleware/auth.js";
 
 interface CardCreateBody {
@@ -378,7 +378,7 @@ export default async function cardRoutes(app: FastifyInstance) {
       const targetCards = await db
         .select({ id: cards.id })
         .from(cards)
-        .where(eq(cards.listId, toListId))
+        .where(and(eq(cards.listId, toListId), ne(cards.id, cardId)))
         .orderBy(asc(cards.position));
 
       const ids = targetCards.map(tc => tc.id);

@@ -136,6 +136,14 @@ Model: Copilot CLI / Gemini 3.1 Pro (model ID: gemini-3.1-pro-preview)
 - Remaining: task 3.3 manual browser verification (drag a card refreshes only current board, no full-page refresh) when a browser-capable env is available.
 Model: Copilot CLI / Claude Opus 4.8 (fast mode) (model ID: claude-opus-4.8-fast)
 
+## WIP: Fix Same-List Downward Card Move
+
+- 2026-07-30: Fixed persisted same-list card ordering in `nello/backend/src/routes/cards.ts`. The move route now excludes the moved card when rebuilding the target list, preventing it from being inserted twice and assigned a stale position when moving downward.
+- Added a backend regression test that moves the first card to the end of the same list and verifies the server-authoritative order after reload.
+- Verified all 81 backend tests and the backend TypeScript build.
+- Remaining: manual drag-and-drop verification in the running Nello UI.
+Model: Codex / GPT-5
+
 ## WIP: Fix DnD Drop-At-End (penultimate) Bug
 
 - 2026-07-30: Fixed `handleDragEnd` in `nello/frontend/src/components/BoardView.tsx`. Dropping a card past the last card landed it penultimate because the target index used `indexOf(over.id)` (insert-before). Now computes `isBelow` from the dragged rect vs the over-card midpoint (insert after when below), and for same-list moves subtracts 1 when the source index precedes the target to compensate for the reducer's remove-then-splice. Cross-list drops at the end now land last.
