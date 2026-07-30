@@ -126,3 +126,18 @@ Model: Codex / GPT-5-Terra medium
 - Frontend: Created `UserSettings` page, replaced top-right static logout button with a `UserMenu` dropdown containing Settings/Logout, updated frontend routing logic in `App.tsx`, covered with unit tests, verified build succeeds.
 - Nothing remaining for this change, ready to archive.
 Model: Copilot CLI / Gemini 3.1 Pro (model ID: gemini-3.1-pro-preview)
+
+## WIP: Fix DnD Single-Board Reload
+
+- 2026-07-30: Implemented `fix-dnd-single-board-reload` via OpenSpec apply.
+- State: added `board/reload` action (`types.ts`) and reducer case (`reducer.ts`) that atomically replaces one board's lists/cards and updates `listIds`, no-op if board absent.
+- Store: added `reloadBoard(boardId)` to `StoreContext.tsx` (calls `api.getBoard`, dispatches `board/reload`), exposed on store value. Replaced `loadBoards(activeBefore)` with `reloadBoard(activeBefore)` in the `card/move` success and drag error-recovery branches (guarded on active board id) — no more global reset/refetch after drag.
+- Tests: new `board/reload` reducer tests + `StoreContext.test.tsx` verifying `card/move` triggers single-board reload (getBoard) and NOT loadBoards (getBoards). 101 frontend tests pass; `rtk npm run build` succeeds.
+- Remaining: task 3.3 manual browser verification (drag a card refreshes only current board, no full-page refresh) when a browser-capable env is available.
+Model: Copilot CLI / Claude Opus 4.8 (fast mode) (model ID: claude-opus-4.8-fast)
+
+## WIP: Fix DnD Drop-At-End (penultimate) Bug
+
+- 2026-07-30: Fixed `handleDragEnd` in `nello/frontend/src/components/BoardView.tsx`. Dropping a card past the last card landed it penultimate because the target index used `indexOf(over.id)` (insert-before). Now computes `isBelow` from the dragged rect vs the over-card midpoint (insert after when below), and for same-list moves subtracts 1 when the source index precedes the target to compensate for the reducer's remove-then-splice. Cross-list drops at the end now land last.
+- Verified `rtk npm run build` and 101 frontend tests pass. Manual drag verification pending.
+Model: Copilot CLI / Claude Opus 4.8 (fast mode) (model ID: claude-opus-4.8-fast)

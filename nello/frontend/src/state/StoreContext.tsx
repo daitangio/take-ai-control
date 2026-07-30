@@ -9,6 +9,7 @@ interface StoreValue {
   dispatch: React.Dispatch<Action>;
   apiDispatch: (action: Action) => Promise<void>;
   loadBoards: (preferredBoardId?: string | null) => Promise<void>;
+  reloadBoard: (boardId: string) => Promise<void>;
   toast: string | null;
   clearToast: () => void;
   searchQuery: string;
@@ -112,6 +113,34 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const reloadBoard = useCallback(async (boardId: string) => {
+    try {
+      const detail = await api.getBoard(boardId);
+      dispatch({
+        type: 'board/reload',
+        boardId,
+        lists: detail.lists.map((list) => ({
+          id: list.id,
+          name: list.name,
+          cards: list.cards.map((card) => ({
+            id: card.id,
+            title: card.title,
+            description: card.description,
+            dueDate: card.dueDate,
+            color: card.color,
+            members: card.members,
+            modifiedBy: card.modifiedBy ?? undefined,
+            modifiedByEmail: card.modifiedByEmail,
+            isModifiedByCurrentUser: card.isModifiedByCurrentUser,
+          })),
+        })),
+      });
+    } catch (err) {
+      console.debug('[nello:api] reloadBoard failed:', err);
+      setToast('Failed to reload board');
+    }
+  }, []);
+
   const apiDispatch = useCallback(async (action: Action) => {
     const activeBefore = stateRef.current.activeBoardId;
     dispatch(action);
@@ -147,17 +176,23 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const member = result as api.MemberResponse;
         dispatch({ type: 'card/member/add', cardId: action.cardId, member });
       } else if (action.type === 'card/move') {
-        await loadBoards(activeBefore);
+        if (activeBefore) await reloadBoard(activeBefore);
       }
     } catch (err) {
       console.debug('[nello:api]', action.type, 'failed:', err);
       setToast(`Failed to ${action.type.replace('/', ' ')}`);
-      if (api.getToken()) await loadBoards(activeBefore);
+      if (api.getToken()) {
+        if (action.type === 'card/move') {
+          if (activeBefore) await reloadBoard(activeBefore);
+        } else {
+          await loadBoards(activeBefore);
+        }
+      }
     }
-  }, [loadBoards]);
+  }, [loadBoards, reloadBoard]);
 
   return (
-    <StoreCtx.Provider value={{ state, dispatch, apiDispatch, loadBoards, toast, clearToast, searchQuery, setSearchQuery }}>
+    <StoreCtx.Provider value={{ state, dispatch, apiDispatch, loadBoards, reloadBoard, toast, clearToast, searchQuery, setSearchQuery }}>
       {children}
     </StoreCtx.Provider>
   );

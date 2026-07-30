@@ -58,6 +58,7 @@ export type Action =
   | { type: 'board/rename'; boardId: BoardId; name: string; isShared?: boolean; isOwner?: boolean }
   | { type: 'board/delete'; boardId: BoardId }
   | { type: 'board/switch'; boardId: BoardId }
+  | { type: 'board/reload'; boardId: BoardId; lists: Array<{ id: ListId; name: string; cards: Card[] }> }
   // List
   | { type: 'list/create'; listId: ListId; boardId: BoardId; name: string }
   | { type: 'list/rename'; listId: ListId; name: string }

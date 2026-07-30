@@ -518,3 +518,49 @@ describe('card/create idempotency', () => {
     expect(b.lists.l0.cardIds).toEqual(['c0']);
   });
 });
+
+describe('board/reload', () => {
+  it('no-ops when the board is absent', () => {
+    const state = s(1, 2, 4);
+    const next = reducer(state, {
+      type: 'board/reload',
+      boardId: 'missing',
+      lists: [{ id: 'lx', name: 'X', cards: [] }],
+    });
+    expect(next).toBe(state);
+  });
+
+  it('replaces the board lists/cards and updates listIds order', () => {
+    // Two boards: b0 (active, l0/l1 with c0..c3) and b1 (l2/l3 with c4/c5)
+    const state = s(2, 4, 6);
+    const next = reducer(state, {
+      type: 'board/reload',
+      boardId: 'b0',
+      lists: [
+        { id: 'nl1', name: 'New 1', cards: [{ id: 'nc1', title: 'NC1', description: '' }] },
+        { id: 'nl0', name: 'New 0', cards: [] },
+      ],
+    });
+
+    // b0 slice replaced with fresh lists in given order
+    expect(next.boards.b0.listIds).toEqual(['nl1', 'nl0']);
+    expect(next.lists.nl1.cardIds).toEqual(['nc1']);
+    expect(next.lists.nl0.cardIds).toEqual([]);
+    expect(next.cards.nc1).toEqual({ id: 'nc1', title: 'NC1', description: '' });
+
+    // Old b0 lists and their cards are gone
+    expect(next.lists.l0).toBeUndefined();
+    expect(next.lists.l1).toBeUndefined();
+    expect(next.cards.c0).toBeUndefined();
+
+    // Other board (b1) left intact
+    expect(next.boards.b1.listIds).toEqual(state.boards.b1.listIds);
+    expect(next.lists.l2).toEqual(state.lists.l2);
+    expect(next.lists.l3).toEqual(state.lists.l3);
+    expect(next.cards.c2).toEqual(state.cards.c2);
+    expect(next.cards.c3).toEqual(state.cards.c3);
+
+    // Active selection unchanged
+    expect(next.activeBoardId).toBe(state.activeBoardId);
+  });
+});

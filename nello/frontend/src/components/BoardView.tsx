@@ -76,7 +76,29 @@ export function BoardView() {
       if (overData?.type === 'card') {
         toListId = overData.listId as string;
         const targetList = state.lists[toListId];
-        index = targetList ? targetList.cardIds.indexOf(over.id as string) : 0;
+        const overIndex = targetList ? targetList.cardIds.indexOf(over.id as string) : 0;
+
+        // Determine whether the pointer is below the target card's midpoint,
+        // so a drop past the last card lands at the end (not penultimate).
+        const activeRect = active.rect.current.translated;
+        const overRect = over.rect;
+        const isBelow = !!(
+          activeRect &&
+          overRect &&
+          activeRect.top + activeRect.height / 2 > overRect.top + overRect.height / 2
+        );
+
+        // Insertion point in the original (pre-removal) list order.
+        let rawIndex = overIndex + (isBelow ? 1 : 0);
+
+        // For same-list moves the reducer first removes the card, shifting
+        // every later position down by one; compensate here.
+        if (fromListId === toListId) {
+          const fromIndex = targetList ? targetList.cardIds.indexOf(cardId) : -1;
+          if (fromIndex !== -1 && fromIndex < rawIndex) rawIndex -= 1;
+        }
+
+        index = rawIndex;
       } else if (overData?.type === 'list') {
         // Dropped onto the list droppable zone (e.g., empty list)
         toListId = overData.listId as string;

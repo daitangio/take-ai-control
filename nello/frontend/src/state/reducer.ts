@@ -86,6 +86,44 @@ export function reducer(state: State, action: Action): State {
       return { ...state, activeBoardId: action.boardId };
     }
 
+    case 'board/reload': {
+      const board = state.boards[action.boardId];
+      if (!board) return state;
+
+      // Remove the board's existing lists and their cards
+      const nextLists = { ...state.lists };
+      const nextCards = { ...state.cards };
+      for (const listId of board.listIds) {
+        const list = state.lists[listId];
+        if (list) {
+          for (const cardId of list.cardIds) delete nextCards[cardId];
+        }
+        delete nextLists[listId];
+      }
+
+      // Insert the fresh lists and cards
+      const nextListIds: string[] = [];
+      for (const list of action.lists) {
+        const cardIds: string[] = [];
+        for (const card of list.cards) {
+          nextCards[card.id] = card;
+          cardIds.push(card.id);
+        }
+        nextLists[list.id] = { id: list.id, name: list.name, cardIds };
+        nextListIds.push(list.id);
+      }
+
+      return {
+        ...state,
+        lists: nextLists,
+        cards: nextCards,
+        boards: {
+          ...state.boards,
+          [action.boardId]: { ...board, listIds: nextListIds },
+        },
+      };
+    }
+
     // ── List ────────────────────────────────
     case 'list/create': {
       if (isBlank(action.name)) return state;
