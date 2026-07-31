@@ -1,11 +1,12 @@
 #!/bin/sh
 set -e
+cd $(dirname $0)
 echo "Dev mode (Node.js/Fastify)"
 if [ ! -f nello.db ]; then
     echo "============"
+    ./jjMigrator.sh
     echo "Creating demo data"
-    sqlite3 -batch -init db-init/00-demo-data.sql nello.db '.quit'
-    ## sqlite3 -batch -init db-init/20*.sql nello.db '.quit'
+    sqlite3 -batch -init ./db-demo-data/00-demo-data.sql nello.db '.quit'
 fi
 # Archive old logs
 if [ -f be.log ]; then

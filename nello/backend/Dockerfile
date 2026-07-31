@@ -15,4 +15,7 @@ COPY --from=build /app/nello/dist dist
 COPY --from=build /app/nello/node_modules node_modules
 COPY package.json ./
 # /app/nello/nello.db
-CMD node dist/index.js
+RUN apt update && apt install -y sqlite3
+COPY backendRunner.sh jjMigrator.sh .
+COPY db-init db-init
+CMD ./backendRunner.sh

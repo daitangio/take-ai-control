@@ -1,0 +1,781 @@
+{
+  "dialect": "sqlite",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevIds": [],
+  "version": "7",
+  "ddl": [
+    {
+      "name": "user",
+      "entityType": "tables"
+    },
+    {
+      "name": "board",
+      "entityType": "tables"
+    },
+    {
+      "name": "list",
+      "entityType": "tables"
+    },
+    {
+      "name": "card",
+      "entityType": "tables"
+    },
+    {
+      "name": "board_member",
+      "entityType": "tables"
+    },
+    {
+      "name": "list_archive",
+      "entityType": "tables"
+    },
+    {
+      "name": "card_archive",
+      "entityType": "tables"
+    },
+    {
+      "name": "card_member",
+      "entityType": "tables"
+    },
+    {
+      "name": "register_key",
+      "entityType": "tables"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "board"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "list"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "card"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "board_id",
+      "entityType": "columns",
+      "table": "board_member"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "list_id",
+      "entityType": "columns",
+      "table": "list_archive"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "card_id",
+      "entityType": "columns",
+      "table": "card_archive"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "card_id",
+      "entityType": "columns",
+      "table": "card_member"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "register_key"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "email",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "user_id",
+      "entityType": "columns",
+      "table": "board"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "board_id",
+      "entityType": "columns",
+      "table": "list"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "list_id",
+      "entityType": "columns",
+      "table": "card"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "user_id",
+      "entityType": "columns",
+      "table": "board_member"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "board_id",
+      "entityType": "columns",
+      "table": "list_archive"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "list_id",
+      "entityType": "columns",
+      "table": "card_archive"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "user_id",
+      "entityType": "columns",
+      "table": "card_member"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "key_pass",
+      "entityType": "columns",
+      "table": "register_key"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "password",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "name",
+      "entityType": "columns",
+      "table": "board"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "name",
+      "entityType": "columns",
+      "table": "list"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "title",
+      "entityType": "columns",
+      "table": "card"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "datetime('now')",
+      "generated": null,
+      "name": "added_at",
+      "entityType": "columns",
+      "table": "board_member"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "archived_by",
+      "entityType": "columns",
+      "table": "list_archive"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "archived_by",
+      "entityType": "columns",
+      "table": "card_archive"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "datetime('now')",
+      "generated": null,
+      "name": "assigned_at",
+      "entityType": "columns",
+      "table": "card_member"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "email_regexp",
+      "entityType": "columns",
+      "table": "register_key"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "datetime('now')",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "datetime('now')",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "board"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "name": "position",
+      "entityType": "columns",
+      "table": "list"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "''",
+      "generated": null,
+      "name": "description",
+      "entityType": "columns",
+      "table": "card"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "datetime('now')",
+      "generated": null,
+      "name": "archived_at",
+      "entityType": "columns",
+      "table": "list_archive"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "datetime('now')",
+      "generated": null,
+      "name": "archived_at",
+      "entityType": "columns",
+      "table": "card_archive"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "assigned_by",
+      "entityType": "columns",
+      "table": "card_member"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "avail_count",
+      "entityType": "columns",
+      "table": "register_key"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "datetime('now')",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "list"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "name": "position",
+      "entityType": "columns",
+      "table": "card"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "datetime('now')",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "register_key"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "datetime('now')",
+      "generated": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "table": "card"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "modified_by",
+      "entityType": "columns",
+      "table": "card"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "due_date",
+      "entityType": "columns",
+      "table": "card"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "color",
+      "entityType": "columns",
+      "table": "card"
+    },
+    {
+      "columns": [
+        "user_id"
+      ],
+      "tableTo": "user",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": true,
+      "name": "fk_board_user_id_user_id_fk",
+      "entityType": "fks",
+      "table": "board"
+    },
+    {
+      "columns": [
+        "board_id"
+      ],
+      "tableTo": "board",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": true,
+      "name": "fk_list_board_id_board_id_fk",
+      "entityType": "fks",
+      "table": "list"
+    },
+    {
+      "columns": [
+        "list_id"
+      ],
+      "tableTo": "list",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": true,
+      "name": "fk_card_list_id_list_id_fk",
+      "entityType": "fks",
+      "table": "card"
+    },
+    {
+      "columns": [
+        "user_id"
+      ],
+      "tableTo": "user",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": true,
+      "name": "fk_board_member_user_id_user_id_fk",
+      "entityType": "fks",
+      "table": "board_member"
+    },
+    {
+      "columns": [
+        "board_id"
+      ],
+      "tableTo": "board",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": true,
+      "name": "fk_board_member_board_id_board_id_fk",
+      "entityType": "fks",
+      "table": "board_member"
+    },
+    {
+      "columns": [
+        "archived_by"
+      ],
+      "tableTo": "user",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "SET NULL",
+      "nameExplicit": true,
+      "name": "fk_list_archive_archived_by_user_id_fk",
+      "entityType": "fks",
+      "table": "list_archive"
+    },
+    {
+      "columns": [
+        "board_id"
+      ],
+      "tableTo": "board",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": true,
+      "name": "fk_list_archive_board_id_board_id_fk",
+      "entityType": "fks",
+      "table": "list_archive"
+    },
+    {
+      "columns": [
+        "list_id"
+      ],
+      "tableTo": "list",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": true,
+      "name": "fk_list_archive_list_id_list_id_fk",
+      "entityType": "fks",
+      "table": "list_archive"
+    },
+    {
+      "columns": [
+        "archived_by"
+      ],
+      "tableTo": "user",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "SET NULL",
+      "nameExplicit": true,
+      "name": "fk_card_archive_archived_by_user_id_fk",
+      "entityType": "fks",
+      "table": "card_archive"
+    },
+    {
+      "columns": [
+        "list_id"
+      ],
+      "tableTo": "list",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": true,
+      "name": "fk_card_archive_list_id_list_id_fk",
+      "entityType": "fks",
+      "table": "card_archive"
+    },
+    {
+      "columns": [
+        "card_id"
+      ],
+      "tableTo": "card",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": true,
+      "name": "fk_card_archive_card_id_card_id_fk",
+      "entityType": "fks",
+      "table": "card_archive"
+    },
+    {
+      "columns": [
+        "assigned_by"
+      ],
+      "tableTo": "user",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "SET NULL",
+      "nameExplicit": true,
+      "name": "fk_card_member_assigned_by_user_id_fk",
+      "entityType": "fks",
+      "table": "card_member"
+    },
+    {
+      "columns": [
+        "user_id"
+      ],
+      "tableTo": "user",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": true,
+      "name": "fk_card_member_user_id_user_id_fk",
+      "entityType": "fks",
+      "table": "card_member"
+    },
+    {
+      "columns": [
+        "card_id"
+      ],
+      "tableTo": "card",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": true,
+      "name": "fk_card_member_card_id_card_id_fk",
+      "entityType": "fks",
+      "table": "card_member"
+    },
+    {
+      "columns": [
+        "board_id",
+        "user_id"
+      ],
+      "nameExplicit": false,
+      "name": "board_member_pk",
+      "entityType": "pks",
+      "table": "board_member"
+    },
+    {
+      "columns": [
+        "card_id",
+        "user_id"
+      ],
+      "nameExplicit": false,
+      "name": "card_member_pk",
+      "entityType": "pks",
+      "table": "card_member"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": true,
+      "name": "user_pk",
+      "table": "user",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": true,
+      "name": "board_pk",
+      "table": "board",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": true,
+      "name": "list_pk",
+      "table": "list",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": true,
+      "name": "card_pk",
+      "table": "card",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "list_id"
+      ],
+      "nameExplicit": true,
+      "name": "list_archive_pk",
+      "table": "list_archive",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "card_id"
+      ],
+      "nameExplicit": true,
+      "name": "card_archive_pk",
+      "table": "card_archive",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": true,
+      "name": "register_key_pk",
+      "table": "register_key",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        {
+          "value": "email",
+          "isExpression": false
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "origin": "manual",
+      "name": "user_email_unique",
+      "entityType": "indexes",
+      "table": "user"
+    },
+    {
+      "columns": [
+        "email"
+      ],
+      "nameExplicit": false,
+      "name": "user_email_unique",
+      "entityType": "uniques",
+      "table": "user"
+    }
+  ],
+  "renames": []
+}
