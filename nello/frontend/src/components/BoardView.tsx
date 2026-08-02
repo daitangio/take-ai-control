@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   DndContext,
   DragOverlay,
+  closestCenter,
   closestCorners,
   type DragStartEvent,
   type DragEndEvent,
@@ -74,6 +75,8 @@ export function BoardView() {
       let index: number;
 
       if (overData?.type === 'card') {
+        console.log("Card move:");
+        console.log(overData);
         toListId = overData.listId as string;
         const targetList = state.lists[toListId];
         const overIndex = targetList ? targetList.cardIds.indexOf(over.id as string) : 0;
@@ -114,9 +117,11 @@ export function BoardView() {
         fromList &&
         fromList.cardIds.indexOf(cardId) === index
       ) {
+        console.log("Same index, no move")
         return;
       }
 
+      console.log("Move:"+cardId+" to index:"+index)
       apiDispatch({
         type: 'card/move',
         cardId,
