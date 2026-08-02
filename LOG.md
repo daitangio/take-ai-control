@@ -161,3 +161,9 @@ Model: Copilot CLI / Claude Opus 4.8 (fast mode) (model ID: claude-opus-4.8-fast
 - Remaining: archive the change when approved; optional manual check that whole-header drag no longer works and that keyboard drag (space/enter via @dnd-kit) reorders.
 Model: Claude Code / GLM-5.2 (model ID: zai-org/GLM-5.2)
 
+
+## WIP: Archive drag-drop-list-reorder
+
+- 2026-08-02: Synced the `list-management` delta spec into the main catalog (modified `List reordering` requirement: drag-handle initiated dragging + "Header controls do not start a drag" scenario; added new `List drag handle` requirement with three scenarios). Validated both spec and change. Archived the completed change to `openspec/changes/archive/2026-08-02-drag-drop-list-reorder/`. Nothing remains.
+Model: Claude Code / GLM-5.2 (model ID: zai-org/GLM-5.2)
+
