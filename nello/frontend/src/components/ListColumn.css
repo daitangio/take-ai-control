@@ -18,6 +18,43 @@
   gap: 6px;
 }
 
+.list-drag-handle {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  color: var(--color-text-secondary);
+  cursor: grab;
+  touch-action: none;
+}
+
+.list-drag-handle:hover,
+.list-drag-handle:focus-visible {
+  background: var(--color-hover);
+  color: var(--color-text);
+}
+
+.list-drag-handle:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+
+.list-drag-handle:active,
+.list-drag-handle--dragging {
+  cursor: grabbing;
+}
+
+.list-drag-handle__grip {
+  display: block;
+  pointer-events: none;
+}
+
 .list-name {
   flex: 1;
   font-size: 14px;

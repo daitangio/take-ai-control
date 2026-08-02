@@ -118,3 +118,49 @@ describe('ListColumn action menu', () => {
     expect(dndMocks.onPointerDown).not.toHaveBeenCalled();
   });
 });
+
+describe('ListColumn drag handle', () => {
+  it('renders exactly one drag handle per visible list', () => {
+    mockState.boards = {
+      'b-1': { id: 'b-1', name: 'Board', listIds: ['l-1', 'l-2'] },
+    };
+    mockState.lists = {
+      'l-1': { id: 'l-1', name: 'Todo', cardIds: [] },
+      'l-2': { id: 'l-2', name: 'Done', cardIds: [] },
+    };
+
+    render(
+      <>
+        <ListColumn listId="l-1" boardId="b-1" onCardClick={() => {}} onCardMembersClick={() => {}} onCardArchived={() => {}} />
+        <ListColumn listId="l-2" boardId="b-1" onCardClick={() => {}} onCardMembersClick={() => {}} onCardArchived={() => {}} />
+      </>,
+    );
+
+    const handles = screen.getAllByRole('button', { name: 'Drag list' });
+    expect(handles).toHaveLength(2);
+  });
+
+  it('does not start a list drag from the title or the action menu button', async () => {
+    const user = userEvent.setup();
+    render(<ListColumn listId="l-1" boardId="b-1" onCardClick={() => {}} onCardMembersClick={() => {}} onCardArchived={() => {}} />);
+
+    // Interacting with the static title (triggers rename mode) must not start a list drag.
+    await user.click(screen.getByText('Todo'));
+    expect(dndMocks.onPointerDown).not.toHaveBeenCalled();
+
+    // Interacting with the `...` action menu button must not start a list drag either.
+    await user.click(screen.getByRole('button', { name: 'List actions for Todo' }));
+    expect(dndMocks.onPointerDown).not.toHaveBeenCalled();
+  });
+
+  it('exposes an accessible label and is keyboard-focusable', async () => {
+    const user = userEvent.setup();
+    render(<ListColumn listId="l-1" boardId="b-1" onCardClick={() => {}} onCardMembersClick={() => {}} onCardArchived={() => {}} />);
+
+    const handle = screen.getByRole('button', { name: 'Drag list' });
+    expect(handle).toBeDefined();
+
+    await user.tab();
+    expect(document.activeElement).toBe(handle);
+  });
+});

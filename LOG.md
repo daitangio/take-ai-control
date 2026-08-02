@@ -149,3 +149,15 @@ Model: Codex / GPT-5
 - 2026-07-30: Fixed `handleDragEnd` in `nello/frontend/src/components/BoardView.tsx`. Dropping a card past the last card landed it penultimate because the target index used `indexOf(over.id)` (insert-before). Now computes `isBelow` from the dragged rect vs the over-card midpoint (insert after when below), and for same-list moves subtracts 1 when the source index precedes the target to compensate for the reducer's remove-then-splice. Cross-list drops at the end now land last.
 - Verified `rtk npm run build` and 101 frontend tests pass. Manual drag verification pending.
 Model: Copilot CLI / Claude Opus 4.8 (fast mode) (model ID: claude-opus-4.8-fast)
+
+## WIP: Drag-Drop List Reorder Handle
+
+- 2026-08-02: Implemented `drag-drop-list-reorder` via OpenSpec apply (schema: spec-driven). 15/15 tasks complete.
+- Frontend: in `nello/frontend/src/components/ListColumn.tsx` added a `<button className="list-drag-handle">` (SVG grip glyph, `aria-label="Drag list"`) at the leading edge of `.list-header`. Moved `useSortable` `listeners` + `attributes` off the `.list-header` / outer `.list-column` onto the handle only, so the title rename and `...` action menu no longer start a list drag. Removed the now-unneeded `stopPropagation` suppression calls on the title span, rename `<input>`, menu button, and menu popup.
+- Styling: added `.list-drag-handle` rules in `ListColumn.css` (24px hit target, `grab`/`grabbing` cursor via `isDragging`, hover/`:focus-visible` affordance). Existing flex `gap` layout accommodates the new fixed-width child without restructuring.
+- Tests: added 3 `ListColumn.test.tsx` cases (one handle per visible list with 2 lists; title + `...` button do not call drag `onPointerDown`; handle is labeled and reachable via `user.tab()`). 104 frontend tests pass; `rtk npm run build` succeeds.
+- Side fix: removed unused `closestCenter` import in `BoardView.tsx` that blocked `tsc -b`.
+- Verified: `rtk openspec validate --type change drag-drop-list-reorder` -> valid.
+- Remaining: archive the change when approved; optional manual check that whole-header drag no longer works and that keyboard drag (space/enter via @dnd-kit) reorders.
+Model: Claude Code / GLM-5.2 (model ID: zai-org/GLM-5.2)
+

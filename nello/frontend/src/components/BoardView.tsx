@@ -2,7 +2,6 @@ import { useState } from 'react';
 import {
   DndContext,
   DragOverlay,
-  closestCenter,
   closestCorners,
   type DragStartEvent,
   type DragEndEvent,

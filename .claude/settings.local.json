@@ -39,7 +39,14 @@
       "Bash(rtk sed *)",
       "Bash(rtk ./node_modules/.bin/vitest run)",
       "Bash(python3 -c \"import json,sys;d=json.load\\(sys.stdin\\);print\\('progress:',d['progress']\\);print\\('state:',d['state']\\)\")",
-      "Bash(python3 -c \"import json,sys;d=json.load\\(sys.stdin\\);print\\('changeDir:',d['changeDir']\\);print\\('specs paths:',d['artifactPaths']['specs']['existingOutputPaths']\\)\")"
+      "Bash(python3 -c \"import json,sys;d=json.load\\(sys.stdin\\);print\\('changeDir:',d['changeDir']\\);print\\('specs paths:',d['artifactPaths']['specs']['existingOutputPaths']\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('applyRequires:',d['applyRequirements']\\); [print\\(a['id'],a['status']\\) for a in d['artifacts']]\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('applyRequires:',d.get\\('applyRequires'\\)\\); [print\\(a['id'],a['status']\\) for a in d['artifacts']]\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('=== INSTRUCTION ==='\\); print\\(d['instruction']\\); print\\('=== DEPS ===', d['dependencies']\\); print\\('=== OUTPUT ===', d['resolvedOutputPath']\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d['template']\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('=== INSTRUCTION ==='\\); print\\(d['instruction']\\); print\\('=== OUTPUT ===', d['resolvedOutputPath']\\); print\\('=== TEMPLATE ==='\\); print\\(d['template']\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('applyRequires:',d.get\\('applyRequires'\\)\\); print\\('isComplete:',d.get\\('isComplete'\\)\\); [print\\(a['id'],a['status']\\) for a in d['artifacts']]\")",
+      "Bash(rtk git *)"
     ]
   }
 }

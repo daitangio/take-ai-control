@@ -125,9 +125,31 @@ export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, o
       ref={setSortableRef}
       className="list-column"
       style={style}
-      {...attributes}
     >
-      <div className="list-header" {...listeners}>
+      <div className="list-header">
+        <button
+          type="button"
+          className={`list-drag-handle${isDragging ? ' list-drag-handle--dragging' : ''}`}
+          aria-label="Drag list"
+          {...attributes}
+          {...listeners}
+        >
+          <svg
+            className="list-drag-handle__grip"
+            aria-hidden="true"
+            width="10"
+            height="14"
+            viewBox="0 0 10 14"
+            fill="currentColor"
+          >
+            <circle cx="2" cy="2" r="1.4" />
+            <circle cx="2" cy="7" r="1.4" />
+            <circle cx="2" cy="12" r="1.4" />
+            <circle cx="8" cy="2" r="1.4" />
+            <circle cx="8" cy="7" r="1.4" />
+            <circle cx="8" cy="12" r="1.4" />
+          </svg>
+        </button>
         {renaming ? (
           <input
             className="list-name"
@@ -135,22 +157,18 @@ export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, o
             onChange={(e) => setRenameName(e.target.value)}
             onBlur={handleRename}
             onKeyDown={(e) => {
-              e.stopPropagation();
               if (e.key === 'Enter') handleRename();
               if (e.key === 'Escape') {
                 setRenaming(false);
                 setRenameName('');
               }
             }}
-            onPointerDown={(e) => e.stopPropagation()}
-            onClick={(e) => e.stopPropagation()}
             autoFocus
           />
         ) : (
           <span
             className="list-name-static"
-            onClick={(e) => {
-              e.stopPropagation();
+            onClick={() => {
               setRenameName(list.name);
               setRenaming(true);
             }}
@@ -166,13 +184,8 @@ export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, o
             aria-label={`List actions for ${list.name}`}
             aria-haspopup="menu"
             aria-expanded={menuOpen}
-            onPointerDown={(e) => e.stopPropagation()}
-            onClick={(e) => {
-              e.stopPropagation();
-              setMenuOpen((open) => !open);
-            }}
+            onClick={() => setMenuOpen((open) => !open)}
             onKeyDown={(e) => {
-              e.stopPropagation();
               if (e.key === 'Escape') setMenuOpen(false);
             }}
           >
@@ -183,10 +196,7 @@ export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, o
               className="list-menu-popup"
               role="menu"
               aria-label={`Actions for ${list.name}`}
-              onPointerDown={(e) => e.stopPropagation()}
-              onClick={(e) => e.stopPropagation()}
               onKeyDown={(e) => {
-                e.stopPropagation();
                 if (e.key === 'Escape') setMenuOpen(false);
               }}
             >
