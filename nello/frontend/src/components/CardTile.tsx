@@ -15,7 +15,8 @@ const COLOR_MAP: Record<string, string> = {
   gray: '#e5e7eb',
 };
 
-const COLOR_OPTIONS = ['red', 'orange', 'green', 'blue', 'violet', 'gray'] as const;
+// GG Semaphore like order
+const COLOR_OPTIONS = [ 'green', 'orange','red', 'blue', 'violet', 'gray'] as const;
 
 interface Props {
   cardId: string;
