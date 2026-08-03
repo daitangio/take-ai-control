@@ -46,7 +46,11 @@
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d['template']\\)\")",
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('=== INSTRUCTION ==='\\); print\\(d['instruction']\\); print\\('=== OUTPUT ===', d['resolvedOutputPath']\\); print\\('=== TEMPLATE ==='\\); print\\(d['template']\\)\")",
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('applyRequires:',d.get\\('applyRequires'\\)\\); print\\('isComplete:',d.get\\('isComplete'\\)\\); [print\\(a['id'],a['status']\\) for a in d['artifacts']]\")",
-      "Bash(rtk git *)"
+      "Bash(rtk git *)",
+      "Skill(openspec-propose)",
+      "WebFetch(domain:stackoverflow.com)",
+      "Skill(openspec-apply-change)",
+      "Bash(npx --package=typescript tsc --noEmit)"
     ]
   }
 }

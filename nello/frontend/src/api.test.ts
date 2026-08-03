@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { archiveCard, archiveList, addCardMember, getBoards, getToken, removeCardMember, setToken, setUnauthorizedHandler, updateCard } from './api';
+import { archiveCard, archiveList, addCardMember, getBoards, getToken, register, removeCardMember, setToken, setUnauthorizedHandler, updateCard } from './api';
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -98,5 +98,29 @@ describe('card API', () => {
     expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({ userId: 'u-2' });
     expect(fetchMock.mock.calls[1][0]).toBe('/api/cards/card-1/members/u-2');
     expect(fetchMock.mock.calls[1][1].method).toBe('DELETE');
+  });
+});
+
+describe('register API', () => {
+  it('sends email, keyPass, and password in the request body', async () => {
+    const tokenResponse = { access_token: 'new-token', token_type: 'bearer' };
+    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify(tokenResponse), { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await register('new@acme.com', 'INVITE-2026', 'securepassword123');
+
+    expect(fetchMock).toHaveBeenCalledWith('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'new@acme.com', keyPass: 'INVITE-2026', password: 'securepassword123' }),
+    });
+  });
+
+  it('returns the token response on success', async () => {
+    const tokenResponse = { access_token: 'new-token', token_type: 'bearer' };
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify(tokenResponse), { status: 200 })));
+
+    const result = await register('test@example.com', 'KEY', 'password123456');
+    expect(result).toEqual(tokenResponse);
   });
 });

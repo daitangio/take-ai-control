@@ -3,6 +3,8 @@ import {
   buildTestApp,
   authHeadersFor,
   registerUser,
+  insertRegisterKey,
+  raw,
   type TestApp,
 } from "./helpers.js";
 
@@ -151,5 +153,115 @@ describe("Password Change", () => {
       payload: { currentPassword: "secret123", newPassword: "newlongpassword123" },
     });
     expect(res.statusCode).toBe(401);
+  });
+});
+
+describe("Registration", () => {
+  let env: TestApp;
+
+  beforeEach(async () => {
+    env = await buildTestApp();
+    await insertRegisterKey(env.db, "INVITE-2026", ".*@acme\\.com", 5);
+  });
+
+  it("registers successfully with valid invitation key and matching email", async () => {
+    const res = await env.app.inject({
+      method: "POST",
+      url: "/api/auth/register",
+      payload: { email: "new@acme.com", keyPass: "INVITE-2026", password: "securepassword123" },
+    });
+    expect(res.statusCode).toBe(200);
+    const data = JSON.parse(res.body);
+    expect(data.access_token).toBeTruthy();
+    expect(data.token_type).toBe("bearer");
+  });
+
+  it("rejects invalid invitation key with 401", async () => {
+    const res = await env.app.inject({
+      method: "POST",
+      url: "/api/auth/register",
+      payload: { email: "new@acme.com", keyPass: "WRONG-KEY", password: "securepassword123" },
+    });
+    expect(res.statusCode).toBe(401);
+    const data = JSON.parse(res.body);
+    expect(data.detail).toBe("Invalid or exhausted invitation key");
+  });
+
+  it("rejects exhausted invitation key with 401", async () => {
+    await insertRegisterKey(env.db, "EXHAUSTED", ".*", 0);
+    const res = await env.app.inject({
+      method: "POST",
+      url: "/api/auth/register",
+      payload: { email: "any@test.com", keyPass: "EXHAUSTED", password: "securepassword123" },
+    });
+    expect(res.statusCode).toBe(401);
+    expect(JSON.parse(res.body).detail).toBe("Invalid or exhausted invitation key");
+  });
+
+  it("rejects email that does not match key regexp with 401", async () => {
+    const res = await env.app.inject({
+      method: "POST",
+      url: "/api/auth/register",
+      payload: { email: "outsider@gmail.com", keyPass: "INVITE-2026", password: "securepassword123" },
+    });
+    expect(res.statusCode).toBe(401);
+    expect(JSON.parse(res.body).detail).toBe("Email not eligible for this invitation key");
+  });
+
+  it("rejects duplicate email with 409", async () => {
+    // First registration
+    await env.app.inject({
+      method: "POST",
+      url: "/api/auth/register",
+      payload: { email: "dup@acme.com", keyPass: "INVITE-2026", password: "securepassword123" },
+    });
+    // Second registration with same email
+    const res = await env.app.inject({
+      method: "POST",
+      url: "/api/auth/register",
+      payload: { email: "dup@acme.com", keyPass: "INVITE-2026", password: "securepassword123" },
+    });
+    expect(res.statusCode).toBe(409);
+    expect(JSON.parse(res.body).detail).toBe("Email already registered");
+  });
+
+  it("rejects short password with 422", async () => {
+    const res = await env.app.inject({
+      method: "POST",
+      url: "/api/auth/register",
+      payload: { email: "new@acme.com", keyPass: "INVITE-2026", password: "short" },
+    });
+    expect(res.statusCode).toBe(422);
+  });
+
+  it("rejects missing fields with 422", async () => {
+    const res = await env.app.inject({
+      method: "POST",
+      url: "/api/auth/register",
+      payload: { email: "new@acme.com" },
+    });
+    expect(res.statusCode).toBe(422);
+  });
+
+  it("accepts any email when regexp is wildcard", async () => {
+    await insertRegisterKey(env.db, "WILDCARD", ".*", 3);
+    const res = await env.app.inject({
+      method: "POST",
+      url: "/api/auth/register",
+      payload: { email: "anyone@gmail.com", keyPass: "WILDCARD", password: "securepassword123" },
+    });
+    expect(res.statusCode).toBe(200);
+  });
+
+  it("decrements avail_count after successful registration", async () => {
+    const res = await env.app.inject({
+      method: "POST",
+      url: "/api/auth/register",
+      payload: { email: "counter@acme.com", keyPass: "INVITE-2026", password: "securepassword123" },
+    });
+    expect(res.statusCode).toBe(200);
+
+    const rows = await raw(env.db, "SELECT avail_count FROM register_key WHERE key_pass = ?", ["INVITE-2026"]);
+    expect(rows[0].avail_count).toBe(4);
   });
 });

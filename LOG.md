@@ -9,3 +9,14 @@
 - Nothing remaining for this change.
 Model: Codex / GPT-5
 
+## Invitation-Key Registration (in progress)
+
+- 2026-08-03: Implemented invitation-key registration feature (change: `invitation-key-register`).
+  - Backend: Added UNIQUE on `register_key.key_pass`, extracted `validatePassword()`, added `POST /api/auth/register` with race-safe decrement, regexp matching in TypeScript.
+  - Backend tests: 9 new registration tests, all 21 auth tests pass.
+  - Frontend: Updated `register()` in api.ts, `AuthContext`, created `RegisterForm.tsx`, added login/register toggle in `AuthGuard` and `LoginForm`.
+  - Frontend tests: 2 new register API tests, 5 RegisterForm component tests, all 113 tests pass.
+  - Build: Clean.
+  - Remaining: Human test (task 10.2) — insert a `register_key` row manually and register through the UI.
+Model: DeepSeek v4 Pro [1m]
+

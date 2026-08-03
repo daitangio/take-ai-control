@@ -88,6 +88,13 @@ const SCHEMA_DDL = [
     assigned_by TEXT REFERENCES user(id) ON DELETE SET NULL,
     PRIMARY KEY (card_id, user_id)
   )`,
+  `CREATE TABLE register_key (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    key_pass      TEXT NOT NULL UNIQUE,
+    email_regexp  TEXT NOT NULL,
+    avail_count   INTEGER NOT NULL,
+    created_at    TEXT NOT NULL DEFAULT (datetime('now'))
+  )`,
 ];
 
 const TABLES = [
@@ -99,6 +106,7 @@ const TABLES = [
   "list",
   "board",
   "user",
+  "register_key",
 ] as const;
 
 let schemaApplied = false;
@@ -218,6 +226,20 @@ export async function rawCount(
   const row = rows[0] ?? {};
   const v = row["count"] ?? row["COUNT(*)"] ?? Object.values(row)[0];
   return Number(v);
+}
+
+/** Insert an invitation key into register_key for tests. */
+export async function insertRegisterKey(
+  db: TestDb,
+  keyPass: string,
+  emailRegexp: string,
+  availCount: number,
+): Promise<void> {
+  await db.insert(schema.registerKey).values({
+    keyPass,
+    emailRegexp,
+    availCount,
+  });
 }
 
 /** Look up a user id by email via raw SQL (mirrors Python `SELECT id FROM user WHERE email = ?`). */

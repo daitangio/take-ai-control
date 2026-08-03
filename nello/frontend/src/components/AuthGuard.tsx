@@ -1,12 +1,17 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { AuthProvider, useAuth } from "../state/AuthContext";
 import { LoginForm } from "./LoginForm";
+import { RegisterForm } from "./RegisterForm";
 
 function Inner({ children }: { children: ReactNode }) {
   const { token } = useAuth();
+  const [mode, setMode] = useState<"login" | "register">("login");
 
   if (!token) {
-    return <LoginForm />;
+    if (mode === "register") {
+      return <RegisterForm onSwitchToLogin={() => setMode("login")} />;
+    }
+    return <LoginForm onSwitchToRegister={() => setMode("register")} />;
   }
 
   return <>{children}</>;

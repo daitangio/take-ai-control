@@ -1,21 +1,20 @@
 import { useState, type FormEvent } from "react";
 import { useAuth } from "../state/AuthContext";
 
-interface LoginFormProps {
-  onSwitchToRegister: () => void;
+interface RegisterFormProps {
+  onSwitchToLogin: () => void;
 }
 
-export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
-  const { login, loading, error } = useAuth();
+export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
+  const { register, loading, error } = useAuth();
   const [email, setEmail] = useState("");
+  const [keyPass, setKeyPass] = useState("");
   const [password, setPassword] = useState("");
-
-  const [toast, _setToast] = useState<string | null>(null);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     try {
-        await login(email, password);
+      await register(email, keyPass, password);
     } catch {
       // Error is already set in AuthContext
     }
@@ -26,15 +25,14 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
       <form className="login-form" onSubmit={handleSubmit}>
         <h2>Nello RuleZ</h2>
         <p className="login-subtitle">
-          "Sign in to your boards"
+          "Create your account"
         </p>
 
-        {toast && <div className="toast">{toast}</div>}
         {error && <div className="login-error">{error}</div>}
 
-        <label htmlFor="login-email">Email</label>
+        <label htmlFor="register-email">Email</label>
         <input
-          id="login-email"
+          id="register-email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -42,25 +40,32 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
           autoFocus
         />
 
-        <label htmlFor="login-password">Password</label>
+        <label htmlFor="register-key">Invitation key</label>
         <input
-          id="login-password"
+          id="register-key"
+          type="text"
+          value={keyPass}
+          onChange={(e) => setKeyPass(e.target.value)}
+          required
+        />
+
+        <label htmlFor="register-password">Password</label>
+        <input
+          id="register-password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          minLength={1}
+          minLength={12}
         />
 
         <button type="submit" disabled={loading}>
-          {loading
-            ? "Please wait..."
-            : "Login"}
+          {loading ? "Please wait..." : "Register"}
         </button>
 
         <p className="login-subtitle">
-          <button type="button" className="login-toggle" onClick={onSwitchToRegister}>
-            Don't have an account? Register
+          <button type="button" className="login-toggle" onClick={onSwitchToLogin}>
+            Already have an account? Login
           </button>
         </p>
       </form>

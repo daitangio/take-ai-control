@@ -69,7 +69,7 @@ export const cardMembers = sqliteTable("card_member", {
 
 export const registerKey = sqliteTable("register_key", {
 	id: integer().primaryKey(),
-	keyPass: text("key_pass").notNull(),
+	keyPass: text("key_pass").notNull().unique(),
 	emailRegexp: text("email_regexp").notNull(),
 	availCount: integer("avail_count").notNull(),
 	createdAt: text("created_at").default(sql`datetime('now')`).notNull(),

@@ -64,10 +64,10 @@ interface TokenResponse {
   token_type: string;
 }
 
-export function register(email: string, password: string) {
+export function register(email: string, keyPass: string, password: string) {
   return fetchWithAuth<TokenResponse>("/auth/register", {
     method: "POST",
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, keyPass, password }),
   });
 }
 
