@@ -8,4 +8,4 @@
 
 - [x] 2.1 Add unit tests for list collision filtering and unchanged card collision handling.
 - [x] 2.2 Run the complete frontend test suite, lint, and production build.
-- [ ] 2.3 In Safari, manually move the last visible list left and right using its drag handle and confirm the order persists.
+- [x] 2.3 In Safari, manually move the last visible list left and right using its drag handle and confirm the order persists.

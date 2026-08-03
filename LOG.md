@@ -180,3 +180,17 @@ Model: Codex / GPT-5
 - Synced the delta into the main `list-management` spec. The `List reordering` requirement now excludes nested card/card-drop targets from list targeting and includes a last-list regression scenario.
 - Validated both the active change and the updated main spec. Remaining: manually verify moving the last list left and right in Safari, then archive the change.
 Model: Codex / GPT-5
+
+## WIP: Archive Fix DnD Single-Board Reload
+
+- 2026-08-03: Synced the `fix-dnd-single-board-reload` delta into the new main `board-data-sync` spec, covering single-board refresh after drag-and-drop, atomic board replacement, and full initial loading.
+- Strict validation passed for both the change and main spec. Archived the completed 8/8-task change at `openspec/changes/archive/2026-08-03-fix-dnd-single-board-reload/`.
+- Nothing remaining for this change.
+Model: Codex / GPT-5
+
+## WIP: Archive Safari List-Drag Targeting Fix
+
+- 2026-08-03: Re-synced `fix-safari-list-drag-targeting`; the operation was idempotent because the main `list-management` spec already exactly contained the modified reorder requirement and Safari nested-target scenario.
+- Strict validation passed for both the change and main spec. Archived the completed 6/6-task change at `openspec/changes/archive/2026-08-03-fix-safari-list-drag-targeting/`.
+- Nothing remaining for this change.
+Model: Codex / GPT-5
