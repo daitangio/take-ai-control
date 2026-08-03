@@ -167,3 +167,16 @@ Model: Claude Code / GLM-5.2 (model ID: zai-org/GLM-5.2)
 - 2026-08-02: Synced the `list-management` delta spec into the main catalog (modified `List reordering` requirement: drag-handle initiated dragging + "Header controls do not start a drag" scenario; added new `List drag handle` requirement with three scenarios). Validated both spec and change. Archived the completed change to `openspec/changes/archive/2026-08-02-drag-drop-list-reorder/`. Nothing remains.
 Model: Claude Code / GLM-5.2 (model ID: zai-org/GLM-5.2)
 
+## WIP: Fix Safari Last-List Dragging
+
+- 2026-08-03: Fixed list reordering when Safari reports a nested card or card-list drop zone as the closest collision target. List drags now consider only sortable columns on the active board, and the drop handler defensively resolves nested targets to their owning list.
+- Added collision-strategy regression tests covering list-target filtering and unchanged card-drop behavior. All 106 frontend tests pass; lint reports only the two pre-existing Fast Refresh warnings.
+- Remaining: manual Safari verification of moving the last list in both directions.
+Model: Codex / GPT-5
+
+## WIP: Sync Safari List-Drag Bugfix Specs
+
+- 2026-08-03: Created OpenSpec change `fix-safari-list-drag-targeting` with proposal, design, `list-management` delta spec, and implementation tasks documenting the completed Safari collision-target fix.
+- Synced the delta into the main `list-management` spec. The `List reordering` requirement now excludes nested card/card-drop targets from list targeting and includes a last-list regression scenario.
+- Validated both the active change and the updated main spec. Remaining: manually verify moving the last list left and right in Safari, then archive the change.
+Model: Codex / GPT-5

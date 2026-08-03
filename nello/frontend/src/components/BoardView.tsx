@@ -2,13 +2,13 @@ import { useState } from 'react';
 import {
   DndContext,
   DragOverlay,
-  closestCorners,
   type DragStartEvent,
   type DragEndEvent,
 } from '@dnd-kit/core';
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 import { useStore } from '../state/StoreContext';
 import { useDndSensors } from '../dnd/useDndSensors';
+import { boardCollisionDetection } from '../dnd/boardCollisionDetection';
 import { ListColumn } from './ListColumn';
 import { CardTile } from './CardTile';
 import { CardModal } from './CardModal';
@@ -139,7 +139,11 @@ export function BoardView() {
       if (!b) return;
 
       const oldIndex = b.listIds.indexOf(listId);
-      const newIndex = b.listIds.indexOf(over.id as string);
+      const overListId =
+        typeof overData?.listId === 'string'
+          ? overData.listId
+          : (over.id as string);
+      const newIndex = b.listIds.indexOf(overListId);
 
       if (oldIndex !== newIndex && newIndex !== -1) {
         const reordered = [...b.listIds];
@@ -188,7 +192,7 @@ export function BoardView() {
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={closestCorners}
+      collisionDetection={boardCollisionDetection}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
