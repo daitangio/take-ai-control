@@ -6,7 +6,7 @@ export const HELP_DISMISSAL_KEY = 'nello:help-dismissed-version';
 const helpItems = [  
   'Nello loves friends: create a shared board by ending its name with $. That suffix is permanent.',
   'On a shared board you own, use the 👤 button to invite or remove members.',
-  'Nello is in beta and it is self explanatory'
+  'Nello is self explanatory'
 ];
 
 function currentHelpIsDismissed() {

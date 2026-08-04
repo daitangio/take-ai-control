@@ -5,6 +5,9 @@ import * as schema from "../src/db/schema.js";
 import { buildApp } from "../src/app.js";
 import type { FastifyInstance } from "fastify";
 import { hashPassword } from "../src/utils/password.js";
+import fs from "fs";
+import path from "path/posix";
+
 
 /**
  * One in-memory libsql client + Drizzle instance per test file. vitest
@@ -28,74 +31,7 @@ export const db: TestDb = new Proxy({} as TestDb, {
   },
 }) as TestDb;
 
-/**
- * Apply the production schema (all 8 tables) to the in-memory database, with
- * foreign keys ON. DDL mirrors src/db/schema.ts / demo-data.sql.
- */
-const SCHEMA_DDL = [
-  `CREATE TABLE user (
-    id          TEXT PRIMARY KEY,
-    email       TEXT UNIQUE NOT NULL,
-    password    TEXT NOT NULL,
-    created_at  TEXT NOT NULL DEFAULT (datetime('now'))
-  )`,
-  `CREATE TABLE board (
-    id          TEXT PRIMARY KEY,
-    user_id     TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
-    name        TEXT NOT NULL,
-    created_at  TEXT NOT NULL DEFAULT (datetime('now'))
-  )`,
-  `CREATE TABLE list (
-    id          TEXT PRIMARY KEY,
-    board_id    TEXT NOT NULL REFERENCES board(id) ON DELETE CASCADE,
-    name        TEXT NOT NULL,
-    position    INTEGER NOT NULL DEFAULT 0,
-    created_at  TEXT NOT NULL DEFAULT (datetime('now'))
-  )`,
-  `CREATE TABLE card (
-    id          TEXT PRIMARY KEY,
-    list_id     TEXT NOT NULL REFERENCES list(id) ON DELETE CASCADE,
-    title       TEXT NOT NULL,
-    description TEXT NOT NULL DEFAULT '',
-    position    INTEGER NOT NULL DEFAULT 0,
-    created_at  TEXT NOT NULL DEFAULT (datetime('now')),
-    modified_by TEXT,
-    due_date    TEXT,
-    color       TEXT
-  )`,
-  `CREATE TABLE board_member (
-    board_id    TEXT NOT NULL REFERENCES board(id) ON DELETE CASCADE,
-    user_id    TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
-    added_at    TEXT NOT NULL DEFAULT (datetime('now')),
-    PRIMARY KEY (board_id, user_id)
-  )`,
-  `CREATE TABLE list_archive (
-    list_id     TEXT PRIMARY KEY REFERENCES list(id) ON DELETE CASCADE,
-    board_id    TEXT NOT NULL REFERENCES board(id) ON DELETE CASCADE,
-    archived_by TEXT REFERENCES user(id) ON DELETE SET NULL,
-    archived_at TEXT NOT NULL DEFAULT (datetime('now'))
-  )`,
-  `CREATE TABLE card_archive (
-    card_id     TEXT PRIMARY KEY REFERENCES card(id) ON DELETE CASCADE,
-    list_id     TEXT NOT NULL REFERENCES list(id) ON DELETE CASCADE,
-    archived_by TEXT REFERENCES user(id) ON DELETE SET NULL,
-    archived_at TEXT NOT NULL DEFAULT (datetime('now'))
-  )`,
-  `CREATE TABLE card_member (
-    card_id     TEXT NOT NULL REFERENCES card(id) ON DELETE CASCADE,
-    user_id     TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
-    assigned_at TEXT NOT NULL DEFAULT (datetime('now')),
-    assigned_by TEXT REFERENCES user(id) ON DELETE SET NULL,
-    PRIMARY KEY (card_id, user_id)
-  )`,
-  `CREATE TABLE register_key (
-    id            INTEGER PRIMARY KEY AUTOINCREMENT,
-    key_pass      TEXT NOT NULL UNIQUE,
-    email_regexp  TEXT NOT NULL,
-    avail_count   INTEGER NOT NULL,
-    created_at    TEXT NOT NULL DEFAULT (datetime('now'))
-  )`,
-];
+
 
 const TABLES = [
   "card_member",
@@ -111,12 +47,28 @@ const TABLES = [
 
 let schemaApplied = false;
 
-/** Create all tables once; call resetTables() before each test for isolation. */
+/** Create all tables once; call resetTables() before each test for isolation. 
+ * GG: To apply the schema we use the migration scripts 
+ */
 export async function ensureSchema(): Promise<void> {
   if (schemaApplied) return;
   const client = dbRef.client;
   await client.execute("PRAGMA foreign_keys = ON");
-  for (const ddl of SCHEMA_DDL) await client.execute(ddl);
+
+  const paths = await fs.promises.readdir("./db-init", { withFileTypes: true});
+  for(const p of paths) {
+      console.debug(`Path ${p.name} Dir:${p.isDirectory()}`);  
+      var ddl=await fs.promises.readFile(path.join(p.parentPath,p.name),'utf-8')
+      /// console.log(ddl)
+      for(const  statement of ddl.split(";")) {
+        if(!statement.trim()){
+          // Skip empty queries and avoid LibsqlError: SQLITE_OK: not an error
+          // error... no comment
+          continue
+        }
+        await client.execute(statement);
+      }
+  }
   schemaApplied = true;
 }
 

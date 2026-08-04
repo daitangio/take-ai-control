@@ -26,7 +26,7 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
       <form className="login-form" onSubmit={handleSubmit}>
         <h2>Nello RuleZ</h2>
         <p className="login-subtitle">
-          "Sign in to your boards"
+          Sign in to your boards
         </p>
 
         {toast && <div className="toast">{toast}</div>}

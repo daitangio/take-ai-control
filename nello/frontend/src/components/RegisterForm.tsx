@@ -25,7 +25,7 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
       <form className="login-form" onSubmit={handleSubmit}>
         <h2>Nello RuleZ</h2>
         <p className="login-subtitle">
-          "Create your account"
+          Create your account
         </p>
 
         {error && <div className="login-error">{error}</div>}
