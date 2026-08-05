@@ -27,3 +27,11 @@ Model: DeepSeek v4 Pro [1m]
 - Added backend tests for 429 and 503 behavior; `rtk npm run build` and `rtk npm test` passed.
 - Manual verification: `loadTest.sh` produced 119 `200` and 31 `429` responses; a temporary unhealthy instance returned `503` on `/api/health`.
 - Model: GPT-5.4 mini [v1.0.78]
+
+## Archive add-ddos-hardening
+
+- 2026-08-05: Archived OpenSpec change `add-ddos-hardening` to `openspec/changes/archive/2026-08-05-add-ddos-hardening/`.
+- Completed pre-archive checks: artifacts all done, tasks all complete (10/10), delta spec sync required and executed.
+- Synced main spec by creating `openspec/specs/backend-abuse-protection/spec.md` with the finalized requirements and scenarios from the change delta.
+- Remaining: none for this archive operation.
+- Model: GPT-5.3-Codex
