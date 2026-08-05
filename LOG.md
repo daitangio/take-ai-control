@@ -20,3 +20,10 @@ Model: Codex / GPT-5
   - Remaining: Human test (task 10.2) — insert a `register_key` row manually and register through the UI.
 Model: DeepSeek v4 Pro [1m]
 
+## Add DDoS Hardening OpenSpec Change
+
+- 2026-08-05: Implemented the OpenSpec change `add-ddos-hardening` for backend abuse protection using only `@fastify/rate-limit` and `@fastify/under-pressure`.
+- Backend now has a global rate limit, stricter auth-route limits, under-pressure shedding, near-threshold warning logs, and a `loadTest.sh` helper.
+- Added backend tests for 429 and 503 behavior; `rtk npm run build` and `rtk npm test` passed.
+- Manual verification: `loadTest.sh` produced 119 `200` and 31 `429` responses; a temporary unhealthy instance returned `503` on `/api/health`.
+- Model: GPT-5.4 mini [v1.0.78]

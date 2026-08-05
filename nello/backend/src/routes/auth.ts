@@ -7,6 +7,20 @@ import { createToken } from "../utils/jwt.js";
 import { authenticate } from "../middleware/auth.js";
 import crypto from "node:crypto";
 
+type RateLimitConfig = {
+  max: number;
+  timeWindow: string | number;
+};
+
+type AuthRoutesOptions = {
+  authRateLimit?: RateLimitConfig;
+};
+
+const DEFAULT_AUTH_RATE_LIMIT: RateLimitConfig = {
+  max: 12,
+  timeWindow: "1 minute",
+};
+
 interface LoginBody {
   email: string;
   password: string;
@@ -23,8 +37,13 @@ interface PasswordChangeBody {
   newPassword?: string;
 }
 
-export default async function authRoutes(app: FastifyInstance) {
-  app.post<{ Body: LoginBody }>("/auth/login", async (request, reply) => {
+export default async function authRoutes(app: FastifyInstance, opts: AuthRoutesOptions = {}) {
+  const authRateLimit = opts.authRateLimit ?? DEFAULT_AUTH_RATE_LIMIT;
+
+  app.post<{ Body: LoginBody }>(
+    "/auth/login",
+    { config: { rateLimit: authRateLimit } },
+    async (request, reply) => {
     const { email, password } = request.body;
 
     if (!email || !password) {
@@ -43,9 +62,13 @@ export default async function authRoutes(app: FastifyInstance) {
 
     const token = createToken(user.id);
     return { access_token: token, token_type: "bearer" };
-  });
+    },
+  );
 
-  app.post<{ Body: RegisterBody }>("/auth/register", async (request, reply) => {
+  app.post<{ Body: RegisterBody }>(
+    "/auth/register",
+    { config: { rateLimit: authRateLimit } },
+    async (request, reply) => {
     const { email, keyPass, password } = request.body;
 
     if (!email || !keyPass || !password) {
@@ -114,9 +137,16 @@ export default async function authRoutes(app: FastifyInstance) {
 
     const token = createToken(userId);
     return { access_token: token, token_type: "bearer" };
-  });
+    },
+  );
 
-  app.put<{ Body: PasswordChangeBody }>("/auth/password", { preHandler: [authenticate] }, async (request, reply) => {
+  app.put<{ Body: PasswordChangeBody }>(
+    "/auth/password",
+    {
+    preHandler: [authenticate],
+    config: { rateLimit: authRateLimit },
+    },
+    async (request, reply) => {
     const { currentPassword, newPassword } = request.body;
     const userId = request.user?.id;
 
@@ -151,6 +181,7 @@ export default async function authRoutes(app: FastifyInstance) {
       .set({ password: newHashedPassword })
       .where(eq(users.id, userId));
 
-    return reply.code(200).send({ detail: "Password updated successfully" });
-  });
+      return reply.code(200).send({ detail: "Password updated successfully" });
+    },
+  );
 }

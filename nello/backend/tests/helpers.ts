@@ -3,6 +3,7 @@ import { createClient, type Client } from "@libsql/client";
 import { drizzle, type LibSQLDatabase } from "drizzle-orm/libsql";
 import * as schema from "../src/db/schema.js";
 import { buildApp } from "../src/app.js";
+import type { BuildAppOptions } from "../src/app.js";
 import type { FastifyInstance } from "fastify";
 import { hashPassword } from "../src/utils/password.js";
 import fs from "fs";
@@ -99,10 +100,10 @@ vi.mock("../src/db/index.js", async () => {
 export type TestApp = { app: FastifyInstance; db: TestDb };
 
 /** Build a fully wired test app against the in-memory db (schema already applied). */
-export async function buildTestApp(): Promise<TestApp> {
+export async function buildTestApp(options: BuildAppOptions = {}): Promise<TestApp> {
   await ensureSchema();
   await resetTables();
-  const app = await buildApp({ logger: false });
+  const app = await buildApp({ logger: false, pressureWarnings: false, ...options });
   return { app, db };
 }
 
