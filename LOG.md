@@ -43,3 +43,25 @@ Model: DeepSeek v4 Pro [1m]
 - Synced main specs by creating `openspec/specs/invitation-registration/spec.md` and updating `openspec/specs/user-auth/spec.md` registration requirement to the invitation-key flow.
 - Remaining: none for this archive operation.
 - Model: GPT-5.3-Codex [v1.0.78]
+
+## add-frontend-multilingual-support (planning ready)
+
+- 2026-08-06: Created OpenSpec change `add-frontend-multilingual-support` with all required planning artifacts completed.
+- Added proposal, design, and tasks plus delta specs for `multilingual-support` (new) and `responsive-user-interface` (modified).
+- Scope includes adding an i18n library, Italian translations, locale persistence/switching, and authoring `nello/frontend/doc/multilingual-support.md` during implementation.
+- Remaining: implementation phase (`/opsx:apply`) and task execution.
+- Model: GPT-5.3-Codex [v1.0.78]
+
+## add-frontend-multilingual-support (updated goals)
+
+- 2026-08-06: Updated planning artifacts to include backend error localization via stable `error_code` values.
+- Revised `proposal.md`, `specs/multilingual-support/spec.md`, `design.md`, and `tasks.md` to cover backend/frontend error-code mapping, tests, and validation.
+- Remaining: add the missing delta spec file for modified capability `backend-api` (deferred in update mode), then run implementation.
+- Model: GPT-5.3-Codex [v1.0.78]
+
+## add-frontend-multilingual-support (coherence follow-up)
+
+- 2026-08-06: Added missing delta spec file `specs/backend-api/spec.md` under the change to align with the newly declared modified capability `backend-api`.
+- Added requirements for stable backend `error_code` responses and contract stability for client localization.
+- Remaining: implementation phase with `/opsx:apply`.
+- Model: GPT-5.3-Codex [v1.0.78]
