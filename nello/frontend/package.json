@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "npm run compile && tsc -b && vite build",
+    "extract": "lingui extract",
+    "compile": "lingui compile",
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run",
@@ -14,10 +16,18 @@
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
+    "@lingui/core": "5.9.5",
+    "@lingui/macro": "5.9.5",
+    "@lingui/react": "5.9.5",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },
   "devDependencies": {
+    "@babel/core": "^7.29.7",
+    "@lingui/babel-plugin-lingui-macro": "5.9.5",
+    "@lingui/cli": "5.9.5",
+    "@lingui/vite-plugin": "5.9.5",
+    "@rolldown/plugin-babel": "^0.2.3",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "@types/node": "^24.13.2",

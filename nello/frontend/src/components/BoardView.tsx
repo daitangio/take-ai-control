@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLingui } from '@lingui/macro';
 import {
   DndContext,
   DragOverlay,
@@ -17,6 +18,7 @@ import { ArchivedItemsDialog } from './ArchivedItemsDialog';
 import './ListColumn.css';
 
 export function BoardView() {
+  const { t } = useLingui();
   const { state, apiDispatch, searchQuery } = useStore();
   const activeBoardId = state.activeBoardId;
   const board = activeBoardId ? state.boards[activeBoardId] : null;
@@ -232,7 +234,7 @@ export function BoardView() {
                     setListName('');
                   }
                 }}
-                placeholder="List name"
+                placeholder={t`List name`}
                 autoFocus
               />
               <div className="add-list-actions">
@@ -241,7 +243,7 @@ export function BoardView() {
                   className="add-list-submit"
                   onClick={handleAddList}
                 >
-                  Add List
+                  {t`Add List`}
                 </button>
                 <button
                   type="button"
@@ -261,7 +263,7 @@ export function BoardView() {
               className="add-list-btn"
               onClick={() => setAddingList(true)}
             >
-              + Add List
+              {t`+ Add List`}
             </button>
           )}
         </div>

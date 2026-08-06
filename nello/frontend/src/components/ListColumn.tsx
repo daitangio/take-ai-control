@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useLingui } from '@lingui/macro';
 import { useSortable } from '@dnd-kit/sortable';
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, onCardArchived, onShowArchived, searchQuery = '' }: Props) {
+  const { t } = useLingui();
   const { state, apiDispatch } = useStore();
   const list = state.lists[listId];
   const [renaming, setRenaming] = useState(false);
@@ -96,7 +98,7 @@ export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, o
   };
 
   const handleArchive = () => {
-    if (!window.confirm(`Archive list "${list.name}"?`)) return;
+    if (!window.confirm(t`Archive list "${list.name}"?`)) return;
     setMenuOpen(false);
     apiDispatch({ type: 'list/archive', listId });
   };
@@ -130,7 +132,7 @@ export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, o
         <button
           type="button"
           className={`list-drag-handle${isDragging ? ' list-drag-handle--dragging' : ''}`}
-          aria-label="Drag list"
+          aria-label={t`Drag list`}
           {...attributes}
           {...listeners}
         >
@@ -181,7 +183,7 @@ export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, o
           <button
             type="button"
             className="list-menu-btn"
-            aria-label={`List actions for ${list.name}`}
+            aria-label={t`List actions for ${list.name}`}
             aria-haspopup="menu"
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((open) => !open)}
@@ -195,7 +197,7 @@ export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, o
             <div
               className="list-menu-popup"
               role="menu"
-              aria-label={`Actions for ${list.name}`}
+              aria-label={t`Actions for ${list.name}`}
               onKeyDown={(e) => {
                 if (e.key === 'Escape') setMenuOpen(false);
               }}
@@ -210,7 +212,7 @@ export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, o
                     onShowArchived(listId, list.name);
                   }}
                 >
-                  Show archived items
+                  {t`Show archived items`}
                 </button>
               )}
               <button
@@ -219,7 +221,7 @@ export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, o
                 className="list-menu-item"
                 onClick={handleArchive}
               >
-                Delete (Archive)
+                {t`Delete (Archive)`}
               </button>
             </div>
           )}
@@ -269,7 +271,7 @@ export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, o
                   setCardTitle('');
                 }
               }}
-              placeholder="Enter card title..."
+              placeholder={t`Enter card title...`}
               autoFocus
             />
             <div className="card-composer-actions">
@@ -278,7 +280,7 @@ export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, o
                 className="card-composer-submit"
                 onClick={() => handleAddCard()}
               >
-                Add Card
+                {t`Add Card`}
               </button>
               <button
                 type="button"
@@ -298,7 +300,7 @@ export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, o
             className="card-composer-btn"
             onClick={() => setAddingCard(true)}
           >
-            + Add Card
+            {t`+ Add Card`}
           </button>
         )}
       </div>

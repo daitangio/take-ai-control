@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { useLingui } from "@lingui/macro";
 import { useAuth } from "../state/AuthContext";
 
 interface LoginFormProps {
@@ -6,6 +7,7 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
+  const { t } = useLingui();
   const { login, loading, error } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,13 +28,13 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
       <form className="login-form" onSubmit={handleSubmit}>
         <h2>Nello RuleZ</h2>
         <p className="login-subtitle">
-          Sign in to your boards
+          {t`Sign in to your boards`}
         </p>
 
         {toast && <div className="toast">{toast}</div>}
         {error && <div className="login-error">{error}</div>}
 
-        <label htmlFor="login-email">Email</label>
+        <label htmlFor="login-email">{t`Email`}</label>
         <input
           id="login-email"
           type="email"
@@ -42,7 +44,7 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
           autoFocus
         />
 
-        <label htmlFor="login-password">Password</label>
+        <label htmlFor="login-password">{t`Password`}</label>
         <input
           id="login-password"
           type="password"
@@ -54,13 +56,13 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
 
         <button type="submit" disabled={loading}>
           {loading
-            ? "Please wait..."
-            : "Login"}
+            ? t`Please wait...`
+            : t`Login`}
         </button>
 
         <p className="login-subtitle">
           <button type="button" className="login-toggle" onClick={onSwitchToRegister}>
-            Don't have an account? Register
+            {t`Don't have an account? Register`}
           </button>
         </p>
       </form>

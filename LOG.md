@@ -43,3 +43,12 @@ Model: DeepSeek v4 Pro [1m]
 - Synced main specs by creating `openspec/specs/invitation-registration/spec.md` and updating `openspec/specs/user-auth/spec.md` registration requirement to the invitation-key flow.
 - Remaining: none for this archive operation.
 - Model: GPT-5.3-Codex [v1.0.78]
+
+## Add Multilingual Support
+
+- 2026-08-06: Implemented OpenSpec change `add-multilingual-support` for the Nello frontend.
+- Added Lingui 5.9.5 with English and Italian catalogs, lazy runtime activation, persisted `nello.locale` preference, and an English/Italian selector in user settings.
+- Migrated user-facing component strings to Lingui macros, translated all 113 catalog messages, and documented the workflow for adding another language.
+- Added i18n test infrastructure and locale persistence/activation coverage; all 115 frontend tests pass and the production build is clean.
+- Remaining: none. The completed change is ready to archive.
+- Model: Codex / GPT-5 [2026-08-06]

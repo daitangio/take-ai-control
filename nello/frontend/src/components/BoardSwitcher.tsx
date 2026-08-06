@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useLingui } from '@lingui/macro';
 import { useStore } from '../state/StoreContext';
 import { MemberDialog } from './MemberDialog';
 import './Board.css';
 
 export function BoardSwitcher() {
+  const { t } = useLingui();
   const { state, apiDispatch, loadBoards } = useStore();
   const boards = Object.values(state.boards);
   const activeId = state.activeBoardId;
@@ -35,7 +37,7 @@ export function BoardSwitcher() {
   };
 
   const handleDelete = (boardId: string, name: string) => {
-    if (window.confirm(`Delete board "${name}" and all its contents?`)) {
+    if (window.confirm(t`Delete board "${name}" and all its contents?`)) {
       apiDispatch({ type: 'board/delete', boardId });
     }
   };
@@ -90,7 +92,7 @@ export function BoardSwitcher() {
                 <button
                   type="button"
                   className="board-tab-delete"
-                  title="Delete board"
+                  title={t`Delete board`}
                   onClick={(e) => {
                     e.stopPropagation();
                     handleDelete(board.id, board.name);
@@ -102,7 +104,7 @@ export function BoardSwitcher() {
               <button
                 type="button"
                 className="board-tab-delete"
-                title="Rename board"
+                title={t`Rename board`}
                 onClick={(e) => {
                   e.stopPropagation();
                   startEditing(board.id, board.name);
@@ -115,7 +117,7 @@ export function BoardSwitcher() {
                 <button
                   type="button"
                   className="board-tab-delete"
-                  title="Manage members"
+                  title={t`Manage members`}
                   onClick={(e) => {
                     e.stopPropagation();
                     setSharingBoardId(board.id);
@@ -143,7 +145,7 @@ export function BoardSwitcher() {
                   setCreateName('');
                 }
               }}
-              placeholder="Board name"
+              placeholder={t`Board name`}
               autoFocus
             />
             <button
@@ -151,7 +153,7 @@ export function BoardSwitcher() {
               className="board-create-submit"
               onClick={handleCreate}
             >
-              Add
+              {t`Add`}
             </button>
             <button
               type="button"
@@ -161,7 +163,7 @@ export function BoardSwitcher() {
                 setCreateName('');
               }}
             >
-              Cancel
+              {t`Cancel`}
             </button>
           </span>
         ) : (
@@ -170,7 +172,7 @@ export function BoardSwitcher() {
             className="board-create-btn"
             onClick={() => setCreating(true)}
           >
-            + New Board
+            {t`+ New Board`}
           </button>
         )}
       </div>

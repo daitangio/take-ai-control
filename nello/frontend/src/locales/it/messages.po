@@ -1,0 +1,497 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-08-06 16:53+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: it\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#. placeholder {0}: selectedIds.size
+#: src/components/ArchivedItemsDialog.tsx:167
+msgid "{0} selected"
+msgstr "{0} selezionate"
+
+#: src/components/CardTile.tsx:297
+msgid "{memberCount} member"
+msgstr "{memberCount} membro"
+
+#: src/components/CardTile.tsx:297
+msgid "{memberCount} members"
+msgstr "{memberCount} membri"
+
+#: src/components/ListColumn.tsx:303
+msgid "+ Add Card"
+msgstr "+ Aggiungi scheda"
+
+#: src/components/BoardView.tsx:266
+msgid "+ Add List"
+msgstr "+ Aggiungi lista"
+
+#: src/components/BoardSwitcher.tsx:175
+msgid "+ New Board"
+msgstr "+ Nuova bacheca"
+
+#. placeholder {0}: card.title
+#. placeholder {0}: list.name
+#: src/components/CardTile.tsx:181
+#: src/components/ListColumn.tsx:200
+msgid "Actions for {0}"
+msgstr "Azioni per {0}"
+
+#: src/components/BoardSwitcher.tsx:156
+#: src/components/CardMemberDialog.tsx:84
+#: src/components/MemberDialog.tsx:140
+msgid "Add"
+msgstr "Aggiungi"
+
+#: src/components/CardModal.tsx:98
+msgid "Add a description..."
+msgstr "Aggiungi una descrizione..."
+
+#: src/components/ListColumn.tsx:283
+msgid "Add Card"
+msgstr "Aggiungi scheda"
+
+#: src/components/BoardView.tsx:246
+msgid "Add List"
+msgstr "Aggiungi lista"
+
+#: src/components/RegisterForm.tsx:70
+msgid "Already have an account? Login"
+msgstr "Hai già un account? Accedi"
+
+#: src/components/UserSettings.tsx:49
+msgid "An error occurred"
+msgstr "Si è verificato un errore"
+
+#: src/components/ArchivedItemsDialog.tsx:188
+msgid "Apply"
+msgstr "Applica"
+
+#. placeholder {0}: selectedIds.size
+#: src/components/ArchivedItemsDialog.tsx:187
+msgid "Apply ({0})"
+msgstr "Applica ({0})"
+
+#: src/components/ArchivedItemsDialog.tsx:185
+msgid "Applying..."
+msgstr "Applicazione..."
+
+#: src/components/CardTile.tsx:265
+msgid "Archive"
+msgstr "Archivia"
+
+#. placeholder {0}: list.name
+#: src/components/ListColumn.tsx:101
+msgid "Archive list \"{0}\"?"
+msgstr "Archiviare la lista \"{0}\"?"
+
+#: src/components/ArchivedItemsDialog.tsx:88
+msgid "Archived Cards"
+msgstr "Schede archiviate"
+
+#: src/components/UserSettings.tsx:113
+msgid "Back to Board"
+msgstr "Torna alla bacheca"
+
+#: src/components/CardTile.tsx:134
+msgid "Blue"
+msgstr "Blu"
+
+#: src/components/BoardSwitcher.tsx:148
+#: src/components/EmptyState.tsx:33
+msgid "Board name"
+msgstr "Nome della bacheca"
+
+#: src/components/BoardSwitcher.tsx:166
+msgid "Cancel"
+msgstr "Annulla"
+
+#. placeholder {0}: card.title
+#: src/components/CardTile.tsx:317
+msgid "Card actions for {0}"
+msgstr "Azioni della scheda {0}"
+
+#: src/components/CardMemberDialog.tsx:66
+msgid "Card members"
+msgstr "Membri della scheda"
+
+#: src/components/CardModal.tsx:89
+msgid "Card title"
+msgstr "Titolo della scheda"
+
+#: src/components/UserSettings.tsx:79
+#: src/components/UserSettings.tsx:110
+msgid "Change Password"
+msgstr "Cambia password"
+
+#: src/components/UserSettings.tsx:110
+msgid "Changing..."
+msgstr "Modifica..."
+
+#: src/components/CardTile.tsx:255
+msgid "Clear"
+msgstr "Cancella"
+
+#: src/components/CardTile.tsx:205
+#: src/components/CardTile.tsx:206
+msgid "Clear color"
+msgstr "Rimuovi colore"
+
+#: src/components/ArchivedItemsDialog.tsx:171
+#: src/components/CardMemberDialog.tsx:98
+#: src/components/CardModal.tsx:133
+#: src/components/MemberDialog.tsx:158
+msgid "Close"
+msgstr "Chiudi"
+
+#: src/components/EmptyState.tsx:41
+msgid "Create Board"
+msgstr "Crea bacheca"
+
+#: src/components/RegisterForm.tsx:30
+msgid "Create your account"
+msgstr "Crea il tuo account"
+
+#: src/components/UserSettings.tsx:85
+msgid "Current Password"
+msgstr "Password attuale"
+
+#: src/components/CardModal.tsx:123
+msgid "Delete"
+msgstr "Elimina"
+
+#: src/components/ListColumn.tsx:224
+msgid "Delete (Archive)"
+msgstr "Elimina (archivia)"
+
+#: src/components/BoardSwitcher.tsx:95
+msgid "Delete board"
+msgstr "Elimina bacheca"
+
+#: src/components/BoardSwitcher.tsx:40
+msgid "Delete board \"{name}\" and all its contents?"
+msgstr "Eliminare la bacheca \"{name}\" e tutto il suo contenuto?"
+
+#. placeholder {0}: card.title
+#: src/components/CardModal.tsx:58
+msgid "Delete card \"{0}\"?"
+msgstr "Eliminare la scheda \"{0}\"?"
+
+#: src/components/CardModal.tsx:92
+msgid "Description"
+msgstr "Descrizione"
+
+#: src/components/CardTile.tsx:222
+msgid "Details"
+msgstr "Dettagli"
+
+#: src/components/HelpBox.tsx:43
+msgid "Dismiss help"
+msgstr "Chiudi guida"
+
+#: src/components/LoginForm.tsx:65
+msgid "Don't have an account? Register"
+msgstr "Non hai un account? Registrati"
+
+#: src/components/ListColumn.tsx:135
+msgid "Drag list"
+msgstr "Trascina lista"
+
+#. placeholder {0}: card.dueDate
+#: src/components/CardTile.tsx:128
+msgid "Due {0}"
+msgstr "Scadenza {0}"
+
+#: src/components/CardModal.tsx:102
+#: src/components/CardTile.tsx:241
+msgid "Due date"
+msgstr "Data di scadenza"
+
+#. placeholder {0}: card.title
+#: src/components/CardTile.tsx:247
+msgid "Due date for {0}"
+msgstr "Data di scadenza per {0}"
+
+#. placeholder {0}: card.modifiedByEmail
+#: src/components/CardTile.tsx:288
+#: src/components/CardTile.tsx:306
+msgid "Edited by {0}"
+msgstr "Modificata da {0}"
+
+#: src/components/LoginForm.tsx:37
+#: src/components/RegisterForm.tsx:35
+msgid "Email"
+msgstr "Email"
+
+#: src/components/MemberDialog.tsx:118
+msgid "Email address"
+msgstr "Indirizzo email"
+
+#: src/components/UserSettings.tsx:72
+msgid "English"
+msgstr "Inglese"
+
+#: src/components/ListColumn.tsx:274
+msgid "Enter card title..."
+msgstr "Inserisci il titolo della scheda..."
+
+#: src/components/MemberDialog.tsx:41
+msgid "Failed to add member"
+msgstr "Impossibile aggiungere il membro"
+
+#: src/components/UserSettings.tsx:42
+msgid "Failed to change password"
+msgstr "Impossibile cambiare la password"
+
+#: src/components/ArchivedItemsDialog.tsx:73
+msgid "Failed to de-archive cards"
+msgstr "Impossibile ripristinare le schede"
+
+#: src/components/ArchivedItemsDialog.tsx:30
+msgid "Failed to load archived cards"
+msgstr "Impossibile caricare le schede archiviate"
+
+#: src/components/CardMemberDialog.tsx:27
+#: src/components/MemberDialog.tsx:24
+msgid "Failed to load members"
+msgstr "Impossibile caricare i membri"
+
+#: src/components/MemberDialog.tsx:50
+msgid "Failed to remove member"
+msgstr "Impossibile rimuovere il membro"
+
+#: src/components/CardMemberDialog.tsx:55
+msgid "Failed to update member"
+msgstr "Impossibile aggiornare il membro"
+
+#: src/App.tsx:49
+msgid "Filter..."
+msgstr "Filtra..."
+
+#. placeholder {0}: state.lists[originalListId]?.name ?? t`Unknown list`
+#: src/components/ArchivedItemsDialog.tsx:123
+msgid "From “{0}”"
+msgstr "Da “{0}”"
+
+#: src/components/CardTile.tsx:136
+msgid "Gray"
+msgstr "Grigio"
+
+#: src/components/CardTile.tsx:131
+msgid "Green"
+msgstr "Verde"
+
+#: src/components/UserSettings.tsx:62
+msgid "Interface language"
+msgstr "Lingua dell'interfaccia"
+
+#: src/components/RegisterForm.tsx:45
+msgid "Invitation key"
+msgstr "Chiave di invito"
+
+#: src/components/UserSettings.tsx:73
+msgid "Italian"
+msgstr "Italiano"
+
+#: src/components/UserSettings.tsx:60
+msgid "Language"
+msgstr "Lingua"
+
+#. placeholder {0}: card.modifiedByEmail || card.modifiedBy
+#: src/components/CardModal.tsx:114
+msgid "Last modified by: {0}"
+msgstr "Ultima modifica di: {0}"
+
+#. placeholder {0}: list.name
+#: src/components/ListColumn.tsx:186
+msgid "List actions for {0}"
+msgstr "Azioni della lista {0}"
+
+#: src/components/BoardView.tsx:237
+msgid "List name"
+msgstr "Nome della lista"
+
+#: src/components/ArchivedItemsDialog.tsx:91
+#: src/components/CardMemberDialog.tsx:68
+#: src/components/MemberDialog.tsx:68
+msgid "Loading..."
+msgstr "Caricamento..."
+
+#: src/components/LoginForm.tsx:60
+msgid "Login"
+msgstr "Accedi"
+
+#: src/components/UserMenu.tsx:42
+msgid "Logout"
+msgstr "Esci"
+
+#: src/components/BoardSwitcher.tsx:120
+msgid "Manage members"
+msgstr "Gestisci membri"
+
+#: src/components/CardTile.tsx:233
+#: src/components/MemberDialog.tsx:65
+msgid "Members"
+msgstr "Membri"
+
+#: src/components/UserSettings.tsx:105
+msgid "Minimum 12 characters"
+msgstr "Minimo 12 caratteri"
+
+#: src/components/HelpBox.tsx:22
+msgid "Nello is self explanatory"
+msgstr "Nello si spiega da solo"
+
+#: src/components/HelpBox.tsx:20
+msgid "Nello loves friends: create a shared board by ending its name with $. That suffix is permanent."
+msgstr "Nello ama gli amici: crea una bacheca condivisa terminando il nome con $. Il suffisso è permanente."
+
+#: src/components/HelpBox.tsx:39
+msgid "Nello non-invasive help"
+msgstr "Guida non invasiva di Nello"
+
+#: src/components/UserSettings.tsx:96
+msgid "New Password"
+msgstr "Nuova password"
+
+#: src/components/UserSettings.tsx:25
+msgid "New password must be at least 12 characters long"
+msgstr "La nuova password deve contenere almeno 12 caratteri"
+
+#: src/components/ArchivedItemsDialog.tsx:93
+msgid "No archived cards."
+msgstr "Nessuna scheda archiviata."
+
+#: src/components/EmptyState.tsx:24
+msgid "No boards yet. Create your first board to get started."
+msgstr "Non ci sono ancora bacheche. Crea la prima per iniziare."
+
+#: src/components/CardMemberDialog.tsx:70
+msgid "No eligible members."
+msgstr "Nessun membro disponibile."
+
+#: src/components/MemberDialog.tsx:73
+msgid "No members yet."
+msgstr "Non ci sono ancora membri."
+
+#: src/components/HelpBox.tsx:21
+msgid "On a shared board you own, use the 👤 button to invite or remove members."
+msgstr "In una bacheca condivisa di tua proprietà, usa il pulsante 👤 per invitare o rimuovere membri."
+
+#: src/components/CardTile.tsx:132
+msgid "Orange"
+msgstr "Arancione"
+
+#: src/components/LoginForm.tsx:47
+#: src/components/RegisterForm.tsx:54
+msgid "Password"
+msgstr "Password"
+
+#: src/components/UserSettings.tsx:45
+msgid "Password changed successfully"
+msgstr "Password modificata correttamente"
+
+#: src/components/LoginForm.tsx:59
+#: src/components/RegisterForm.tsx:65
+msgid "Please wait..."
+msgstr "Attendi..."
+
+#: src/components/CardTile.tsx:133
+msgid "Red"
+msgstr "Rosso"
+
+#: src/components/RegisterForm.tsx:65
+msgid "Register"
+msgstr "Registrati"
+
+#: src/components/CardMemberDialog.tsx:84
+msgid "Remove"
+msgstr "Rimuovi"
+
+#: src/components/MemberDialog.tsx:101
+msgid "Remove member"
+msgstr "Rimuovi membro"
+
+#: src/components/BoardSwitcher.tsx:107
+msgid "Rename board"
+msgstr "Rinomina bacheca"
+
+#: src/components/ArchivedItemsDialog.tsx:110
+msgid "Select all"
+msgstr "Seleziona tutto"
+
+#: src/components/ArchivedItemsDialog.tsx:154
+msgid "Selected cards will be restored to the bottom of “{listName}”."
+msgstr "Le schede selezionate verranno ripristinate in fondo a “{listName}”."
+
+#: src/components/CardTile.tsx:142
+msgid "Set color blue"
+msgstr "Imposta il colore blu"
+
+#: src/components/CardTile.tsx:144
+msgid "Set color gray"
+msgstr "Imposta il colore grigio"
+
+#: src/components/CardTile.tsx:139
+msgid "Set color green"
+msgstr "Imposta il colore verde"
+
+#: src/components/CardTile.tsx:140
+msgid "Set color orange"
+msgstr "Imposta il colore arancione"
+
+#: src/components/CardTile.tsx:141
+msgid "Set color red"
+msgstr "Imposta il colore rosso"
+
+#: src/components/CardTile.tsx:143
+msgid "Set color violet"
+msgstr "Imposta il colore viola"
+
+#: src/components/UserMenu.tsx:39
+msgid "Settings"
+msgstr "Impostazioni"
+
+#: src/components/ListColumn.tsx:215
+msgid "Show archived items"
+msgstr "Mostra elementi archiviati"
+
+#: src/components/LoginForm.tsx:31
+msgid "Sign in to your boards"
+msgstr "Accedi alle tue bacheche"
+
+#: src/components/ArchivedItemsDialog.tsx:123
+msgid "Unknown list"
+msgstr "Lista sconosciuta"
+
+#: src/components/ArchivedItemsDialog.tsx:144
+msgid "Unknown user"
+msgstr "Utente sconosciuto"
+
+#: src/components/UserMenu.tsx:25
+msgid "User"
+msgstr "Utente"
+
+#: src/components/UserMenu.tsx:32
+#~ msgid "User menu"
+#~ msgstr "Menu utente"
+
+#: src/components/UserMenu.tsx:32
+msgid "User Menu"
+msgstr "Menu utente"
+
+#: src/components/UserSettings.tsx:57
+msgid "User Settings"
+msgstr "Impostazioni utente"
+
+#: src/components/CardTile.tsx:135
+msgid "Violet"
+msgstr "Viola"

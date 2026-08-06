@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useLingui } from '@lingui/macro';
 import { createPortal } from 'react-dom';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -28,6 +29,7 @@ interface Props {
 }
 
 export function CardTile({ cardId, listId, onClick, onMembersClick, onArchived, enableActions = true }: Props) {
+  const { t } = useLingui();
   const { state, apiDispatch } = useStore();
   const card = state.cards[cardId];
   const [menuOpen, setMenuOpen] = useState(false);
@@ -123,8 +125,24 @@ export function CardTile({ cardId, listId, onClick, onMembersClick, onArchived, 
 
   const showEditorIcon =
     card.isModifiedByCurrentUser === false && !!card.modifiedByEmail;
-  const dueDateLabel = card.dueDate ? `Due ${card.dueDate}` : null;
+  const dueDateLabel = card.dueDate ? t`Due ${card.dueDate}` : null;
   const memberCount = card.members?.length ?? 0;
+  const colorLabels = {
+    green: t`Green`,
+    orange: t`Orange`,
+    red: t`Red`,
+    blue: t`Blue`,
+    violet: t`Violet`,
+    gray: t`Gray`,
+  };
+  const setColorLabels = {
+    green: t`Set color green`,
+    orange: t`Set color orange`,
+    red: t`Set color red`,
+    blue: t`Set color blue`,
+    violet: t`Set color violet`,
+    gray: t`Set color gray`,
+  };
 
   const updateDueDate = (dueDate: string | null) => {
     apiDispatch({
@@ -160,7 +178,7 @@ export function CardTile({ cardId, listId, onClick, onMembersClick, onArchived, 
       ref={popupRef}
       className="card-tile__menu-popup"
       role="menu"
-      aria-label={`Actions for ${card.title}`}
+      aria-label={t`Actions for ${card.title}`}
       style={menuPosition}
       onPointerDown={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}
@@ -176,16 +194,16 @@ export function CardTile({ cardId, listId, onClick, onMembersClick, onArchived, 
             type="button"
             className={`card-tile__color-swatch${card.color === colorName ? ' card-tile__color-swatch--active' : ''}`}
             style={{ background: COLOR_MAP[colorName] }}
-            aria-label={`Set color ${colorName}`}
-            title={colorName.charAt(0).toUpperCase() + colorName.slice(1)}
+            aria-label={setColorLabels[colorName]}
+            title={colorLabels[colorName]}
             onClick={() => setColor(colorName)}
           />
         ))}
         <button
           type="button"
           className="card-tile__color-clear"
-          aria-label="Clear color"
-          title="Clear color"
+          aria-label={t`Clear color`}
+          title={t`Clear color`}
           onClick={() => setColor(null)}
         >
           ✕
@@ -201,7 +219,7 @@ export function CardTile({ cardId, listId, onClick, onMembersClick, onArchived, 
           onClick();
         }}
       >
-        Details
+        {t`Details`}
       </button>
       <button
         type="button"
@@ -212,7 +230,7 @@ export function CardTile({ cardId, listId, onClick, onMembersClick, onArchived, 
           onMembersClick?.();
         }}
       >
-        Members
+        {t`Members`}
       </button>
       <button
         type="button"
@@ -220,13 +238,13 @@ export function CardTile({ cardId, listId, onClick, onMembersClick, onArchived, 
         className="card-tile__menu-item"
         onClick={() => setEditingDueDate((editing) => !editing)}
       >
-        Due date
+        {t`Due date`}
       </button>
       {editingDueDate && (
         <div className="card-tile__due-editor">
           <input
             type="date"
-            aria-label={`Due date for ${card.title}`}
+            aria-label={t`Due date for ${card.title}`}
             value={card.dueDate ?? ''}
             onChange={(e) => updateDueDate(e.target.value || null)}
           />
@@ -234,7 +252,7 @@ export function CardTile({ cardId, listId, onClick, onMembersClick, onArchived, 
             type="button"
             onClick={() => updateDueDate(null)}
           >
-            Clear
+            {t`Clear`}
           </button>
         </div>
       )}
@@ -244,7 +262,7 @@ export function CardTile({ cardId, listId, onClick, onMembersClick, onArchived, 
         className="card-tile__menu-item card-tile__menu-item--danger"
         onClick={archive}
       >
-        Archive
+        {t`Archive`}
       </button>
     </div>,
     document.body,
@@ -267,7 +285,7 @@ export function CardTile({ cardId, listId, onClick, onMembersClick, onArchived, 
         }}
       >
         <span
-          title={card.modifiedByEmail ? `Edited by ${card.modifiedByEmail}` : undefined}
+          title={card.modifiedByEmail ? t`Edited by ${card.modifiedByEmail}` : undefined}
           className="card-tile__title"
         >
           {card.title}
@@ -275,7 +293,9 @@ export function CardTile({ cardId, listId, onClick, onMembersClick, onArchived, 
         {(dueDateLabel || memberCount > 0) && (
           <span className="card-tile__meta">
             {dueDateLabel && <span>{dueDateLabel}</span>}
-            {memberCount > 0 && <span>{memberCount} member{memberCount === 1 ? '' : 's'}</span>}
+            {memberCount > 0 && (
+              <span>{memberCount === 1 ? t`${memberCount} member` : t`${memberCount} members`}</span>
+            )}
           </span>
         )}
       </button>
@@ -283,7 +303,7 @@ export function CardTile({ cardId, listId, onClick, onMembersClick, onArchived, 
         <span
           className="card-tile__editor-icon"
           title={card.modifiedByEmail!}
-          aria-label={`Edited by ${card.modifiedByEmail}`}
+          aria-label={t`Edited by ${card.modifiedByEmail}`}
         >
           ✎
         </span>
@@ -294,7 +314,7 @@ export function CardTile({ cardId, listId, onClick, onMembersClick, onArchived, 
             ref={menuButtonRef}
             type="button"
             className="card-tile__menu-btn"
-            aria-label={`Card actions for ${card.title}`}
+            aria-label={t`Card actions for ${card.title}`}
             aria-haspopup="menu"
             aria-expanded={menuOpen}
             onPointerDown={(e) => e.stopPropagation()}

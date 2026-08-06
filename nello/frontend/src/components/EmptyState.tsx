@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useLingui } from '@lingui/macro';
 import { useStore } from '../state/StoreContext';
 import './Board.css';
 
 export function EmptyState() {
+  const { t } = useLingui();
   const { apiDispatch } = useStore();
   const [name, setName] = useState('');
 
@@ -19,7 +21,7 @@ export function EmptyState() {
 
   return (
     <div className="empty-state">
-      <p className="empty-state-text">No boards yet. Create your first board to get started.</p>
+      <p className="empty-state-text">{t`No boards yet. Create your first board to get started.`}</p>
       <span className="empty-state-form">
         <input
           className="empty-state-input"
@@ -28,7 +30,7 @@ export function EmptyState() {
           onKeyDown={(e) => {
             if (e.key === 'Enter') handleCreate();
           }}
-          placeholder="Board name"
+          placeholder={t`Board name`}
           autoFocus
         />
         <button
@@ -36,7 +38,7 @@ export function EmptyState() {
           className="empty-state-btn"
           onClick={handleCreate}
         >
-          Create Board
+          {t`Create Board`}
         </button>
       </span>
     </div>

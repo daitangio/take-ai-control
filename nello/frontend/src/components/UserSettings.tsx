@@ -1,11 +1,14 @@
 import { useState } from 'react';
+import { useLingui } from '@lingui/macro';
 import { useAuth } from '../state/AuthContext';
+import { dynamicActivate, getStoredLocale, isLocale, setStoredLocale } from '../i18n';
 
 interface UserSettingsProps {
   onBack: () => void;
 }
 
 export function UserSettings({ onBack }: UserSettingsProps) {
+  const { t } = useLingui();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [error, setError] = useState('');
@@ -19,7 +22,7 @@ export function UserSettings({ onBack }: UserSettingsProps) {
     setSuccess('');
 
     if (newPassword.length < 12) {
-      setError('New password must be at least 12 characters long');
+      setError(t`New password must be at least 12 characters long`);
       return;
     }
 
@@ -36,14 +39,14 @@ export function UserSettings({ onBack }: UserSettingsProps) {
 
       if (!response.ok) {
         const data = await response.json().catch(() => null);
-        throw new Error(data?.detail || 'Failed to change password');
+        throw new Error(data?.detail || t`Failed to change password`);
       }
 
-      setSuccess('Password changed successfully');
+      setSuccess(t`Password changed successfully`);
       setCurrentPassword('');
       setNewPassword('');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : t`An error occurred`);
     } finally {
       setIsSubmitting(false);
     }
@@ -51,16 +54,35 @@ export function UserSettings({ onBack }: UserSettingsProps) {
 
   return (
     <div className="user-settings-container">
-      <h2 className="user-settings-title">User Settings</h2>
+      <h2 className="user-settings-title">{t`User Settings`}</h2>
+
+      <div className="settings-form">
+        <h3>{t`Language`}</h3>
+        <div className="settings-form-group">
+          <label htmlFor="language">{t`Interface language`}</label>
+          <select
+            id="language"
+            value={getStoredLocale()}
+            onChange={async (event) => {
+              if (!isLocale(event.target.value)) return;
+              setStoredLocale(event.target.value);
+              await dynamicActivate(event.target.value);
+            }}
+          >
+            <option value="en">{t`English`}</option>
+            <option value="it">{t`Italian`}</option>
+          </select>
+        </div>
+      </div>
       
       <form onSubmit={handleSubmit} className="settings-form">
-        <h3>Change Password</h3>
+        <h3>{t`Change Password`}</h3>
         
         {error && <div className="settings-error">{error}</div>}
         {success && <div className="settings-success">{success}</div>}
 
         <div className="settings-form-group">
-          <label htmlFor="currentPassword">Current Password</label>
+          <label htmlFor="currentPassword">{t`Current Password`}</label>
           <input
             id="currentPassword"
             type="password"
@@ -71,7 +93,7 @@ export function UserSettings({ onBack }: UserSettingsProps) {
         </div>
 
         <div className="settings-form-group">
-          <label htmlFor="newPassword">New Password</label>
+          <label htmlFor="newPassword">{t`New Password`}</label>
           <input
             id="newPassword"
             type="password"
@@ -80,15 +102,15 @@ export function UserSettings({ onBack }: UserSettingsProps) {
             required
             minLength={12}
           />
-          <small>Minimum 12 characters</small>
+          <small>{t`Minimum 12 characters`}</small>
         </div>
 
         <div className="settings-actions">
           <button type="submit" className="btn-primary" disabled={isSubmitting}>
-            {isSubmitting ? 'Changing...' : 'Change Password'}
+            {isSubmitting ? t`Changing...` : t`Change Password`}
           </button>
           <button type="button" className="btn-secondary" onClick={onBack}>
-            Back to Board
+            {t`Back to Board`}
           </button>
         </div>
       </form>

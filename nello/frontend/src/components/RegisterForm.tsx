@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { useLingui } from "@lingui/macro";
 import { useAuth } from "../state/AuthContext";
 
 interface RegisterFormProps {
@@ -6,6 +7,7 @@ interface RegisterFormProps {
 }
 
 export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
+  const { t } = useLingui();
   const { register, loading, error } = useAuth();
   const [email, setEmail] = useState("");
   const [keyPass, setKeyPass] = useState("");
@@ -25,12 +27,12 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
       <form className="login-form" onSubmit={handleSubmit}>
         <h2>Nello RuleZ</h2>
         <p className="login-subtitle">
-          Create your account
+          {t`Create your account`}
         </p>
 
         {error && <div className="login-error">{error}</div>}
 
-        <label htmlFor="register-email">Email</label>
+        <label htmlFor="register-email">{t`Email`}</label>
         <input
           id="register-email"
           type="email"
@@ -40,7 +42,7 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
           autoFocus
         />
 
-        <label htmlFor="register-key">Invitation key</label>
+        <label htmlFor="register-key">{t`Invitation key`}</label>
         <input
           id="register-key"
           type="text"
@@ -49,7 +51,7 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
           required
         />
 
-        <label htmlFor="register-password">Password</label>
+        <label htmlFor="register-password">{t`Password`}</label>
         <input
           id="register-password"
           type="password"
@@ -60,12 +62,12 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
         />
 
         <button type="submit" disabled={loading}>
-          {loading ? "Please wait..." : "Register"}
+          {loading ? t`Please wait...` : t`Register`}
         </button>
 
         <p className="login-subtitle">
           <button type="button" className="login-toggle" onClick={onSwitchToLogin}>
-            Already have an account? Login
+            {t`Already have an account? Login`}
           </button>
         </p>
       </form>

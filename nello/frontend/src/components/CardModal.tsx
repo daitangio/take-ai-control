@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { useLingui } from '@lingui/macro';
 import { useStore } from '../state/StoreContext';
 import type { Card } from '../state/types';
 
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export function CardModal({ cardId, onClose }: Props) {
+  const { t } = useLingui();
   const { state, apiDispatch } = useStore();
   const card: Card | undefined = state.cards[cardId];
   const [title, setTitle] = useState(card?.title ?? '');
@@ -53,7 +55,7 @@ export function CardModal({ cardId, onClose }: Props) {
 
   const handleDelete = () => {
     if (!card) return;
-    if (window.confirm(`Delete card "${card.title}"?`)) {
+    if (window.confirm(t`Delete card "${card.title}"?`)) {
       apiDispatch({ type: 'card/delete', cardId: card.id });
       onClose();
     }
@@ -84,20 +86,20 @@ export function CardModal({ cardId, onClose }: Props) {
               (e.target as HTMLInputElement).blur();
             }
           }}
-          placeholder="Card title"
+          placeholder={t`Card title`}
         />
         <div>
-          <label className="modal-label">Description</label>
+          <label className="modal-label">{t`Description`}</label>
           <textarea
             className="modal-desc-input"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             onBlur={save}
-            placeholder="Add a description..."
+            placeholder={t`Add a description...`}
           />
         </div>
         <div>
-          <label className="modal-label" htmlFor="card-due-date-input">Due date</label>
+          <label className="modal-label" htmlFor="card-due-date-input">{t`Due date`}</label>
           <input
             id="card-due-date-input"
             type="date"
@@ -109,7 +111,7 @@ export function CardModal({ cardId, onClose }: Props) {
         </div>
         {card.modifiedBy && (
           <p style={{ fontSize: 12, color: 'var(--color-text-secondary)', marginTop: 8 }}>
-            Last modified by: {card.modifiedByEmail || card.modifiedBy}
+            {t`Last modified by: ${card.modifiedByEmail || card.modifiedBy}`}
           </p>
         )}
         <div className="modal-actions">
@@ -118,7 +120,7 @@ export function CardModal({ cardId, onClose }: Props) {
             className="modal-delete-btn"
             onClick={handleDelete}
           >
-            Delete
+            {t`Delete`}
           </button>
           <button
             type="button"
@@ -128,7 +130,7 @@ export function CardModal({ cardId, onClose }: Props) {
               onClose();
             }}
           >
-            Close
+            {t`Close`}
           </button>
         </div>
       </div>

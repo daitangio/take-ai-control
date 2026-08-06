@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useLingui } from '@lingui/macro';
 import { StoreProvider, useStore } from './state/StoreContext';
 import { useAuth } from './state/AuthContext';
 import { AuthGuard } from './components/AuthGuard';
@@ -11,6 +12,7 @@ import { UserSettings } from './components/UserSettings';
 import './App.css';
 
 function AppInner() {
+  const { t } = useLingui();
   const { state, loadBoards, toast, clearToast, searchQuery, setSearchQuery } = useStore();
   const { token } = useAuth();
   const [showSettings, setShowSettings] = useState(false);
@@ -44,7 +46,7 @@ function AppInner() {
               <input
                 type="text"
                 className="search-input"
-                placeholder="Filter..."
+                placeholder={t`Filter...`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
