@@ -35,3 +35,11 @@ Model: DeepSeek v4 Pro [1m]
 - Synced main spec by creating `openspec/specs/backend-abuse-protection/spec.md` with the finalized requirements and scenarios from the change delta.
 - Remaining: none for this archive operation.
 - Model: GPT-5.3-Codex
+
+## Archive invitation-key-register
+
+- 2026-08-06: Archived OpenSpec change `invitation-key-register` to `openspec/changes/archive/2026-08-06-invitation-key-register/`.
+- Completed pre-archive checks: artifacts all done, tasks all complete (18/18), delta spec sync required and executed.
+- Synced main specs by creating `openspec/specs/invitation-registration/spec.md` and updating `openspec/specs/user-auth/spec.md` registration requirement to the invitation-key flow.
+- Remaining: none for this archive operation.
+- Model: GPT-5.3-Codex [v1.0.78]

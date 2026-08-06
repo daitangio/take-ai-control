@@ -6,21 +6,26 @@ Enable users to register an account and log in with email and password. Authenti
 ## Requirements
 ### Requirement: User registration
 
-The system SHALL allow a new user to register with an email and password. The password MUST be hashed before storage. The email MUST be unique.
+The system SHALL allow a new user to register with an email, invitation key, and password. The invitation key MUST be validated against the `register_key` table before account creation. The password MUST be hashed with bcrypt before storage and be at least 12 characters long. The email MUST be unique.
 
 #### Scenario: Successful registration
 
-- **WHEN** a user sends `POST /api/auth/register` with a unique email and a non-empty password
-- **THEN** a user account is created and the response includes a JWT access token with status 201
+- **WHEN** a user sends `POST /api/auth/register` with a unique email, a valid invitation key, and a password of 12 or more characters
+- **THEN** a user account is created and the response includes a JWT access token with status 200
 
 #### Scenario: Duplicate email registration
 
 - **WHEN** a user sends `POST /api/auth/register` with an email that already exists
 - **THEN** the system returns status 409 with an error message
 
-#### Scenario: Registration with empty password
+#### Scenario: Registration with short password
 
-- **WHEN** a user sends `POST /api/auth/register` with an empty or whitespace-only password
+- **WHEN** a user sends `POST /api/auth/register` with a valid invitation key but a password shorter than 12 characters
+- **THEN** the system returns status 422 with a validation error
+
+#### Scenario: Registration with missing invitation key
+
+- **WHEN** a user sends `POST /api/auth/register` without an invitation key
 - **THEN** the system returns status 422 with a validation error
 
 #### Scenario: Registration with invalid email
@@ -84,4 +89,3 @@ The system SHALL allow an authenticated user to change their password by providi
 #### Scenario: New password is too short
 - **WHEN** an authenticated user submits a new password that is less than 12 characters long
 - **THEN** the system returns status 422 with a validation error
-
