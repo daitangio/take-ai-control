@@ -8,11 +8,14 @@ import { BoardView } from './components/BoardView';
 import { HelpBox } from './components/HelpBox';
 import { UserMenu } from './components/UserMenu';
 import { UserSettings } from './components/UserSettings';
+import { LanguageSelector } from './components/LanguageSelector';
+import { useTranslation } from 'react-i18next';
 import './App.css';
 
 function AppInner() {
   const { state, loadBoards, toast, clearToast, searchQuery, setSearchQuery } = useStore();
   const { token } = useAuth();
+  const { t } = useTranslation();
   const [showSettings, setShowSettings] = useState(false);
 
   // Load boards when authenticated
@@ -36,7 +39,7 @@ function AppInner() {
         </div>
       )}
       <header className="app-header">
-        <h1 className="app-title" onClick={() => setShowSettings(false)} style={{ cursor: 'pointer' }}>Nello</h1>
+        <h1 className="app-title" onClick={() => setShowSettings(false)} style={{ cursor: 'pointer' }}>{t('app.title')}</h1>
         {!showSettings && hasBoards && <BoardSwitcher />}
         <div className="header-right">
           {!showSettings && (
@@ -44,12 +47,13 @@ function AppInner() {
               <input
                 type="text"
                 className="search-input"
-                placeholder="Filter..."
+                placeholder={t('app.filterPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
           )}
+          <LanguageSelector />
           {token && <UserMenu onSettingsClick={() => setShowSettings(true)} />}
         </div>
       </header>

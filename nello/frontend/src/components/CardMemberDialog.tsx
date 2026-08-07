@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import * as api from '../api';
 import { useStore } from '../state/StoreContext';
 import type { Member } from '../state/types';
+import { useTranslation } from 'react-i18next';
+import { toLocalizedErrorMessage } from '../i18n/backendErrors';
 
 interface Props {
   cardId: string;
@@ -10,6 +12,7 @@ interface Props {
 
 export function CardMemberDialog({ cardId, onClose }: Props) {
   const { state, apiDispatch } = useStore();
+  const { t } = useTranslation();
   const card = state.cards[cardId];
   const [options, setOptions] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,11 +25,11 @@ export function CardMemberDialog({ cardId, onClose }: Props) {
       setOptions(list);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load members');
+      setError(toLocalizedErrorMessage(t, err));
     } finally {
       setLoading(false);
     }
-  }, [cardId]);
+  }, [cardId, t]);
 
   useEffect(() => {
     loadOptions();
@@ -50,7 +53,7 @@ export function CardMemberDialog({ cardId, onClose }: Props) {
         await apiDispatch({ type: 'card/member/add', cardId, member });
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update member');
+      setError(toLocalizedErrorMessage(t, err));
     }
   };
 
@@ -61,11 +64,11 @@ export function CardMemberDialog({ cardId, onClose }: Props) {
   return (
     <div className="modal-overlay" ref={overlayRef} onClick={handleOverlayClick}>
       <div className="modal" style={{ maxWidth: 420 }}>
-        <h3 style={{ margin: '0 0 16px' }}>Card members</h3>
+        <h3 style={{ margin: '0 0 16px' }}>{t('cardMembers.title')}</h3>
         {loading ? (
-          <p style={{ color: 'var(--color-text-secondary)' }}>Loading...</p>
+          <p style={{ color: 'var(--color-text-secondary)' }}>{t('cardMembers.loading')}</p>
         ) : options.length === 0 ? (
-          <p style={{ color: 'var(--color-text-secondary)' }}>No eligible members.</p>
+          <p style={{ color: 'var(--color-text-secondary)' }}>{t('cardMembers.noEligible')}</p>
         ) : (
           <ul className="card-member-list">
             {options.map((member) => {
@@ -79,7 +82,7 @@ export function CardMemberDialog({ cardId, onClose }: Props) {
                     onClick={() => toggleMember(member)}
                     aria-pressed={checked}
                   >
-                    {checked ? 'Remove' : 'Add'}
+                    {checked ? t('cardMembers.remove') : t('cardMembers.add')}
                   </button>
                 </li>
               );
@@ -93,7 +96,7 @@ export function CardMemberDialog({ cardId, onClose }: Props) {
         )}
         <div style={{ marginTop: 16, textAlign: 'right' }}>
           <button type="button" className="modal-close-btn" onClick={onClose}>
-            Close
+            {t('card.close')}
           </button>
         </div>
       </div>

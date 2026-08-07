@@ -1,8 +1,10 @@
+# multilingual-support Specification
+
 ## Purpose
 
 Enable users to use the Nello frontend in multiple languages by introducing localized UI text, a persisted locale preference, and a safe fallback when translations are incomplete.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: User-selectable frontend language
 The frontend SHALL allow users to select a UI language from the supported locale list through a polished, compact selector that uses recognizable locale flags, clearly indicates the active language, exposes an accessible text label, and SHALL apply the selected language to visible UI text without requiring a new login.

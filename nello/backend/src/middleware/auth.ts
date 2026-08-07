@@ -3,6 +3,8 @@ import { verifyToken } from "../utils/jwt.js";
 import { db } from "../db/index.js";
 import { users, boardMembers, boards } from "../db/schema.js";
 import { eq, and } from "drizzle-orm";
+import { sendError } from "../utils/apiError.js";
+import { ErrorCode } from "../types/errors.js";
 
 
 /**
@@ -25,14 +27,14 @@ export async function authenticate(
 ): Promise<void> {
   const header = request.headers.authorization;
   if (!header || !header.startsWith("Bearer ")) {
-    reply.code(401).send({ detail: "Not authenticated" });
+    sendError(reply, 401, ErrorCode.authRequired, "Not authenticated");
     return;
   }
 
   const token = header.slice(7);
   const userId = verifyToken(token);
   if (!userId) {
-    reply.code(401).send({ detail: "Invalid or expired token" });
+    sendError(reply, 401, ErrorCode.authTokenInvalid, "Invalid or expired token");
     return;
   }
 
@@ -43,7 +45,7 @@ export async function authenticate(
     .limit(1);
 
   if (!user) {
-    reply.code(401).send({ detail: "User not found" });
+    sendError(reply, 401, ErrorCode.authUserNotFound, "User not found");
     return;
   }
 

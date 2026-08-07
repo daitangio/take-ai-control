@@ -1,13 +1,8 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const HELP_CONTENT_VERSION = '1';
 export const HELP_DISMISSAL_KEY = 'nello:help-dismissed-version';
-
-const helpItems = [  
-  'Nello loves friends: create a shared board by ending its name with $. That suffix is permanent.',
-  'On a shared board you own, use the 👤 button to invite or remove members.',
-  'Nello is self explanatory'
-];
 
 function currentHelpIsDismissed() {
   // GG Hum help dismission should not be permanent....
@@ -19,7 +14,9 @@ function currentHelpIsDismissed() {
 }
 
 export function HelpBox() {
+  const { t } = useTranslation();
   const [dismissed, setDismissed] = useState(currentHelpIsDismissed);
+  const helpItems = t('help.items', { returnObjects: true }) as string[];
 
   const dismiss = () => {
     setDismissed(true);    
@@ -35,11 +32,11 @@ export function HelpBox() {
   return (
     <aside className="help-box" aria-labelledby="help-box-title">
       <div className="help-box-header">
-        <h2 id="help-box-title">Nello non-invasive help</h2>
+        <h2 id="help-box-title">{t('help.title')}</h2>
         <button
           type="button"
           className="help-box-close"
-          aria-label="Dismiss help"
+          aria-label={t('help.dismissAria')}
           onClick={dismiss}
         >
           ×

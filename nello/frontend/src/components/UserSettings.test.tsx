@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { UserSettings } from './UserSettings';
 import * as AuthContext from '../state/AuthContext';
+import * as api from '../api';
 
-// Mock AuthContext
 vi.mock('../state/AuthContext', () => ({
   useAuth: vi.fn(),
 }));
@@ -17,6 +17,7 @@ describe('UserSettings', () => {
     (AuthContext.useAuth as any).mockReturnValue({
       token: 'fake-token',
     });
+    api.setToken('fake-token');
     fetchMock = vi.fn();
     vi.stubGlobal('fetch', fetchMock);
   });
@@ -38,12 +39,12 @@ describe('UserSettings', () => {
 
   it('shows error if new password is too short', async () => {
     render(<UserSettings onBack={mockOnBack} />);
-    
+
     fireEvent.change(screen.getByLabelText('Current Password'), { target: { value: 'oldpass12345' } });
     fireEvent.change(screen.getByLabelText('New Password'), { target: { value: 'short' } });
-    
+
     fireEvent.click(screen.getByRole('button', { name: 'Change Password' }));
-    
+
     expect(await screen.findByText('New password must be at least 12 characters long')).toBeTruthy();
     expect(fetchMock).not.toHaveBeenCalled();
   });
@@ -51,23 +52,23 @@ describe('UserSettings', () => {
   it('calls API and shows success on successful password change', async () => {
     fetchMock.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ detail: 'Password updated successfully' })
+      json: async () => ({ detail: 'Password updated successfully' }),
     });
 
     render(<UserSettings onBack={mockOnBack} />);
-    
+
     fireEvent.change(screen.getByLabelText('Current Password'), { target: { value: 'oldpass12345' } });
     fireEvent.change(screen.getByLabelText('New Password'), { target: { value: 'newlongpassword123' } });
-    
+
     fireEvent.click(screen.getByRole('button', { name: 'Change Password' }));
-    
+
     expect(fetchMock).toHaveBeenCalledWith('/api/auth/password', expect.objectContaining({
       method: 'PUT',
-      headers: {
+      headers: expect.objectContaining({
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer fake-token'
-      },
-      body: JSON.stringify({ currentPassword: 'oldpass12345', newPassword: 'newlongpassword123' })
+        Authorization: expect.any(String),
+      }),
+      body: JSON.stringify({ currentPassword: 'oldpass12345', newPassword: 'newlongpassword123' }),
     }));
 
     expect(await screen.findByText('Password changed successfully')).toBeTruthy();
@@ -76,16 +77,19 @@ describe('UserSettings', () => {
   it('shows error from API on failure', async () => {
     fetchMock.mockResolvedValueOnce({
       ok: false,
-      json: async () => ({ detail: 'Invalid current password' })
+      text: async () => JSON.stringify({
+        detail: 'Invalid current password',
+        error_code: 'PASSWORD_CHANGE_CURRENT_INVALID',
+      }),
     });
 
     render(<UserSettings onBack={mockOnBack} />);
-    
+
     fireEvent.change(screen.getByLabelText('Current Password'), { target: { value: 'wrongpass' } });
     fireEvent.change(screen.getByLabelText('New Password'), { target: { value: 'newlongpassword123' } });
-    
+
     fireEvent.click(screen.getByRole('button', { name: 'Change Password' }));
-    
+
     expect(await screen.findByText('Invalid current password')).toBeTruthy();
   });
 });

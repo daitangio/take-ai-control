@@ -3,6 +3,8 @@ import type { Action, State } from './types';
 import { createInitialState } from './types';
 import { reducer } from './reducer';
 import * as api from '../api';
+import i18n from '../i18n';
+import { toLocalizedErrorMessage } from '../i18n/backendErrors';
 
 interface StoreValue {
   state: State;
@@ -107,7 +109,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       }
     } catch (err) {
       console.debug('[nello:api] loadBoards failed:', err);
-      setToast('Failed to load boards');
+      setToast(toLocalizedErrorMessage(i18n.t.bind(i18n), err, 'errors.apiLoadBoards'));
     } finally {
       loadingRef.current = false;
     }
@@ -137,7 +139,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       });
     } catch (err) {
       console.debug('[nello:api] reloadBoard failed:', err);
-      setToast('Failed to reload board');
+      setToast(toLocalizedErrorMessage(i18n.t.bind(i18n), err, 'errors.apiReloadBoard'));
     }
   }, []);
 
@@ -180,7 +182,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       }
     } catch (err) {
       console.debug('[nello:api]', action.type, 'failed:', err);
-      setToast(`Failed to ${action.type.replace('/', ' ')}`);
+      if (err instanceof api.ApiError) {
+        setToast(toLocalizedErrorMessage(i18n.t.bind(i18n), err, 'errors.generic'));
+      } else {
+        setToast(i18n.t('errors.apiActionFailed', { action: action.type.replace('/', ' ') }));
+      }
       if (api.getToken()) {
         if (action.type === 'card/move') {
           if (activeBefore) await reloadBoard(activeBefore);

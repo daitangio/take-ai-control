@@ -39,6 +39,13 @@ Nello frontend components currently embed English strings directly in TSX files,
   - URL-only locale state: less suitable for current SPA patterns and persistence expectations.
   - Non-persisted in-memory locale: degrades UX across refreshes.
 
+### Decision 6: Use a flag-based language selector
+- **Choice:** Present the runtime language switcher as a compact, polished control with recognizable English and Italian flags, an active-language state, and an accessible text label/ARIA name.
+- **Rationale:** Flags make the two available locales scannable while the text label preserves clarity and accessibility. The control should fit the existing header and remain usable at narrow breakpoints.
+- **Alternatives considered:**
+  - Text-only locale names: accessible but less visually scannable in the compact header.
+  - Flags without text or accessible naming: visually compact but ambiguous and inaccessible.
+
 ### Decision 4: Migrate tests with stable locale assumptions
 - **Choice:** Update tests to run with deterministic locale setup (default English unless explicitly testing Italian).
 - **Rationale:** Prevents test flakiness caused by environment locale differences.

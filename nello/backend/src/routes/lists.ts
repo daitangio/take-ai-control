@@ -3,6 +3,8 @@ import { db } from "../db/index.js";
 import { lists, listArchive, cards } from "../db/schema.js";
 import { eq, and, isNull, asc, sql } from "drizzle-orm";
 import { authenticate, checkBoardAccess } from "../middleware/auth.js";
+import { sendError } from "../utils/apiError.js";
+import { ErrorCode } from "../types/errors.js";
 
 interface ListCreateBody {
   id: string;
@@ -25,11 +27,11 @@ export default async function listRoutes(app: FastifyInstance) {
     const { id, boardId, name } = request.body;
 
     if (!name || !name.trim()) {
-      return reply.code(422).send({ detail: "List name is required" });
+      return sendError(reply, 422, ErrorCode.listNameRequired, "List name is required");
     }
 
     const role = await checkBoardAccess(boardId, user.id);
-    if (!role) return reply.code(404).send({ detail: "Board not found" });
+    if (!role) return sendError(reply, 404, ErrorCode.boardNotFound, "Board not found");
 
     const trimmedName = name.trim();
 
@@ -62,7 +64,7 @@ export default async function listRoutes(app: FastifyInstance) {
     const { name } = request.body;
 
     if (!name || !name.trim()) {
-      return reply.code(422).send({ detail: "List name is required" });
+      return sendError(reply, 422, ErrorCode.listNameRequired, "List name is required");
     }
 
     const [listRow] = await db
@@ -71,10 +73,10 @@ export default async function listRoutes(app: FastifyInstance) {
       .where(eq(lists.id, listId))
       .limit(1);
 
-    if (!listRow) return reply.code(404).send();
+    if (!listRow) return sendError(reply, 404, ErrorCode.listNotFound, "List not found");
 
     const role = await checkBoardAccess(listRow.boardId, user.id);
-    if (!role) return reply.code(404).send();
+    if (!role) return sendError(reply, 404, ErrorCode.listNotFound, "List not found");
 
     const trimmedName = name.trim();
     await db.update(lists).set({ name: trimmedName }).where(eq(lists.id, listId));
@@ -111,10 +113,10 @@ export default async function listRoutes(app: FastifyInstance) {
       .where(eq(lists.id, listId))
       .limit(1);
 
-    if (!listRow) return reply.code(404).send();
+    if (!listRow) return sendError(reply, 404, ErrorCode.listNotFound, "List not found");
 
     const role = await checkBoardAccess(listRow.boardId, user.id);
-    if (!role) return reply.code(404).send();
+    if (!role) return sendError(reply, 404, ErrorCode.listNotFound, "List not found");
 
     await db.delete(lists).where(eq(lists.id, listId));
     reply.code(204).send();
@@ -131,10 +133,10 @@ export default async function listRoutes(app: FastifyInstance) {
       .where(eq(lists.id, listId))
       .limit(1);
 
-    if (!listRow) return reply.code(404).send();
+    if (!listRow) return sendError(reply, 404, ErrorCode.listNotFound, "List not found");
 
     const role = await checkBoardAccess(listRow.boardId, user.id);
-    if (!role) return reply.code(404).send();
+    if (!role) return sendError(reply, 404, ErrorCode.listNotFound, "List not found");
 
     await db
       .insert(listArchive)
@@ -154,7 +156,7 @@ export default async function listRoutes(app: FastifyInstance) {
       const { listIds } = request.body;
 
       const role = await checkBoardAccess(boardId, user.id);
-      if (!role) return reply.code(404).send({ detail: "Board not found" });
+      if (!role) return sendError(reply, 404, ErrorCode.boardNotFound, "Board not found");
 
       // Only update visible (non-archived) lists
       const visibleRows = await db

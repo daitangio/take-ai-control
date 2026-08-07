@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import * as api from '../api';
 import type { ArchivedCard } from '../api';
 import { useStore } from '../state/StoreContext';
+import { useTranslation } from 'react-i18next';
+import { toLocalizedErrorMessage } from '../i18n/backendErrors';
 
 interface Props {
   boardId: string;
@@ -12,6 +14,7 @@ interface Props {
 
 export function ArchivedItemsDialog({ boardId, sourceListId, listName, onClose }: Props) {
   const { state, loadBoards } = useStore();
+  const { t, i18n } = useTranslation();
   const [archivedCards, setArchivedCards] = useState<ArchivedCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +28,7 @@ export function ArchivedItemsDialog({ boardId, sourceListId, listName, onClose }
       setArchivedCards(cards);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load archived cards');
+      setError(toLocalizedErrorMessage(t, err));
     } finally {
       setLoading(false);
     }
@@ -68,7 +71,7 @@ export function ArchivedItemsDialog({ boardId, sourceListId, listName, onClose }
       onClose();
       loadBoards();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to de-archive cards');
+      setError(toLocalizedErrorMessage(t, err));
       setApplying(false);
     }
   };
@@ -83,12 +86,12 @@ export function ArchivedItemsDialog({ boardId, sourceListId, listName, onClose }
   return (
     <div className="modal-overlay" ref={overlayRef} onClick={handleOverlayClick}>
       <div className="modal" style={{ maxWidth: 520 }}>
-        <h3 style={{ margin: '0 0 16px' }}>Archived Cards</h3>
+        <h3 style={{ margin: '0 0 16px' }}>{t('archived.title')}</h3>
 
         {loading ? (
-          <p style={{ color: 'var(--color-text-secondary)' }}>Loading...</p>
+          <p style={{ color: 'var(--color-text-secondary)' }}>{t('archived.loading')}</p>
         ) : archivedCards.length === 0 ? (
-          <p style={{ color: 'var(--color-text-secondary)' }}>No archived cards.</p>
+          <p style={{ color: 'var(--color-text-secondary)' }}>{t('archived.empty')}</p>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <label
@@ -105,7 +108,7 @@ export function ArchivedItemsDialog({ boardId, sourceListId, listName, onClose }
                 onChange={toggleAll}
                 style={{ marginRight: 8 }}
               />
-              Select all
+              {t('archived.selectAll')}
             </label>
             {Array.from(grouped.entries()).map(([originalListId, cards]) => (
               <div key={originalListId}>
@@ -118,7 +121,9 @@ export function ArchivedItemsDialog({ boardId, sourceListId, listName, onClose }
                     margin: '0 0 8px',
                   }}
                 >
-                  From &ldquo;{state.lists[originalListId]?.name ?? 'Unknown list'}&rdquo;
+                  {t('archived.fromList', {
+                    name: state.lists[originalListId]?.name ?? t('archived.unknownList'),
+                  })}
                 </p>
                 <ul className="card-member-list">
                   {cards.map((card) => (
@@ -139,8 +144,8 @@ export function ArchivedItemsDialog({ boardId, sourceListId, listName, onClose }
                         <span style={{ fontWeight: 500 }}>{card.title}</span>
                         <br />
                         <span style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>
-                          {card.archivedByEmail ?? 'Unknown user'} &middot;{' '}
-                          {formatDate(card.archivedAt)}
+                          {card.archivedByEmail ?? t('archived.unknownUser')} &middot;{' '}
+                          {formatDate(card.archivedAt, i18n.language)}
                         </span>
                       </div>
                     </li>
@@ -149,7 +154,7 @@ export function ArchivedItemsDialog({ boardId, sourceListId, listName, onClose }
               </div>
             ))}
             <p style={{ fontSize: 12, color: 'var(--color-text-secondary)', margin: 0 }}>
-              Selected cards will be restored to the bottom of &ldquo;{listName}&rdquo;.
+                  {t('archived.restoreHint', { name: listName })}
             </p>
           </div>
         )}
@@ -162,11 +167,11 @@ export function ArchivedItemsDialog({ boardId, sourceListId, listName, onClose }
 
         <div style={{ marginTop: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ fontSize: 13, color: 'var(--color-text-secondary)' }}>
-            {selectedIds.size > 0 ? `${selectedIds.size} selected` : ''}
+            {selectedIds.size > 0 ? t('archived.selected', { count: selectedIds.size }) : ''}
           </span>
           <div style={{ display: 'flex', gap: 8 }}>
             <button type="button" className="modal-close-btn" onClick={onClose}>
-              Close
+              {t('archived.close')}
             </button>
             <button
               type="button"
@@ -179,7 +184,7 @@ export function ArchivedItemsDialog({ boardId, sourceListId, listName, onClose }
               onClick={handleApply}
               disabled={selectedIds.size === 0 || applying}
             >
-              {applying ? 'Applying...' : `Apply${selectedIds.size > 0 ? ` (${selectedIds.size})` : ''}`}
+              {applying ? t('archived.applying') : `${t('archived.apply')}${selectedIds.size > 0 ? ` (${selectedIds.size})` : ''}`}
             </button>
           </div>
         </div>
@@ -202,7 +207,7 @@ function groupBy<T, K>(items: T[], keyFn: (item: T) => K): Map<K, T[]> {
   return map;
 }
 
-function formatDate(iso: string): string {
+function formatDate(iso: string, locale: string): string {
   const d = new Date(iso);
-  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  return d.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
 }

@@ -35,6 +35,7 @@ describe("Login", () => {
       payload: { email: "test@example.com", password: "wrongpassword" },
     });
     expect(res.statusCode).toBe(401);
+    expect(JSON.parse(res.body).error_code).toBe("AUTH_INVALID_CREDENTIALS");
   });
 
   it("rejects an unknown email with 401", async () => {
@@ -77,6 +78,7 @@ describe("Token", () => {
   it("rejects a request with no token at all with 401", async () => {
     const res = await env.app.inject({ method: "GET", url: "/api/boards" });
     expect(res.statusCode).toBe(401);
+    expect(JSON.parse(res.body).error_code).toBe("AUTH_REQUIRED");
   });
 
   it("accepts a valid token issued by login", async () => {
@@ -124,6 +126,7 @@ describe("Password Change", () => {
       payload: { currentPassword: "wrongpassword", newPassword: "newlongpassword123" },
     });
     expect(res.statusCode).toBe(401);
+    expect(JSON.parse(res.body).error_code).toBe("PASSWORD_CHANGE_CURRENT_INVALID");
   });
 
   it("rejects password change if new password is too short", async () => {
@@ -185,6 +188,7 @@ describe("Registration", () => {
     expect(res.statusCode).toBe(401);
     const data = JSON.parse(res.body);
     expect(data.detail).toBe("Invalid or exhausted invitation key");
+    expect(data.error_code).toBe("REGISTER_KEY_INVALID_OR_EXHAUSTED");
   });
 
   it("rejects exhausted invitation key with 401", async () => {

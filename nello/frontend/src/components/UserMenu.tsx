@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../state/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 interface UserMenuProps {
   onSettingsClick: () => void;
@@ -8,6 +9,7 @@ interface UserMenuProps {
 export function UserMenu({ onSettingsClick }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { logout, email } = useAuth();
+  const { t } = useTranslation();
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -20,24 +22,24 @@ export function UserMenu({ onSettingsClick }: UserMenuProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const displayName = email ? email.substring(0, 9) : 'User';
+  const displayName = email ? email.substring(0, 9) : t('userMenu.userFallback');
 
   return (
     <div className="user-menu" ref={menuRef}>
       <button 
         className="user-menu-btn" 
         onClick={() => setIsOpen(!isOpen)}
-        aria-label="User Menu"
+        aria-label={t('userMenu.ariaLabel')}
       >
         {displayName}
       </button>
       {isOpen && (
         <div className="user-menu-dropdown">
           <button className="user-menu-item" onClick={() => { setIsOpen(false); onSettingsClick(); }}>
-            Settings
+            {t('userMenu.settings')}
           </button>
           <button className="user-menu-item logout-btn" onClick={logout}>
-            Logout
+            {t('userMenu.logout')}
           </button>
         </div>
       )}

@@ -1,17 +1,21 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../state/AuthContext';
+import { changePassword } from '../api';
+import { toLocalizedErrorMessage } from '../i18n/backendErrors';
 
 interface UserSettingsProps {
   onBack: () => void;
 }
 
 export function UserSettings({ onBack }: UserSettingsProps) {
+  const { t } = useTranslation();
+  useAuth();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { token } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,31 +23,18 @@ export function UserSettings({ onBack }: UserSettingsProps) {
     setSuccess('');
 
     if (newPassword.length < 12) {
-      setError('New password must be at least 12 characters long');
+      setError(t('errors.backend.PASSWORD_CHANGE_PASSWORD_INVALID'));
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const response = await fetch('/api/auth/password', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ currentPassword, newPassword })
-      });
-
-      if (!response.ok) {
-        const data = await response.json().catch(() => null);
-        throw new Error(data?.detail || 'Failed to change password');
-      }
-
-      setSuccess('Password changed successfully');
+      await changePassword(currentPassword, newPassword);
+      setSuccess(t('settings.success'));
       setCurrentPassword('');
       setNewPassword('');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(toLocalizedErrorMessage(t, err));
     } finally {
       setIsSubmitting(false);
     }
@@ -51,16 +42,16 @@ export function UserSettings({ onBack }: UserSettingsProps) {
 
   return (
     <div className="user-settings-container">
-      <h2 className="user-settings-title">User Settings</h2>
-      
+      <h2 className="user-settings-title">{t('settings.title')}</h2>
+
       <form onSubmit={handleSubmit} className="settings-form">
-        <h3>Change Password</h3>
-        
+        <h3>{t('settings.changePasswordTitle')}</h3>
+
         {error && <div className="settings-error">{error}</div>}
         {success && <div className="settings-success">{success}</div>}
 
         <div className="settings-form-group">
-          <label htmlFor="currentPassword">Current Password</label>
+          <label htmlFor="currentPassword">{t('settings.currentPassword')}</label>
           <input
             id="currentPassword"
             type="password"
@@ -71,7 +62,7 @@ export function UserSettings({ onBack }: UserSettingsProps) {
         </div>
 
         <div className="settings-form-group">
-          <label htmlFor="newPassword">New Password</label>
+          <label htmlFor="newPassword">{t('settings.newPassword')}</label>
           <input
             id="newPassword"
             type="password"
@@ -80,15 +71,15 @@ export function UserSettings({ onBack }: UserSettingsProps) {
             required
             minLength={12}
           />
-          <small>Minimum 12 characters</small>
+          <small>{t('settings.minimumLength')}</small>
         </div>
 
         <div className="settings-actions">
           <button type="submit" className="btn-primary" disabled={isSubmitting}>
-            {isSubmitting ? 'Changing...' : 'Change Password'}
+            {isSubmitting ? t('settings.changing') : t('settings.changePassword')}
           </button>
           <button type="button" className="btn-secondary" onClick={onBack}>
-            Back to Board
+            {t('settings.backToBoard')}
           </button>
         </div>
       </form>

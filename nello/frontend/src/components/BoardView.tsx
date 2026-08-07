@@ -14,10 +14,12 @@ import { CardTile } from './CardTile';
 import { CardModal } from './CardModal';
 import { CardMemberDialog } from './CardMemberDialog';
 import { ArchivedItemsDialog } from './ArchivedItemsDialog';
+import { useTranslation } from 'react-i18next';
 import './ListColumn.css';
 
 export function BoardView() {
   const { state, apiDispatch, searchQuery } = useStore();
+  const { t } = useTranslation();
   const activeBoardId = state.activeBoardId;
   const board = activeBoardId ? state.boards[activeBoardId] : null;
 
@@ -232,7 +234,7 @@ export function BoardView() {
                     setListName('');
                   }
                 }}
-                placeholder="List name"
+                placeholder={t('boardView.listNamePlaceholder')}
                 autoFocus
               />
               <div className="add-list-actions">
@@ -241,7 +243,7 @@ export function BoardView() {
                   className="add-list-submit"
                   onClick={handleAddList}
                 >
-                  Add List
+                  {t('boardView.addList')}
                 </button>
                 <button
                   type="button"
@@ -261,7 +263,7 @@ export function BoardView() {
               className="add-list-btn"
               onClick={() => setAddingList(true)}
             >
-              + Add List
+              {t('boardView.addListButton')}
             </button>
           )}
         </div>

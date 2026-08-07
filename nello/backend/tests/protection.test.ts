@@ -57,6 +57,8 @@ describe("backend abuse protection", () => {
     });
 
     expect(res.statusCode).toBe(503);
-    expect(JSON.parse(res.body).detail).toBe("Service under pressure");
+    const payload = JSON.parse(res.body);
+    expect(payload.detail).toBe("Service under pressure");
+    expect(payload.error_code).toBe("SERVICE_UNDER_PRESSURE");
   });
 });

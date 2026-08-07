@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useStore } from '../state/StoreContext';
 import './Board.css';
+import { useTranslation } from 'react-i18next';
 
 export function EmptyState() {
   const { apiDispatch } = useStore();
+  const { t } = useTranslation();
   const [name, setName] = useState('');
 
   const handleCreate = () => {
@@ -19,7 +21,7 @@ export function EmptyState() {
 
   return (
     <div className="empty-state">
-      <p className="empty-state-text">No boards yet. Create your first board to get started.</p>
+      <p className="empty-state-text">{t('emptyState.message')}</p>
       <span className="empty-state-form">
         <input
           className="empty-state-input"
@@ -28,7 +30,7 @@ export function EmptyState() {
           onKeyDown={(e) => {
             if (e.key === 'Enter') handleCreate();
           }}
-          placeholder="Board name"
+          placeholder={t('emptyState.boardNamePlaceholder')}
           autoFocus
         />
         <button
@@ -36,7 +38,7 @@ export function EmptyState() {
           className="empty-state-btn"
           onClick={handleCreate}
         >
-          Create Board
+          {t('emptyState.createBoard')}
         </button>
       </span>
     </div>

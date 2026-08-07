@@ -3,6 +3,8 @@ import { db } from "../db/index.js";
 import { boards, lists, cards, listArchive, cardArchive, cardMembers, users, boardMembers } from "../db/schema.js";
 import { eq, and, isNull, asc, sql as sqlDrizzle } from "drizzle-orm";
 import { authenticate, checkBoardAccess } from "../middleware/auth.js";
+import { sendError } from "../utils/apiError.js";
+import { ErrorCode } from "../types/errors.js";
 
 interface BoardCreateBody {
   id: string;
@@ -65,7 +67,7 @@ export default async function boardRoutes(app: FastifyInstance) {
     const { id, name } = request.body;
 
     if (!name || !name.trim()) {
-      return reply.code(422).send({ detail: "Board name is required" });
+      return sendError(reply, 422, ErrorCode.boardNameRequired, "Board name is required");
     }
 
     const trimmedName = name.trim();
@@ -86,7 +88,7 @@ export default async function boardRoutes(app: FastifyInstance) {
     const boardId = request.params.id;
 
     const role = await checkBoardAccess(boardId, user.id);
-    if (!role) return reply.code(404).send();
+    if (!role) return sendError(reply, 404, ErrorCode.boardNotFound, "Board not found");
 
     const [board] = await db.select().from(boards).where(eq(boards.id, boardId)).limit(1);
 
@@ -149,13 +151,13 @@ export default async function boardRoutes(app: FastifyInstance) {
     const boardId = request.params.id;
 
     const role = await checkBoardAccess(boardId, user.id);
-    if (!role) return reply.code(404).send();
+    if (!role) return sendError(reply, 404, ErrorCode.boardNotFound, "Board not found");
 
     const [current] = await db.select({ name: boards.name }).from(boards).where(eq(boards.id, boardId)).limit(1);
     const newName = request.body.name.trim();
 
     if (current.name.endsWith("$") && !newName.endsWith("$")) {
-      return reply.code(409).send({ detail: "Shared boards must keep the '$' suffix" });
+      return sendError(reply, 409, ErrorCode.boardSharedSuffixRequired, "Shared boards must keep the '$' suffix");
     }
 
     await db.update(boards).set({ name: newName }).where(eq(boards.id, boardId));
@@ -183,8 +185,8 @@ export default async function boardRoutes(app: FastifyInstance) {
     const boardId = request.params.id;
 
     const role = await checkBoardAccess(boardId, user.id);
-    if (!role) return reply.code(404).send();
-    if (role !== "owner") return reply.code(403).send({ detail: "Only the board owner can delete the board" });
+    if (!role) return sendError(reply, 404, ErrorCode.boardNotFound, "Board not found");
+    if (role !== "owner") return sendError(reply, 403, ErrorCode.boardDeleteForbidden, "Only the board owner can delete the board");
 
     await db.delete(boards).where(eq(boards.id, boardId));
     reply.code(204).send();
@@ -196,7 +198,7 @@ export default async function boardRoutes(app: FastifyInstance) {
     const boardId = request.params.id;
 
     const role = await checkBoardAccess(boardId, user.id);
-    if (!role) return reply.code(404).send();
+    if (!role) return sendError(reply, 404, ErrorCode.boardNotFound, "Board not found");
 
     const rows = await db
       .select({

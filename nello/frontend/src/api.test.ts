@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { archiveCard, archiveList, addCardMember, getBoards, getToken, register, removeCardMember, setToken, setUnauthorizedHandler, updateCard } from './api';
+import { ApiError, archiveCard, archiveList, addCardMember, getBoards, getToken, register, removeCardMember, setToken, setUnauthorizedHandler, updateCard } from './api';
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -16,7 +16,9 @@ describe('API authentication', () => {
       new Response('expired', { status: 401 }),
     ));
 
-    await expect(getBoards()).rejects.toThrow('failed (401)');
+    const request = getBoards();
+    await expect(request).rejects.toThrow('expired');
+    await expect(request).rejects.toBeInstanceOf(ApiError);
 
     expect(getToken()).toBeNull();
     expect(onUnauthorized).toHaveBeenCalledOnce();

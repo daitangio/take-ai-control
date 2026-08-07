@@ -10,6 +10,23 @@ const BASE_URL = "/api";
 let token: string | null = null;
 let unauthorizedHandler: (() => void) | null = null;
 
+type ApiErrorPayload = {
+  detail?: string;
+  error_code?: string;
+};
+
+export class ApiError extends Error {
+  status: number;
+  errorCode: string | null;
+
+  constructor(message: string, status: number, errorCode: string | null = null) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.errorCode = errorCode;
+  }
+}
+
 export function setToken(t: string | null) {
   token = t;
 }
@@ -45,9 +62,19 @@ async function fetchWithAuth<T>(
       setToken(null);
       unauthorizedHandler?.();
     }
-    const body = await res.text();
-    const err = new Error(
-      `API ${options.method || "GET"} ${path} failed (${res.status}): ${body}`,
+    const rawBody = await res.text();
+    let payload: ApiErrorPayload | null = null;
+    try {
+      payload = rawBody ? (JSON.parse(rawBody) as ApiErrorPayload) : null;
+    } catch {
+      payload = null;
+    }
+
+    const detail = payload?.detail ?? rawBody ?? "Request failed";
+    const err = new ApiError(
+      detail,
+      res.status,
+      payload?.error_code ?? null,
     );
     console.debug("[nello:api]", err.message);
     throw err;
@@ -75,6 +102,13 @@ export function login(email: string, password: string) {
   return fetchWithAuth<TokenResponse>("/auth/login", {
     method: "POST",
     body: JSON.stringify({ email, password }),
+  });
+}
+
+export function changePassword(currentPassword: string, newPassword: string) {
+  return fetchWithAuth<{ detail: string }>("/auth/password", {
+    method: "PUT",
+    body: JSON.stringify({ currentPassword, newPassword }),
   });
 }
 

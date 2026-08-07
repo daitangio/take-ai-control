@@ -13,6 +13,8 @@ import {
   getToken,
   setUnauthorizedHandler,
 } from "../api";
+import i18n from "../i18n";
+import { toLocalizedErrorMessage } from "../i18n/backendErrors";
 
 interface AuthState {
   token: string | null;
@@ -36,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUnauthorizedHandler(() => {
       setTokenState(null);
       setEmail(null);
-      setError("Your session expired. Please sign in again.");
+      setError(i18n.t("auth.sessionExpired"));
     });
     return () => setUnauthorizedHandler(null);
   }, []);
@@ -50,7 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setTokenState(res.access_token);
       setEmail(e);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Login failed";
+      const msg = toLocalizedErrorMessage(i18n.t.bind(i18n), err);
       setError(msg);
       console.debug("[nello:api] login failed:", err);
       throw err;
@@ -68,7 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setTokenState(res.access_token);
       setEmail(e);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Registration failed";
+      const msg = toLocalizedErrorMessage(i18n.t.bind(i18n), err);
       setError(msg);
       console.debug("[nello:api] register failed:", err);
       throw err;

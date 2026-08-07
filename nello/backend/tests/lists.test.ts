@@ -43,6 +43,7 @@ describe("CreateList", () => {
     await _createBoard(env, other, "theirs", "Theirs");
     const res = await _createList(env, auth, "list-1", "theirs", "Nope");
     expect(res.statusCode).toBe(404);
+    expect(JSON.parse(res.body).error_code).toBe("BOARD_NOT_FOUND");
   });
 
   it("rejects creating a list without authentication with 401", async () => {

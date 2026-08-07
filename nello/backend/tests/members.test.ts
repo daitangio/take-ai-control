@@ -98,10 +98,12 @@ describe("AddMember", () => {
     // Third user is not a member at all → board invisible → 404.
     const r3 = await env.app.inject({ method: "POST", url: "/api/boards/shared-1/members", headers: thirdHeaders, payload: { email: "third@example.com" } });
     expect(r3.statusCode).toBe(404);
+    expect(asJson(r3).error_code).toBe("BOARD_NOT_FOUND");
 
     // Other user is a member but not the owner → 403.
     const rMember = await env.app.inject({ method: "POST", url: "/api/boards/shared-1/members", headers: other, payload: { email: "third@example.com" } });
     expect(rMember.statusCode).toBe(403);
+    expect(asJson(rMember).error_code).toBe("MEMBER_ADD_FORBIDDEN");
   });
 });
 

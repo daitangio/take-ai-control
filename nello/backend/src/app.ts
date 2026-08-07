@@ -7,6 +7,8 @@ import boardRoutes from "./routes/boards.js";
 import listRoutes from "./routes/lists.js";
 import cardRoutes from "./routes/cards.js";
 import memberRoutes from "./routes/members.js";
+import { sendError } from "./utils/apiError.js";
+import { ErrorCode } from "./types/errors.js";
 
 type RateLimitConfig = {
   max: number;
@@ -165,9 +167,7 @@ export async function buildApp(opts: BuildAppOptions = {}): Promise<FastifyInsta
         "Backend rejected a request because the process is under pressure",
       );
 
-      reply.code(503).send({
-        detail: "Service under pressure",
-      });
+      sendError(reply, 503, ErrorCode.serviceUnderPressure, "Service under pressure");
     },
   };
 

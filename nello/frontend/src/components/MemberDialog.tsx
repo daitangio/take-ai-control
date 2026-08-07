@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import * as api from '../api';
+import { useTranslation } from 'react-i18next';
+import { toLocalizedErrorMessage } from '../i18n/backendErrors';
 
 interface Props {
   boardId: string;
@@ -7,6 +9,7 @@ interface Props {
 }
 
 export function MemberDialog({ boardId, onClose }: Props) {
+  const { t } = useTranslation();
   const [members, setMembers] = useState<api.MemberResponse[]>([]);
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(true);
@@ -18,12 +21,12 @@ export function MemberDialog({ boardId, onClose }: Props) {
       const list = await api.listMembers(boardId);
       setMembers(list);
       setError(null);
-    } catch {
-      setError('Failed to load members');
+    } catch (err) {
+      setError(toLocalizedErrorMessage(t, err));
     } finally {
       setLoading(false);
     }
-  }, [boardId]);
+  }, [boardId, t]);
 
   useEffect(() => {
     loadMembers();
@@ -36,7 +39,7 @@ export function MemberDialog({ boardId, onClose }: Props) {
       setEmail('');
       await loadMembers();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add member');
+      setError(toLocalizedErrorMessage(t, err));
     }
   };
 
@@ -45,7 +48,7 @@ export function MemberDialog({ boardId, onClose }: Props) {
       await api.removeMember(boardId, memberId);
       setMembers((prev) => prev.filter((m) => m.id !== memberId));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to remove member');
+      setError(toLocalizedErrorMessage(t, err));
     }
   };
 
@@ -60,15 +63,15 @@ export function MemberDialog({ boardId, onClose }: Props) {
       onClick={handleOverlayClick}
     >
       <div className="modal" style={{ maxWidth: 400 }}>
-        <h3 style={{ margin: '0 0 16px' }}>Members</h3>
+        <h3 style={{ margin: '0 0 16px' }}>{t('members.title')}</h3>
 
         {loading ? (
-          <p style={{ color: 'var(--color-text-secondary)' }}>Loading...</p>
+          <p style={{ color: 'var(--color-text-secondary)' }}>{t('members.loading')}</p>
         ) : (
           <>
             {members.length === 0 ? (
               <p style={{ color: 'var(--color-text-secondary)' }}>
-                No members yet.
+                {t('members.empty')}
               </p>
             ) : (
               <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px' }}>
@@ -96,7 +99,7 @@ export function MemberDialog({ boardId, onClose }: Props) {
                         cursor: 'pointer',
                         borderRadius: 3,
                       }}
-                      title="Remove member"
+                      title={t('members.removeTitle')}
                     >
                       ×
                     </button>
@@ -113,7 +116,7 @@ export function MemberDialog({ boardId, onClose }: Props) {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleAdd();
                 }}
-                placeholder="Email address"
+                placeholder={t('members.emailPlaceholder')}
                 style={{
                   flex: 1,
                   padding: '6px 10px',
@@ -135,7 +138,7 @@ export function MemberDialog({ boardId, onClose }: Props) {
                   fontSize: 14,
                 }}
               >
-                Add
+                {t('members.add')}
               </button>
             </div>
 
@@ -153,7 +156,7 @@ export function MemberDialog({ boardId, onClose }: Props) {
             className="modal-close-btn"
             onClick={onClose}
           >
-            Close
+            {t('members.close')}
           </button>
         </div>
       </div>

@@ -281,6 +281,7 @@ describe("CardMembers", () => {
 
     const res = await env.app.inject({ method: "POST", url: "/api/cards/card-1/members", headers: auth, payload: { userId: outsiderId } });
     expect(res.statusCode).toBe(409);
+    expect(asJson(res).error_code).toBe("CARD_MEMBER_OUTSIDE_BOARD");
     expect(asJson(await env.app.inject({ method: "GET", url: "/api/cards/card-1/members", headers: auth }))).toEqual([]);
   });
 

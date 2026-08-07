@@ -3,6 +3,8 @@ import { db } from "../db/index.js";
 import { cards, lists, cardArchive, cardMembers, users, boards as boardsTable, boardMembers } from "../db/schema.js";
 import { eq, ne, and, asc, sql } from "drizzle-orm";
 import { authenticate, checkBoardAccess } from "../middleware/auth.js";
+import { sendError } from "../utils/apiError.js";
+import { ErrorCode } from "../types/errors.js";
 
 interface CardCreateBody {
   id: string;
@@ -103,12 +105,12 @@ export default async function cardRoutes(app: FastifyInstance) {
     const { id, listId, title } = request.body;
 
     if (!title || !title.trim()) {
-      return reply.code(422).send({ detail: "Card title is required" });
+      return sendError(reply, 422, ErrorCode.cardTitleRequired, "Card title is required");
     }
 
     const boardId = await _listBoardId(listId);
     if (!boardId || !(await checkBoardAccess(boardId, user.id))) {
-      return reply.code(404).send({ detail: "List not found" });
+      return sendError(reply, 404, ErrorCode.cardListNotFound, "List not found");
     }
 
     const [maxRow] = await db
@@ -137,16 +139,16 @@ export default async function cardRoutes(app: FastifyInstance) {
       const cardId = request.params.id;
 
       const card = await _cardRow(cardId);
-      if (!card) return reply.code(404).send();
+      if (!card) return sendError(reply, 404, ErrorCode.cardNotFound, "Card not found");
 
       const boardId = await _cardBoardId(cardId);
       if (!boardId || !(await checkBoardAccess(boardId, user.id))) {
-        return reply.code(404).send();
+        return sendError(reply, 404, ErrorCode.cardNotFound, "Card not found");
       }
 
       const { title, description = "", dueDate, color } = request.body;
       if (!title || !title.trim()) {
-        return reply.code(422).send({ detail: "Card title is required" });
+        return sendError(reply, 422, ErrorCode.cardTitleRequired, "Card title is required");
       }
       const hasBody = request.body as any;
       const hasDueDate = "dueDate" in hasBody;
@@ -173,7 +175,7 @@ export default async function cardRoutes(app: FastifyInstance) {
     const cardId = request.params.id;
     const boardId = await _cardBoardId(cardId);
     if (!boardId || !(await checkBoardAccess(boardId, user.id))) {
-      return reply.code(404).send();
+      return sendError(reply, 404, ErrorCode.cardNotFound, "Card not found");
     }
     await db.delete(cards).where(eq(cards.id, cardId));
     reply.code(204).send();
@@ -185,11 +187,11 @@ export default async function cardRoutes(app: FastifyInstance) {
     const cardId = request.params.id;
 
     const card = await _cardRow(cardId);
-    if (!card) return reply.code(404).send();
+    if (!card) return sendError(reply, 404, ErrorCode.cardNotFound, "Card not found");
 
     const boardId = await _cardBoardId(cardId);
     if (!boardId || !(await checkBoardAccess(boardId, user.id))) {
-      return reply.code(404).send();
+      return sendError(reply, 404, ErrorCode.cardNotFound, "Card not found");
     }
 
     await db
@@ -215,11 +217,11 @@ export default async function cardRoutes(app: FastifyInstance) {
         .where(eq(cardArchive.cardId, cardId))
         .limit(1);
 
-      if (!archiveRow) return reply.code(404).send();
+      if (!archiveRow) return sendError(reply, 404, ErrorCode.cardNotFound, "Card not found");
 
       const targetBoardId = await _listBoardId(targetListId);
       if (!targetBoardId || !(await checkBoardAccess(targetBoardId, user.id))) {
-        return reply.code(404).send();
+        return sendError(reply, 404, ErrorCode.cardListNotFound, "Target list not found");
       }
 
       await db.delete(cardArchive).where(eq(cardArchive.cardId, cardId));
@@ -244,7 +246,7 @@ export default async function cardRoutes(app: FastifyInstance) {
     const cardId = request.params.id;
     const boardId = await _cardBoardId(cardId);
     if (!boardId || !(await checkBoardAccess(boardId, user.id))) {
-      return reply.code(404).send();
+      return sendError(reply, 404, ErrorCode.cardNotFound, "Card not found");
     }
     return await _cardMembers(cardId);
   });
@@ -258,7 +260,7 @@ export default async function cardRoutes(app: FastifyInstance) {
       const cardId = request.params.id;
       const boardId = await _cardBoardId(cardId);
       if (!boardId || !(await checkBoardAccess(boardId, user.id))) {
-        return reply.code(404).send();
+        return sendError(reply, 404, ErrorCode.cardNotFound, "Card not found");
       }
 
       const rows = await db
@@ -290,10 +292,10 @@ export default async function cardRoutes(app: FastifyInstance) {
 
       const boardId = await _cardBoardId(cardId);
       if (!boardId || !(await checkBoardAccess(boardId, user.id))) {
-        return reply.code(404).send();
+        return sendError(reply, 404, ErrorCode.cardNotFound, "Card not found");
       }
       if (!(await checkBoardAccess(boardId, memberId))) {
-        return reply.code(409).send({ detail: "User does not have access to this board" });
+        return sendError(reply, 409, ErrorCode.cardMemberOutsideBoard, "User does not have access to this board");
       }
 
       await db
@@ -307,7 +309,7 @@ export default async function cardRoutes(app: FastifyInstance) {
         .where(eq(users.id, memberId))
         .limit(1);
 
-      if (!member) return reply.code(404).send();
+      if (!member) return sendError(reply, 404, ErrorCode.memberUserNotFound, "User not found");
       reply.code(201).send(member);
     },
   );
@@ -323,7 +325,7 @@ export default async function cardRoutes(app: FastifyInstance) {
 
       const boardId = await _cardBoardId(cardId);
       if (!boardId || !(await checkBoardAccess(boardId, user.id))) {
-        return reply.code(404).send();
+        return sendError(reply, 404, ErrorCode.cardNotFound, "Card not found");
       }
 
       await db
@@ -344,16 +346,16 @@ export default async function cardRoutes(app: FastifyInstance) {
       const { toListId, index } = request.body;
 
       const card = await _cardRow(cardId);
-      if (!card) return reply.code(404).send();
+      if (!card) return sendError(reply, 404, ErrorCode.cardNotFound, "Card not found");
 
       const fromBoardId = await _cardBoardId(cardId);
       if (!fromBoardId || !(await checkBoardAccess(fromBoardId, user.id))) {
-        return reply.code(404).send();
+        return sendError(reply, 404, ErrorCode.cardNotFound, "Card not found");
       }
 
       const toBoardId = await _listBoardId(toListId);
       if (!toBoardId || !(await checkBoardAccess(toBoardId, user.id))) {
-        return reply.code(404).send();
+        return sendError(reply, 404, ErrorCode.cardListNotFound, "Target list not found");
       }
 
       // Get old list's cards

@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { useAuth } from "../state/AuthContext";
+import { useTranslation } from "react-i18next";
 
 interface LoginFormProps {
   onSwitchToRegister: () => void;
@@ -7,6 +8,7 @@ interface LoginFormProps {
 
 export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
   const { login, loading, error } = useAuth();
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -26,13 +28,13 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
       <form className="login-form" onSubmit={handleSubmit}>
         <h2>Nello RuleZ</h2>
         <p className="login-subtitle">
-          Sign in to your boards
+          {t("auth.loginSubtitle")}
         </p>
 
         {toast && <div className="toast">{toast}</div>}
         {error && <div className="login-error">{error}</div>}
 
-        <label htmlFor="login-email">Email</label>
+        <label htmlFor="login-email">{t("auth.email")}</label>
         <input
           id="login-email"
           type="email"
@@ -42,7 +44,7 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
           autoFocus
         />
 
-        <label htmlFor="login-password">Password</label>
+        <label htmlFor="login-password">{t("auth.password")}</label>
         <input
           id="login-password"
           type="password"
@@ -54,13 +56,13 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
 
         <button type="submit" disabled={loading}>
           {loading
-            ? "Please wait..."
-            : "Login"}
+            ? t("auth.pleaseWait")
+            : t("auth.login")}
         </button>
 
         <p className="login-subtitle">
           <button type="button" className="login-toggle" onClick={onSwitchToRegister}>
-            Don't have an account? Register
+            {t("auth.toRegister")}
           </button>
         </p>
       </form>

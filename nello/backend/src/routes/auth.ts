@@ -6,6 +6,8 @@ import { hashPassword, verifyPassword, validatePassword } from "../utils/passwor
 import { createToken } from "../utils/jwt.js";
 import { authenticate } from "../middleware/auth.js";
 import crypto from "node:crypto";
+import { sendError } from "../utils/apiError.js";
+import { ErrorCode } from "../types/errors.js";
 
 type RateLimitConfig = {
   max: number;
@@ -47,7 +49,7 @@ export default async function authRoutes(app: FastifyInstance, opts: AuthRoutesO
     const { email, password } = request.body;
 
     if (!email || !password) {
-      return reply.code(422).send({ detail: "Email and password are required" });
+      return sendError(reply, 422, ErrorCode.authCredentialsRequired, "Email and password are required");
     }
 
     const [user] = await db
@@ -57,7 +59,7 @@ export default async function authRoutes(app: FastifyInstance, opts: AuthRoutesO
       .limit(1);
 
     if (!user || !verifyPassword(password, user.password)) {
-      return reply.code(401).send({ detail: "Invalid email or password" });
+      return sendError(reply, 401, ErrorCode.authInvalidCredentials, "Invalid email or password");
     }
 
     const token = createToken(user.id);
@@ -72,13 +74,13 @@ export default async function authRoutes(app: FastifyInstance, opts: AuthRoutesO
     const { email, keyPass, password } = request.body;
 
     if (!email || !keyPass || !password) {
-      return reply.code(422).send({ detail: "Email, invitation key, and password are required" });
+      return sendError(reply, 422, ErrorCode.registerFieldsRequired, "Email, invitation key, and password are required");
     }
 
     try {
       validatePassword(password);
     } catch (e) {
-      return reply.code(422).send({ detail: (e as Error).message });
+      return sendError(reply, 422, ErrorCode.registerPasswordInvalid, (e as Error).message);
     }
 
     // Look up the invitation key
@@ -89,7 +91,7 @@ export default async function authRoutes(app: FastifyInstance, opts: AuthRoutesO
       .limit(1);
 
     if (!key) {
-      return reply.code(401).send({ detail: "Invalid or exhausted invitation key" });
+      return sendError(reply, 401, ErrorCode.registerKeyInvalidOrExhausted, "Invalid or exhausted invitation key");
     }
 
     // Validate email against the key's regexp
@@ -97,7 +99,7 @@ export default async function authRoutes(app: FastifyInstance, opts: AuthRoutesO
       try {
         const re = new RegExp(key.emailRegexp);
         if (!re.test(email)) {
-          return reply.code(401).send({ detail: "Email not eligible for this invitation key" });
+          return sendError(reply, 401, ErrorCode.registerEmailNotEligible, "Email not eligible for this invitation key");
         }
       } catch {
         // Invalid regexp in DB — allow through (admin error, not user's fault)
@@ -112,7 +114,7 @@ export default async function authRoutes(app: FastifyInstance, opts: AuthRoutesO
       .limit(1);
 
     if (existingUser) {
-      return reply.code(409).send({ detail: "Email already registered" });
+      return sendError(reply, 409, ErrorCode.registerEmailAlreadyRegistered, "Email already registered");
     }
 
     // Race-safe decrement of avail_count
@@ -122,7 +124,7 @@ export default async function authRoutes(app: FastifyInstance, opts: AuthRoutesO
       .where(and(eq(registerKey.id, key.id), sql`${registerKey.availCount} > 0`));
 
     if (updateResult.rowsAffected === 0) {
-      return reply.code(409).send({ detail: "Invitation key just exhausted" });
+      return sendError(reply, 409, ErrorCode.registerKeyJustExhausted, "Invitation key just exhausted");
     }
 
     // Create user
@@ -151,17 +153,17 @@ export default async function authRoutes(app: FastifyInstance, opts: AuthRoutesO
     const userId = request.user?.id;
 
     if (!userId) {
-      return reply.code(401).send({ detail: "Unauthorized" });
+      return sendError(reply, 401, ErrorCode.passwordChangeUnauthorized, "Unauthorized");
     }
 
     if (!currentPassword || !newPassword) {
-      return reply.code(422).send({ detail: "Current password and new password are required" });
+      return sendError(reply, 422, ErrorCode.passwordChangeFieldsRequired, "Current password and new password are required");
     }
 
     try {
       validatePassword(newPassword);
     } catch (e) {
-      return reply.code(422).send({ detail: (e as Error).message });
+      return sendError(reply, 422, ErrorCode.passwordChangePasswordInvalid, (e as Error).message);
     }
 
     const [user] = await db
@@ -171,7 +173,7 @@ export default async function authRoutes(app: FastifyInstance, opts: AuthRoutesO
       .limit(1);
 
     if (!user || !verifyPassword(currentPassword, user.password)) {
-      return reply.code(401).send({ detail: "Invalid current password" });
+      return sendError(reply, 401, ErrorCode.passwordChangeCurrentInvalid, "Invalid current password");
     }
 
     const newHashedPassword = hashPassword(newPassword);

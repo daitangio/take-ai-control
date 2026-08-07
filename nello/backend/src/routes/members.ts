@@ -3,6 +3,8 @@ import { db } from "../db/index.js";
 import { boards, boardMembers, cardMembers, cards, lists, users } from "../db/schema.js";
 import { eq, and, asc } from "drizzle-orm";
 import { authenticate, checkBoardAccess } from "../middleware/auth.js";
+import { sendError } from "../utils/apiError.js";
+import { ErrorCode } from "../types/errors.js";
 
 interface AddMemberBody {
   email: string;
@@ -15,7 +17,7 @@ export default async function memberRoutes(app: FastifyInstance) {
     const boardId = request.params.id;
 
     if (!(await checkBoardAccess(boardId, user.id))) {
-      return reply.code(404).send();
+      return sendError(reply, 404, ErrorCode.boardNotFound, "Board not found");
     }
 
     const rows = await db
@@ -38,9 +40,9 @@ export default async function memberRoutes(app: FastifyInstance) {
       const { email } = request.body;
 
       const role = await checkBoardAccess(boardId, user.id);
-      if (!role) return reply.code(404).send({ detail: "Board not found" });
+      if (!role) return sendError(reply, 404, ErrorCode.boardNotFound, "Board not found");
       if (role !== "owner") {
-        return reply.code(403).send({ detail: "Only the board owner can add members" });
+        return sendError(reply, 403, ErrorCode.memberAddForbidden, "Only the board owner can add members");
       }
 
       const [board] = await db
@@ -50,7 +52,7 @@ export default async function memberRoutes(app: FastifyInstance) {
         .limit(1);
 
       if (!board.name.endsWith("$")) {
-        return reply.code(409).send({ detail: "Board is not shared (name must end with '$')" });
+        return sendError(reply, 409, ErrorCode.boardNotShared, "Board is not shared (name must end with '$')");
       }
 
       const [memberUser] = await db
@@ -60,11 +62,11 @@ export default async function memberRoutes(app: FastifyInstance) {
         .limit(1);
 
       if (!memberUser) {
-        return reply.code(404).send({ detail: "User not found" });
+        return sendError(reply, 404, ErrorCode.memberUserNotFound, "User not found");
       }
 
       if (memberUser.id === user.id) {
-        return reply.code(409).send({ detail: "Cannot add yourself as a member" });
+        return sendError(reply, 409, ErrorCode.memberSelfAddForbidden, "Cannot add yourself as a member");
       }
 
       // Check if already a member
@@ -75,7 +77,7 @@ export default async function memberRoutes(app: FastifyInstance) {
         .limit(1);
 
       if (existing) {
-        return reply.code(409).send({ detail: "User is already a member" });
+        return sendError(reply, 409, ErrorCode.memberAlreadyExists, "User is already a member");
       }
 
       await db.insert(boardMembers).values({
@@ -97,9 +99,9 @@ export default async function memberRoutes(app: FastifyInstance) {
       const memberId = request.params.memberId;
 
       const role = await checkBoardAccess(boardId, user.id);
-      if (!role) return reply.code(404).send();
+      if (!role) return sendError(reply, 404, ErrorCode.boardNotFound, "Board not found");
       if (role !== "owner") {
-        return reply.code(403).send({ detail: "Only the board owner can remove members" });
+        return sendError(reply, 403, ErrorCode.memberRemoveForbidden, "Only the board owner can remove members");
       }
 
       // Verify the target user is a board member before deleting; the Python
@@ -110,7 +112,7 @@ export default async function memberRoutes(app: FastifyInstance) {
         .where(and(eq(boardMembers.boardId, boardId), eq(boardMembers.userId, memberId)))
         .limit(1);
       if (!existing) {
-        return reply.code(404).send({ detail: "Member not found" });
+        return sendError(reply, 404, ErrorCode.memberNotFound, "Member not found");
       }
 
       const delResult = await db
