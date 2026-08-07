@@ -92,3 +92,9 @@ Model: DeepSeek v4 Pro [1m]
 - Affected specs validate successfully individually. Repository-wide strict validation still reports the unrelated existing `card-assignment` spec failure.
 - The change remains active; archive after the pending human verification is completed.
 - Model: Codex / GPT-5
+
+## Archive add-frontend-multilingual-support
+
+- 2026-08-07: Archived the completed OpenSpec change to `openspec/changes/archive/2026-08-07-add-frontend-multilingual-support/`.
+- All 19 tasks and all planning artifacts were complete; affected main specs were synced and validated.
+- Model: Codex / GPT-5
