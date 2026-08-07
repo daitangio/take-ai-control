@@ -24,12 +24,13 @@ export function LanguageSelector() {
         }}
       >
         {LOCALE_OPTIONS.map(({ locale, flag, labelKey }) => {
-          // const label = t(`language.${labelKey}`);
+          const label = t(`language.${labelKey}`);
 
           return (
             <option
               key={locale}
               value={locale}
+              title={label}
             >
               {flag}
             </option>
