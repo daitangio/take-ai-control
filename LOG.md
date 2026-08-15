@@ -98,3 +98,35 @@ Model: DeepSeek v4 Pro [1m]
 - 2026-08-07: Archived the completed OpenSpec change to `openspec/changes/archive/2026-08-07-add-frontend-multilingual-support/`.
 - All 19 tasks and all planning artifacts were complete; affected main specs were synced and validated.
 - Model: Codex / GPT-5
+
+## Audit request and response logging (exploration)
+
+- 2026-08-15: Updated the `data-persistence` OpenSpec with the audit-log contract: every completed Fastify request records URL, method, redacted JSON request payload, and redacted JSON response payload in `audit_log`.
+- The existing database DDL includes the new `response` column. No application code was changed while in explore mode.
+- Remaining: create a change proposal and implement the global audit hook and its tests.
+- Model: Codex / GPT-5
+
+## Request and response audit logging
+
+- 2026-08-15: Created and implemented OpenSpec change `add-request-response-audit-log`.
+- Added a global Fastify audit path that stores URL, method, recursively redacted JSON request payload, and recursively redacted JSON response payload in `audit_log`; non-JSON payloads are omitted safely and audit writes are best-effort.
+- Added audit schema mapping and reset cleanup, plus four focused tests. `rtk npm test` passed (97 tests) and `rtk npm run build` passed.
+- Human-tested an isolated temporary backend: `GET /api/health` produced an `audit_log` row with `request: "null"` and `response: {"status":"ok"}`. The temporary server and database were removed.
+- Remaining: none; the change is ready for OpenSpec archive.
+- Model: Codex / GPT-5
+
+## Request and response audit retention (planning)
+
+- 2026-08-15: Updated `add-request-response-audit-log` planning artifacts and the main `data-persistence` spec with four-week audit retention.
+- Planned best-effort cleanup at backend startup and every 24 hours, with focused automated and human retention checks.
+- Remaining: apply the four retention tasks to the backend implementation.
+- Model: Codex / GPT-5 Terra
+
+## Request and response audit retention (implementation)
+
+- 2026-08-15: Implemented four-week audit retention for `add-request-response-audit-log`.
+- Backend now removes `audit_log` rows older than 28 days at startup and every 24 hours; the timer is unref'd and cleared on shutdown.
+- Added retention coverage proving a 29-day-old row is removed while a 27-day-old row remains. `rtk npm test` passed (98 tests) and `rtk npm run build` passed.
+- Human-tested startup cleanup with an isolated temporary database; only the 27-day-old audit record remained. The temporary server and database were removed.
+- Remaining: none; the change is ready for OpenSpec archive.
+- Model: Codex / GPT-5 Terra

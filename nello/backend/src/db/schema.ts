@@ -75,3 +75,11 @@ export const registerKey = sqliteTable("register_key", {
 	createdAt: text("created_at").default(sql`datetime('now')`).notNull(),
 });
 
+export const auditLog = sqliteTable("audit_log", {
+  id: integer("id").primaryKey(),
+  url: text("url"),
+  method: text("method"),
+  request: text("request"),
+  response: text("response"),
+  logTime: text("log_time").notNull().default(sql`(datetime('now'))`),
+});

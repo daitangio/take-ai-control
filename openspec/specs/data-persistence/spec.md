@@ -106,6 +106,40 @@ The system SHALL log data mutations (INSERT, UPDATE, DELETE) at DEBUG level incl
 - **WHEN** a board, list, or card is created via the API
 - **THEN** a DEBUG-level log entry is emitted with the table name, operation, and user ID
 
+### Requirement: Request and response audit persistence
+
+The system SHALL persist one audit record for every completed Fastify request in the `audit_log` table. Each record SHALL contain the request URL, HTTP method, a JSON `request` payload, a JSON `response` payload, and the database-generated log time. The request and response payloads MUST be recursively redacted before persistence so credentials, invitation keys, bearer tokens, access tokens, and password values are never stored. The system SHALL automatically delete audit records older than four weeks.
+
+#### Scenario: JSON request and response are audited
+
+- **WHEN** a request with a JSON body completes with a JSON response
+- **THEN** one `audit_log` row is stored with its URL and method, plus JSON representations of the request body and response body
+
+#### Scenario: Sensitive values are redacted
+
+- **WHEN** a request or response contains sensitive data at any nesting level
+- **THEN** the stored JSON retains its structure but replaces the sensitive value with a redacted marker
+
+#### Scenario: Request has no body or response body
+
+- **WHEN** a completed request or response has no body
+- **THEN** the corresponding audit column stores the JSON value `null`
+
+#### Scenario: Non-JSON content is not captured raw
+
+- **WHEN** a request or response body is not JSON
+- **THEN** the corresponding audit column stores a JSON-safe omission marker rather than the raw content
+
+#### Scenario: Rejected requests are audited
+
+- **WHEN** a request completes with an authentication, validation, rate-limit, or not-found response
+- **THEN** an audit record is persisted for that completed request
+
+#### Scenario: Expired audit records are removed
+
+- **WHEN** audit cleanup runs
+- **THEN** audit records whose `log_time` is older than four weeks are deleted and newer records are retained
+
 ### Requirement: Card due date persistence
 The system SHALL persist an optional date-only due date for each card.
 

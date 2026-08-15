@@ -35,6 +35,7 @@ export const db: TestDb = new Proxy({} as TestDb, {
 
 
 const TABLES = [
+  "audit_log",
   "card_member",
   "card_archive",
   "list_archive",

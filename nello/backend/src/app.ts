@@ -9,6 +9,9 @@ import cardRoutes from "./routes/cards.js";
 import memberRoutes from "./routes/members.js";
 import { sendError } from "./utils/apiError.js";
 import { ErrorCode } from "./types/errors.js";
+import { db } from "./db/index.js";
+import { auditLog } from "./db/schema.js";
+import { isJsonContentType, purgeExpiredAuditLogs, serializeAuditPayload } from "./utils/audit.js";
 
 type RateLimitConfig = {
   max: number;
@@ -72,6 +75,7 @@ const DEFAULT_UNDER_PRESSURE: Partial<UnderPressureConfig> = {
 
 const DEFAULT_WARNING_RATIO = 0.9;
 const DEFAULT_WARNING_INTERVAL_MS = 5000;
+const AUDIT_CLEANUP_INTERVAL_MS = 24 * 60 * 60 * 1000;
 
 function mergeRateLimitConfig(defaults: RateLimitConfig, overrides?: Partial<RateLimitConfig>): RateLimitConfig {
   return { ...defaults, ...overrides };
@@ -143,6 +147,7 @@ function installPressureWarnings(
  */
 export async function buildApp(opts: BuildAppOptions = {}): Promise<FastifyInstance> {
   const app = Fastify({ logger: opts.logger ?? { level: "debug" } });
+  const responsePayloads = new WeakMap<FastifyRequest, string>();
 
   await app.register(cors, {
     origin: ["http://localhost:5173"],
@@ -181,6 +186,47 @@ export async function buildApp(opts: BuildAppOptions = {}): Promise<FastifyInsta
       opts.pressureWarningIntervalMs ?? DEFAULT_WARNING_INTERVAL_MS,
     );
   }
+
+  const cleanupAuditLogs = async () => {
+    try {
+      await purgeExpiredAuditLogs(db);
+    } catch (error) {
+      app.log.warn({ error }, "Failed to remove expired audit logs");
+    }
+  };
+  await cleanupAuditLogs();
+  const auditCleanupTimer = setInterval(() => {
+    void cleanupAuditLogs();
+  }, AUDIT_CLEANUP_INTERVAL_MS);
+  auditCleanupTimer.unref?.();
+  app.addHook("onClose", async () => {
+    clearInterval(auditCleanupTimer);
+  });
+
+  app.addHook("onSend", async (request, reply, payload) => {
+    responsePayloads.set(
+      request,
+      serializeAuditPayload(payload, isJsonContentType(reply.getHeader("content-type")?.toString())),
+    );
+  });
+
+  app.addHook("onResponse", async (request) => {
+    try {
+      await db.insert(auditLog).values({
+        url: request.raw.url ?? request.url,
+        method: request.method,
+        request: serializeAuditPayload(
+          request.body,
+          isJsonContentType(request.headers["content-type"]),
+        ),
+        response: responsePayloads.get(request) ?? "null",
+      });
+    } catch (error) {
+      app.log.warn({ error }, "Failed to persist request audit log");
+    } finally {
+      responsePayloads.delete(request);
+    }
+  });
 
   await app.register(authRoutes, {
     prefix: "/api",
