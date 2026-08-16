@@ -130,3 +130,25 @@ Model: DeepSeek v4 Pro [1m]
 - Human-tested startup cleanup with an isolated temporary database; only the 27-day-old audit record remained. The temporary server and database were removed.
 - Remaining: none; the change is ready for OpenSpec archive.
 - Model: Codex / GPT-5 Terra
+
+## Request and response audit user email (planning update)
+
+- 2026-08-16: Updated OpenSpec change `add-request-response-audit-log` to persist the authenticated user's email in the existing `audit_log.user_email` column.
+- Confirmed `nello/backend/db-init/003-audit-log.sql` already defines `user_email`; no database migration is needed.
+- Added requirements and scenarios for authenticated and unauthenticated requests, the trusted `request.user?.email` design decision, and two unchecked implementation/test tasks.
+- Remaining: apply tasks 1.4 and 2.4 through `/opsx:apply`.
+- Model: Codex / GPT-5 [version unspecified]
+
+## Request and response audit user email (implementation)
+
+- 2026-08-16: Implemented tasks 1.4 and 2.4 for `add-request-response-audit-log`.
+- Mapped the existing `audit_log.user_email` column and populated it from authenticated `request.user?.email`; anonymous and rejected-auth requests remain `NULL`.
+- Added audit tests covering both authenticated and unauthenticated records. Backend tests passed (99 tests) and the backend TypeScript build passed.
+- Remaining: none; the change is ready for OpenSpec archive.
+- Model: Codex / GPT-5 [version unspecified]
+
+## Request and response audit logging (refactor)
+
+- 2026-08-16: Extracted the `onResponse` audit-log insert into `src/utils/audit.ts` as `persistAuditLog()`; the Fastify hook now only assembles lifecycle data and delegates persistence.
+- Backend tests passed (99 tests) and the backend TypeScript build passed. Remaining: frontend build verification pending.
+- Model: Codex / GPT-5 [version unspecified]

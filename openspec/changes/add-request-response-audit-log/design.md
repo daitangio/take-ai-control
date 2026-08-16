@@ -1,6 +1,6 @@
 ## Context
 
-The existing `audit_log` table has `url`, `method`, `request`, `response`, and a database-generated `log_time`. The application uses a single Drizzle/libSQL database instance and builds every route through `buildApp`; tests use the same DDL against an in-memory database.
+The existing `audit_log` table has `url`, `method`, `request`, `response`, `user_email`, and a database-generated `log_time`. The application uses a single Drizzle/libSQL database instance and builds every route through `buildApp`; tests use the same DDL against an in-memory database. Authentication assigns the trusted authenticated user, including their email, to `request.user`.
 
 ## Goals / Non-Goals
 
@@ -8,6 +8,7 @@ The existing `audit_log` table has `url`, `method`, `request`, `response`, and a
 
 - Make audit persistence cross-cutting so application and error responses use one path.
 - Preserve request and response structure while preventing secret persistence.
+- Associate authenticated requests with the trusted email from the authentication context.
 - Ensure audit failures never alter the completed HTTP response.
 - Enforce four-week audit retention without a separate service or dependency.
 
@@ -30,6 +31,10 @@ Use JSON serialization for both fields and write JSON `null` for absent bodies. 
 
 Use a shared, recursive sanitizer that replaces values for case-insensitive sensitive keys, including password variants, invitation keys, authorization, and token/access-token fields. Do not include request headers in the audit payload. Sanitizing at this boundary protects both request and response content; the latter can otherwise include login access tokens.
 
+### Persist the authenticated email separately from redacted payloads
+
+Write `request.user?.email` to the existing `audit_log.user_email` column. This uses the trusted user resolved by authentication rather than a caller-controlled body value; requests that do not reach authenticated state, including authentication failures, store `NULL`.
+
 ### Treat audit persistence as best effort
 
 Catch and log database insertion failures from the completion hook. The response has already been completed and must not be changed or delayed by an audit failure.
@@ -48,7 +53,7 @@ Delete rows whose SQLite `log_time` is older than 28 days when the application s
 ## Migration Plan
 
 1. Add the Drizzle mapping and runtime audit hook.
-2. Run the existing DDL-based initialization; `003-audit-log.sql` already creates `response` for new databases.
+2. Run the existing DDL-based initialization; `003-audit-log.sql` already creates `response` and `user_email` for new databases.
 3. Enable the startup and daily retention cleanup.
 4. Verify the backend test suite and TypeScript build.
 5. Roll back by removing the hook and cleanup timer; existing audit rows remain inert and no public API contract changes.

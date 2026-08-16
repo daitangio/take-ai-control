@@ -8,6 +8,14 @@ const SENSITIVE_KEY = /password|keypass|authorization|token/i;
 
 export const AUDIT_RETENTION_DAYS = 28; // 4 weeks retention policy
 
+type AuditLogEntry = {
+  url: string;
+  method: string;
+  request: string;
+  response: string;
+  userEmail?: string;
+};
+
 function sanitize(value: unknown, seen = new WeakSet<object>()): unknown {
   if (value === null || typeof value === "string" || typeof value === "boolean") return value;
   if (typeof value === "number") return Number.isFinite(value) ? value : String(value);
@@ -45,6 +53,13 @@ export function serializeAuditPayload(payload: unknown, isJson: boolean): string
   }
 
   return JSON.stringify(sanitize(jsonPayload));
+}
+
+export async function persistAuditLog(
+  database: Pick<Db, "insert">,
+  entry: AuditLogEntry,
+): Promise<void> {
+  await database.insert(auditLog).values(entry);
 }
 
 export async function purgeExpiredAuditLogs(database: Pick<Db, "delete">): Promise<void> {

@@ -4,5 +4,6 @@ CREATE table if not exists audit_log (
     method TEXT,
     request TEXT,
     response TEXT,
+    user_email TEXT,
     log_time  TEXT NOT NULL DEFAULT (datetime('now'))
 ) STRICT;

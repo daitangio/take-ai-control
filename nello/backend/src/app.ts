@@ -10,8 +10,7 @@ import memberRoutes from "./routes/members.js";
 import { sendError } from "./utils/apiError.js";
 import { ErrorCode } from "./types/errors.js";
 import { db } from "./db/index.js";
-import { auditLog } from "./db/schema.js";
-import { isJsonContentType, purgeExpiredAuditLogs, serializeAuditPayload } from "./utils/audit.js";
+import { isJsonContentType, persistAuditLog, purgeExpiredAuditLogs, serializeAuditPayload } from "./utils/audit.js";
 
 type RateLimitConfig = {
   max: number;
@@ -212,7 +211,7 @@ export async function buildApp(opts: BuildAppOptions = {}): Promise<FastifyInsta
 
   app.addHook("onResponse", async (request) => {
     try {
-      await db.insert(auditLog).values({
+      await persistAuditLog(db, {
         url: request.raw.url ?? request.url,
         method: request.method,
         request: serializeAuditPayload(
@@ -220,6 +219,7 @@ export async function buildApp(opts: BuildAppOptions = {}): Promise<FastifyInsta
           isJsonContentType(request.headers["content-type"]),
         ),
         response: responsePayloads.get(request) ?? "null",
+        userEmail: request.user?.email,
       });
     } catch (error) {
       app.log.warn({ error }, "Failed to persist request audit log");

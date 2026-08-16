@@ -81,5 +81,6 @@ export const auditLog = sqliteTable("audit_log", {
   method: text("method"),
   request: text("request"),
   response: text("response"),
+  userEmail: text("user_email"),
   logTime: text("log_time").notNull().default(sql`(datetime('now'))`),
 });

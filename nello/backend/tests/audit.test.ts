@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { buildTestApp, raw, registerUser, type TestApp } from "./helpers.js";
+import { authHeadersFor, buildTestApp, raw, registerUser, type TestApp } from "./helpers.js";
 import { purgeExpiredAuditLogs, serializeAuditPayload } from "../src/utils/audit.js";
 
 describe("request and response audit logging", () => {
@@ -40,13 +40,25 @@ describe("request and response audit logging", () => {
     const rejected = await env.app.inject({ method: "GET", url: "/api/boards" });
     expect(rejected.statusCode).toBe(401);
 
-    const [healthRow] = await raw(env.db, "SELECT request, response FROM audit_log WHERE url = ?", ["/api/health"]);
+    const [healthRow] = await raw(env.db, "SELECT request, response, user_email FROM audit_log WHERE url = ?", ["/api/health"]);
     expect(healthRow?.request).toBe("null");
     expect(JSON.parse(healthRow?.response as string)).toEqual({ status: "ok" });
+    expect(healthRow?.user_email).toBeNull();
 
-    const [rejectedRow] = await raw(env.db, "SELECT request, response FROM audit_log WHERE url = ?", ["/api/boards"]);
+    const [rejectedRow] = await raw(env.db, "SELECT request, response, user_email FROM audit_log WHERE url = ?", ["/api/boards"]);
     expect(rejectedRow?.request).toBe("null");
     expect(JSON.parse(rejectedRow?.response as string)).toMatchObject({ error_code: "AUTH_REQUIRED" });
+    expect(rejectedRow?.user_email).toBeNull();
+  });
+
+  it("stores the authenticated user's email", async () => {
+    const headers = await authHeadersFor(env.app, env.db, "actor@example.com", "secret123");
+
+    const response = await env.app.inject({ method: "GET", url: "/api/boards", headers });
+    expect(response.statusCode).toBe(200);
+
+    const [row] = await raw(env.db, "SELECT user_email FROM audit_log WHERE url = ?", ["/api/boards"]);
+    expect(row?.user_email).toBe("actor@example.com");
   });
 
   it("omits non-JSON payloads instead of recording their raw content", () => {

@@ -2,7 +2,7 @@
 
 ### Requirement: Request and response audit persistence
 
-The system SHALL persist one audit record for every completed Fastify request in the `audit_log` table. Each record SHALL contain the request URL, HTTP method, a JSON `request` payload, a JSON `response` payload, and the database-generated log time. The request and response payloads MUST be recursively redacted before persistence so credentials, invitation keys, bearer tokens, access tokens, and password values are never stored. The system SHALL automatically delete audit records older than four weeks.
+The system SHALL persist one audit record for every completed Fastify request in the `audit_log` table. Each record SHALL contain the request URL, HTTP method, a JSON `request` payload, a JSON `response` payload, the authenticated user's email in `user_email` when available, and the database-generated log time. The `user_email` column SHALL be `NULL` when the request has no authenticated user. The request and response payloads MUST be recursively redacted before persistence so credentials, invitation keys, bearer tokens, access tokens, and password values are never stored. The system SHALL automatically delete audit records older than four weeks.
 
 #### Scenario: JSON request and response are audited
 
@@ -28,6 +28,16 @@ The system SHALL persist one audit record for every completed Fastify request in
 
 - **WHEN** a request completes with an authentication, validation, rate-limit, or not-found response
 - **THEN** an audit record is persisted for that completed request
+
+#### Scenario: Authenticated user email is audited
+
+- **WHEN** a request completes after authentication has assigned a user to the request
+- **THEN** the audit record stores that user's email in `user_email`
+
+#### Scenario: No authenticated user email is available
+
+- **WHEN** a request completes without an authenticated user, including a rejected authentication request
+- **THEN** the audit record stores `NULL` in `user_email`
 
 #### Scenario: Expired audit records are removed
 

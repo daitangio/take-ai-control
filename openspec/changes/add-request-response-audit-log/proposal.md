@@ -5,7 +5,7 @@ The backend currently writes operational logs but has no durable record of the r
 ## What Changes
 
 - Record every completed Fastify request in the existing SQLite `audit_log` table.
-- Persist JSON-safe, recursively redacted request and response payloads alongside the URL and HTTP method.
+- Persist JSON-safe, recursively redacted request and response payloads alongside the URL, HTTP method, and authenticated user email when available.
 - Retain audit records for four weeks, then remove expired records automatically.
 - Cover ordinary, rejected, bodyless, and non-JSON requests with automated tests.
 
@@ -23,4 +23,4 @@ None.
 
 - Backend: Fastify app lifecycle configuration, Drizzle schema, and a small audit utility.
 - Tests: in-memory schema cleanup and audit-log coverage.
-- Database: uses the existing `audit_log.response` column; no new dependency or public API endpoint.
+- Database: uses the existing `audit_log.response` and `audit_log.user_email` columns; no new dependency or public API endpoint.
