@@ -137,7 +137,7 @@ Model: DeepSeek v4 Pro [1m]
 - Confirmed `nello/backend/db-init/003-audit-log.sql` already defines `user_email`; no database migration is needed.
 - Added requirements and scenarios for authenticated and unauthenticated requests, the trusted `request.user?.email` design decision, and two unchecked implementation/test tasks.
 - Remaining: apply tasks 1.4 and 2.4 through `/opsx:apply`.
-- Model: Codex / GPT-5 [version unspecified]
+- Model: Codex / GPT-5 Terra
 
 ## Request and response audit user email (implementation)
 
@@ -145,10 +145,18 @@ Model: DeepSeek v4 Pro [1m]
 - Mapped the existing `audit_log.user_email` column and populated it from authenticated `request.user?.email`; anonymous and rejected-auth requests remain `NULL`.
 - Added audit tests covering both authenticated and unauthenticated records. Backend tests passed (99 tests) and the backend TypeScript build passed.
 - Remaining: none; the change is ready for OpenSpec archive.
-- Model: Codex / GPT-5 [version unspecified]
+- Model: Codex / GPT-5 Terra
 
 ## Request and response audit logging (refactor)
 
 - 2026-08-16: Extracted the `onResponse` audit-log insert into `src/utils/audit.ts` as `persistAuditLog()`; the Fastify hook now only assembles lifecycle data and delegates persistence.
 - Backend tests passed (99 tests) and the backend TypeScript build passed. Remaining: frontend build verification pending.
-- Model: Codex / GPT-5 [version unspecified]
+- Model: Codex / GPT-5 Terra
+
+## Archive add-request-response-audit-log
+
+- 2026-08-16: Synced the completed audit-log change into the main `data-persistence` spec, including authenticated `user_email` persistence and anonymous-request `NULL` behavior.
+- Archived the completed 12/12-task change at `openspec/changes/archive/2026-08-16-add-request-response-audit-log/`.
+- Strict validation passed for the change and the synced main spec.
+- Remaining: none.
+- Model: Codex / GPT-5 Terra
