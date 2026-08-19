@@ -12,6 +12,8 @@ import { ErrorCode } from "./types/errors.js";
 import { db } from "./db/index.js";
 import { isJsonContentType, persistAuditLog, purgeExpiredAuditLogs, serializeAuditPayload } from "./utils/audit.js";
 
+import { JWT_EXPIRATION_HOURS  } from "./utils/jwt.js";
+
 type RateLimitConfig = {
   max: number;
   timeWindow: string | number;
@@ -239,5 +241,7 @@ export async function buildApp(opts: BuildAppOptions = {}): Promise<FastifyInsta
 
   app.get("/api/health", async () => ({ status: "ok" }));
 
+
+  app.log.info("Nello READY. Session duration:"+JWT_EXPIRATION_HOURS)
   return app;
 }

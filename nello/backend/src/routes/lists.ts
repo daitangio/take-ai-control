@@ -81,11 +81,6 @@ export default async function listRoutes(app: FastifyInstance) {
     const trimmedName = name.trim();
     await db.update(lists).set({ name: trimmedName }).where(eq(lists.id, listId));
 
-    const cardRows = await db
-      .select({ id: lists.id })
-      .from(lists)
-      .where(eq(lists.id, listId))
-      .limit(1);
 
     // Fetch card IDs for this list
     const cardIdRows = await db

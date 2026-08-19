@@ -645,6 +645,7 @@
   background: var(--color-danger);
   color: #fff;
   font-size: 14px;
+  margin-right: 64%; /* GG trick 276 px */
 }
 
 .modal-delete-btn:hover {
