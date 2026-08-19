@@ -160,3 +160,17 @@ Model: DeepSeek v4 Pro [1m]
 - Strict validation passed for the change and the synced main spec.
 - Remaining: none.
 - Model: Codex / GPT-5 Terra
+
+## French and German frontend translations
+
+- 2026-08-19: Added complete French (`fr`) and German (`de`) translation resources using English as the source, including localized backend error messages.
+- Made both locales selectable in the language dropdown and available through browser-locale detection.
+- Remaining: none.
+- Model: Codex / GPT-5 Terra
+
+## Spanish frontend translation
+
+- 2026-08-19: Added complete Spanish (`es`) translation resources from the English source, including backend error messages.
+- Made Spanish selectable in the language dropdown and available through browser-locale detection.
+- Remaining: none.
+- Model: Codex / GPT-5 Terra

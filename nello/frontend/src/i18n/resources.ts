@@ -1,5 +1,5 @@
 export const DEFAULT_LOCALE = 'en' as const;
-export const SUPPORTED_LOCALES = ['en', 'it'] as const;
+export const SUPPORTED_LOCALES = ['en', 'it', 'fr', 'de', 'es'] as const;
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 export const LOCALE_STORAGE_KEY = 'nello:locale';
 
@@ -14,6 +14,9 @@ export const resources = {
         label: 'Language',
         english: 'English',
         italian: 'Italiano',
+        french: 'Français',
+        german: 'Deutsch',
+        spanish: 'Español',
       },
       auth: {
         heading: 'Nello RuleZ',
@@ -178,7 +181,7 @@ export const resources = {
           MEMBER_NOT_FOUND: 'Member not found.',
           MEMBER_ADD_FORBIDDEN: 'Only the board owner can add members.',
           MEMBER_REMOVE_FORBIDDEN: 'Only the board owner can remove members.',
-          SERVICE_UNDER_PRESSURE: 'Service under pressure.',
+          SERVICE_UNDER_PRESSURE: 'Service under pressure. :( Try later',
           TEST_FALLBACK_ONLY: 'Fallback only message',
         },
       },
@@ -194,6 +197,9 @@ export const resources = {
         label: 'Lingua',
         english: 'English',
         italian: 'Italiano',
+        french: 'Français',
+        german: 'Deutsch',
+        spanish: 'Español',
       },
       auth: {
         heading: 'Nello RuleZ',
@@ -359,6 +365,90 @@ export const resources = {
           MEMBER_ADD_FORBIDDEN: 'Solo il proprietario può aggiungere membri.',
           MEMBER_REMOVE_FORBIDDEN: 'Solo il proprietario può rimuovere membri.',
           SERVICE_UNDER_PRESSURE: 'Servizio sotto carico. Non starai mica cercando di forzarlo?',
+        },
+      },
+    },
+  },
+  fr: {
+    translation: {
+      app: { title: 'Nello', filterPlaceholder: 'Filtrer...' },
+      language: { label: 'Langue', english: 'English', italian: 'Italiano', french: 'Français', german: 'Deutsch' },
+      auth: {
+        heading: 'Nello RuleZ', loginSubtitle: 'Connectez-vous à vos tableaux', registerSubtitle: 'Créez votre compte', email: 'E-mail', password: 'Mot de passe', invitationKey: 'Clé d’invitation', login: 'Connexion', register: 'S’inscrire', pleaseWait: 'Veuillez patienter...', toRegister: 'Vous n’avez pas de compte ? Inscrivez-vous', toLogin: 'Vous avez déjà un compte ? Connectez-vous', sessionExpired: 'Votre session a expiré. Veuillez vous reconnecter.',
+      },
+      userMenu: { ariaLabel: 'Menu utilisateur', settings: 'Paramètres', logout: 'Déconnexion', userFallback: 'Utilisateur' },
+      settings: { title: 'Paramètres utilisateur', changePasswordTitle: 'Modifier le mot de passe', currentPassword: 'Mot de passe actuel', newPassword: 'Nouveau mot de passe', minimumLength: '12 caractères minimum', changing: 'Modification...', changePassword: 'Modifier le mot de passe', backToBoard: 'Retour au tableau', success: 'Mot de passe modifié avec succès' },
+      emptyState: { message: 'Aucun tableau pour le moment. Créez votre premier tableau pour commencer.', boardNamePlaceholder: 'Nom du tableau', createBoard: 'Créer un tableau' },
+      board: { newBoard: '+ Nouveau tableau', add: 'Ajouter', cancel: 'Annuler', deleteTitle: 'Supprimer le tableau', renameTitle: 'Renommer le tableau', manageMembersTitle: 'Gérer les membres', deleteConfirm: 'Supprimer le tableau « {{name}} » et tout son contenu ?' },
+      list: { dragAria: 'Faire glisser la liste', actionsAria: 'Actions de la liste {{name}}', actionsMenuAria: 'Actions pour {{name}}', showArchived: 'Afficher les éléments archivés', archive: 'Supprimer (Archiver)', archiveConfirm: 'Archiver la liste « {{name}} » ?', enterTitle: 'Saisissez le titre de la carte...', addCard: 'Ajouter une carte', addCardButton: '+ Ajouter une carte' },
+      boardView: { listNamePlaceholder: 'Nom de la liste', addList: 'Ajouter une liste', addListButton: '+ Ajouter une liste' },
+      card: {
+        titlePlaceholder: 'Titre de la carte', descriptionLabel: 'Description', descriptionPlaceholder: 'Ajouter une description...', dueDate: 'Date d’échéance', dueDateForAria: 'Date d’échéance de {{title}}', dueDateShort: 'Échéance {{date}}', lastModifiedBy: 'Dernière modification par : {{author}}', delete: 'Supprimer', close: 'Fermer', details: 'Détails', members: 'Membres', clear: 'Effacer', archive: 'Archiver', cardActionsAria: 'Actions de la carte {{title}}', cardActionsMenuAria: 'Actions pour {{title}}', editedByTitle: 'Modifié par {{email}}', editedByAria: 'Modifié par {{email}}', color: { clear: 'Supprimer la couleur' }, deleteConfirm: 'Supprimer la carte « {{title}} » ?', membersCount_one: '{{count}} membre', membersCount_other: '{{count}} membres',
+      },
+      cardMembers: { title: 'Membres de la carte', loading: 'Chargement...', noEligible: 'Aucun membre éligible.', add: 'Ajouter', remove: 'Retirer' },
+      archived: { title: 'Cartes archivées', loading: 'Chargement...', empty: 'Aucune carte archivée.', selectAll: 'Tout sélectionner', fromList: 'Depuis « {{name}} »', unknownList: 'Liste inconnue', unknownUser: 'Utilisateur inconnu', restoreHint: 'Les cartes sélectionnées seront restaurées à la fin de « {{name}} ».', selected: '{{count}} sélectionnée(s)', applying: 'Application...', apply: 'Appliquer', close: 'Fermer' },
+      members: { title: 'Membres', loading: 'Chargement...', empty: 'Aucun membre pour le moment.', emailPlaceholder: 'Adresse e-mail', add: 'Ajouter', close: 'Fermer', removeTitle: 'Retirer le membre' },
+      help: { title: 'Aide non intrusive de Nello', dismissAria: 'Fermer l’aide', items: ['Nello adore les amis : créez un tableau partagé en terminant son nom par $. Ce suffixe est permanent.', 'Sur un tableau partagé dont vous êtes propriétaire, utilisez le bouton 👤 pour inviter ou retirer des membres.', 'Nello est explicite'] },
+      errors: {
+        generic: 'Une erreur est survenue', apiLoadBoards: 'Impossible de charger les tableaux', apiReloadBoard: 'Impossible de recharger le tableau', apiActionFailed: 'Impossible d’effectuer : {{action}}',
+        backend: {
+          AUTH_REQUIRED: 'Vous devez vous connecter pour continuer.', AUTH_TOKEN_INVALID: 'Votre session est invalide ou a expiré.', AUTH_USER_NOT_FOUND: 'Votre compte utilisateur est introuvable.', AUTH_CREDENTIALS_REQUIRED: 'L’e-mail et le mot de passe sont requis.', AUTH_INVALID_CREDENTIALS: 'E-mail ou mot de passe invalide.', REGISTER_FIELDS_REQUIRED: 'L’e-mail, la clé d’invitation et le mot de passe sont requis.', REGISTER_PASSWORD_INVALID: 'Le mot de passe ne respecte pas les exigences.', REGISTER_KEY_INVALID_OR_EXHAUSTED: 'Clé d’invitation invalide ou épuisée.', REGISTER_EMAIL_NOT_ELIGIBLE: 'E-mail non éligible pour cette clé d’invitation.', REGISTER_EMAIL_ALREADY_REGISTERED: 'E-mail déjà enregistré.', REGISTER_KEY_JUST_EXHAUSTED: 'La clé d’invitation vient d’être épuisée.', PASSWORD_CHANGE_UNAUTHORIZED: 'Non autorisé.', PASSWORD_CHANGE_FIELDS_REQUIRED: 'Le mot de passe actuel et le nouveau mot de passe sont requis.', PASSWORD_CHANGE_PASSWORD_INVALID: 'Le nouveau mot de passe doit comporter au moins 12 caractères', PASSWORD_CHANGE_CURRENT_INVALID: 'Mot de passe actuel invalide', BOARD_NAME_REQUIRED: 'Le nom du tableau est requis.', BOARD_NOT_FOUND: 'Tableau introuvable.', BOARD_DELETE_FORBIDDEN: 'Seul le propriétaire peut supprimer le tableau.', BOARD_SHARED_SUFFIX_REQUIRED: "Les tableaux partagés doivent conserver le suffixe '$'.", BOARD_NOT_SHARED: "Le tableau n’est pas partagé (le nom doit se terminer par '$').", LIST_NAME_REQUIRED: 'Le nom de la liste est requis.', LIST_NOT_FOUND: 'Liste introuvable.', CARD_TITLE_REQUIRED: 'Le titre de la carte est requis.', CARD_NOT_FOUND: 'Carte introuvable.', CARD_LIST_NOT_FOUND: 'Liste introuvable.', CARD_MEMBER_OUTSIDE_BOARD: 'L’utilisateur n’a pas accès à ce tableau.', MEMBER_USER_NOT_FOUND: 'Utilisateur introuvable.', MEMBER_SELF_ADD_FORBIDDEN: 'Vous ne pouvez pas vous ajouter comme membre.', MEMBER_ALREADY_EXISTS: 'L’utilisateur est déjà membre.', MEMBER_NOT_FOUND: 'Membre introuvable.', MEMBER_ADD_FORBIDDEN: 'Seul le propriétaire peut ajouter des membres.', MEMBER_REMOVE_FORBIDDEN: 'Seul le propriétaire peut retirer des membres.', SERVICE_UNDER_PRESSURE: 'Service sous pression. :( Réessayez plus tard', TEST_FALLBACK_ONLY: 'Message de secours uniquement',
+        },
+      },
+    },
+  },
+  de: {
+    translation: {
+      app: { title: 'Nello', filterPlaceholder: 'Filtern...' },
+      language: { label: 'Sprache', english: 'English', italian: 'Italiano', french: 'Français', german: 'Deutsch' },
+      auth: {
+        heading: 'Nello RuleZ', loginSubtitle: 'Melde dich bei deinen Boards an', registerSubtitle: 'Erstelle dein Konto', email: 'E-Mail', password: 'Passwort', invitationKey: 'Einladungsschlüssel', login: 'Anmelden', register: 'Registrieren', pleaseWait: 'Bitte warten...', toRegister: 'Noch kein Konto? Registrieren', toLogin: 'Du hast bereits ein Konto? Anmelden', sessionExpired: 'Deine Sitzung ist abgelaufen. Bitte melde dich erneut an.',
+      },
+      userMenu: { ariaLabel: 'Benutzermenü', settings: 'Einstellungen', logout: 'Abmelden', userFallback: 'Benutzer' },
+      settings: { title: 'Benutzereinstellungen', changePasswordTitle: 'Passwort ändern', currentPassword: 'Aktuelles Passwort', newPassword: 'Neues Passwort', minimumLength: 'Mindestens 12 Zeichen', changing: 'Wird geändert...', changePassword: 'Passwort ändern', backToBoard: 'Zurück zum Board', success: 'Passwort erfolgreich geändert' },
+      emptyState: { message: 'Noch keine Boards. Erstelle dein erstes Board, um loszulegen.', boardNamePlaceholder: 'Boardname', createBoard: 'Board erstellen' },
+      board: { newBoard: '+ Neues Board', add: 'Hinzufügen', cancel: 'Abbrechen', deleteTitle: 'Board löschen', renameTitle: 'Board umbenennen', manageMembersTitle: 'Mitglieder verwalten', deleteConfirm: 'Board „{{name}}“ und seinen gesamten Inhalt löschen?' },
+      list: { dragAria: 'Liste ziehen', actionsAria: 'Listenaktionen für {{name}}', actionsMenuAria: 'Aktionen für {{name}}', showArchived: 'Archivierte Elemente anzeigen', archive: 'Löschen (Archivieren)', archiveConfirm: 'Liste „{{name}}“ archivieren?', enterTitle: 'Kartentitel eingeben...', addCard: 'Karte hinzufügen', addCardButton: '+ Karte hinzufügen' },
+      boardView: { listNamePlaceholder: 'Listenname', addList: 'Liste hinzufügen', addListButton: '+ Liste hinzufügen' },
+      card: {
+        titlePlaceholder: 'Kartentitel', descriptionLabel: 'Beschreibung', descriptionPlaceholder: 'Beschreibung hinzufügen...', dueDate: 'Fälligkeitsdatum', dueDateForAria: 'Fälligkeitsdatum für {{title}}', dueDateShort: 'Fällig am {{date}}', lastModifiedBy: 'Zuletzt geändert von: {{author}}', delete: 'Löschen', close: 'Schließen', details: 'Details', members: 'Mitglieder', clear: 'Löschen', archive: 'Archivieren', cardActionsAria: 'Kartenaktionen für {{title}}', cardActionsMenuAria: 'Aktionen für {{title}}', editedByTitle: 'Bearbeitet von {{email}}', editedByAria: 'Bearbeitet von {{email}}', color: { clear: 'Farbe entfernen' }, deleteConfirm: 'Karte „{{title}}“ löschen?', membersCount_one: '{{count}} Mitglied', membersCount_other: '{{count}} Mitglieder',
+      },
+      cardMembers: { title: 'Kartenmitglieder', loading: 'Wird geladen...', noEligible: 'Keine berechtigten Mitglieder.', add: 'Hinzufügen', remove: 'Entfernen' },
+      archived: { title: 'Archivierte Karten', loading: 'Wird geladen...', empty: 'Keine archivierten Karten.', selectAll: 'Alle auswählen', fromList: 'Aus „{{name}}“', unknownList: 'Unbekannte Liste', unknownUser: 'Unbekannter Benutzer', restoreHint: 'Ausgewählte Karten werden am Ende von „{{name}}“ wiederhergestellt.', selected: '{{count}} ausgewählt', applying: 'Wird angewendet...', apply: 'Anwenden', close: 'Schließen' },
+      members: { title: 'Mitglieder', loading: 'Wird geladen...', empty: 'Noch keine Mitglieder.', emailPlaceholder: 'E-Mail-Adresse', add: 'Hinzufügen', close: 'Schließen', removeTitle: 'Mitglied entfernen' },
+      help: { title: 'Nellos unaufdringliche Hilfe', dismissAria: 'Hilfe schließen', items: ['Nello liebt Freunde: Erstelle ein geteiltes Board, indem du seinen Namen mit $ enden lässt. Dieses Suffix ist dauerhaft.', 'Auf einem geteilten Board, das dir gehört, kannst du mit der 👤-Schaltfläche Mitglieder einladen oder entfernen.', 'Nello ist selbsterklärend'] },
+      errors: {
+        generic: 'Ein Fehler ist aufgetreten', apiLoadBoards: 'Boards konnten nicht geladen werden', apiReloadBoard: 'Board konnte nicht neu geladen werden', apiActionFailed: '{{action}} fehlgeschlagen',
+        backend: {
+          AUTH_REQUIRED: 'Du musst dich anmelden, um fortzufahren.', AUTH_TOKEN_INVALID: 'Deine Sitzung ist ungültig oder abgelaufen.', AUTH_USER_NOT_FOUND: 'Dein Benutzerkonto wurde nicht gefunden.', AUTH_CREDENTIALS_REQUIRED: 'E-Mail und Passwort sind erforderlich.', AUTH_INVALID_CREDENTIALS: 'Ungültige E-Mail oder ungültiges Passwort.', REGISTER_FIELDS_REQUIRED: 'E-Mail, Einladungsschlüssel und Passwort sind erforderlich.', REGISTER_PASSWORD_INVALID: 'Das Passwort erfüllt die Anforderungen nicht.', REGISTER_KEY_INVALID_OR_EXHAUSTED: 'Ungültiger oder aufgebrauchter Einladungsschlüssel.', REGISTER_EMAIL_NOT_ELIGIBLE: 'Die E-Mail ist für diesen Einladungsschlüssel nicht berechtigt.', REGISTER_EMAIL_ALREADY_REGISTERED: 'E-Mail bereits registriert.', REGISTER_KEY_JUST_EXHAUSTED: 'Der Einladungsschlüssel wurde gerade aufgebraucht.', PASSWORD_CHANGE_UNAUTHORIZED: 'Nicht autorisiert.', PASSWORD_CHANGE_FIELDS_REQUIRED: 'Aktuelles Passwort und neues Passwort sind erforderlich.', PASSWORD_CHANGE_PASSWORD_INVALID: 'Das neue Passwort muss mindestens 12 Zeichen lang sein', PASSWORD_CHANGE_CURRENT_INVALID: 'Ungültiges aktuelles Passwort', BOARD_NAME_REQUIRED: 'Boardname ist erforderlich.', BOARD_NOT_FOUND: 'Board nicht gefunden.', BOARD_DELETE_FORBIDDEN: 'Nur der Boardbesitzer kann das Board löschen.', BOARD_SHARED_SUFFIX_REQUIRED: "Geteilte Boards müssen das Suffix '$' behalten.", BOARD_NOT_SHARED: "Das Board ist nicht geteilt (der Name muss mit '$' enden).", LIST_NAME_REQUIRED: 'Listenname ist erforderlich.', LIST_NOT_FOUND: 'Liste nicht gefunden.', CARD_TITLE_REQUIRED: 'Kartentitel ist erforderlich.', CARD_NOT_FOUND: 'Karte nicht gefunden.', CARD_LIST_NOT_FOUND: 'Liste nicht gefunden.', CARD_MEMBER_OUTSIDE_BOARD: 'Der Benutzer hat keinen Zugriff auf dieses Board.', MEMBER_USER_NOT_FOUND: 'Benutzer nicht gefunden.', MEMBER_SELF_ADD_FORBIDDEN: 'Du kannst dich nicht selbst als Mitglied hinzufügen.', MEMBER_ALREADY_EXISTS: 'Der Benutzer ist bereits Mitglied.', MEMBER_NOT_FOUND: 'Mitglied nicht gefunden.', MEMBER_ADD_FORBIDDEN: 'Nur der Boardbesitzer kann Mitglieder hinzufügen.', MEMBER_REMOVE_FORBIDDEN: 'Nur der Boardbesitzer kann Mitglieder entfernen.', SERVICE_UNDER_PRESSURE: 'Dienst überlastet. :( Bitte später erneut versuchen', TEST_FALLBACK_ONLY: 'Nur Fallback-Nachricht',
+        },
+      },
+    },
+  },
+  es: {
+    translation: {
+      app: { title: 'Nello', filterPlaceholder: 'Filtrar...' },
+      language: { label: 'Idioma', english: 'English', italian: 'Italiano', french: 'Français', german: 'Deutsch', spanish: 'Español' },
+      auth: {
+        heading: 'Nello RuleZ', loginSubtitle: 'Inicia sesión en tus tableros', registerSubtitle: 'Crea tu cuenta', email: 'Correo electrónico', password: 'Contraseña', invitationKey: 'Clave de invitación', login: 'Iniciar sesión', register: 'Registrarse', pleaseWait: 'Espera, por favor...', toRegister: '¿No tienes una cuenta? Regístrate', toLogin: '¿Ya tienes una cuenta? Inicia sesión', sessionExpired: 'Tu sesión ha expirado. Inicia sesión de nuevo.',
+      },
+      userMenu: { ariaLabel: 'Menú de usuario', settings: 'Configuración', logout: 'Cerrar sesión', userFallback: 'Usuario' },
+      settings: { title: 'Configuración de usuario', changePasswordTitle: 'Cambiar contraseña', currentPassword: 'Contraseña actual', newPassword: 'Nueva contraseña', minimumLength: 'Mínimo 12 caracteres', changing: 'Cambiando...', changePassword: 'Cambiar contraseña', backToBoard: 'Volver al tablero', success: 'Contraseña cambiada correctamente' },
+      emptyState: { message: 'Todavía no hay tableros. Crea tu primer tablero para empezar.', boardNamePlaceholder: 'Nombre del tablero', createBoard: 'Crear tablero' },
+      board: { newBoard: '+ Nuevo tablero', add: 'Añadir', cancel: 'Cancelar', deleteTitle: 'Eliminar tablero', renameTitle: 'Renombrar tablero', manageMembersTitle: 'Gestionar miembros', deleteConfirm: '¿Eliminar el tablero "{{name}}" y todo su contenido?' },
+      list: { dragAria: 'Arrastrar lista', actionsAria: 'Acciones de la lista {{name}}', actionsMenuAria: 'Acciones para {{name}}', showArchived: 'Mostrar elementos archivados', archive: 'Eliminar (Archivar)', archiveConfirm: '¿Archivar la lista "{{name}}"?', enterTitle: 'Introduce el título de la tarjeta...', addCard: 'Añadir tarjeta', addCardButton: '+ Añadir tarjeta' },
+      boardView: { listNamePlaceholder: 'Nombre de la lista', addList: 'Añadir lista', addListButton: '+ Añadir lista' },
+      card: {
+        titlePlaceholder: 'Título de la tarjeta', descriptionLabel: 'Descripción', descriptionPlaceholder: 'Añade una descripción...', dueDate: 'Fecha de vencimiento', dueDateForAria: 'Fecha de vencimiento de {{title}}', dueDateShort: 'Vence {{date}}', lastModifiedBy: 'Última modificación por: {{author}}', delete: 'Eliminar', close: 'Cerrar', details: 'Detalles', members: 'Miembros', clear: 'Borrar', archive: 'Archivar', cardActionsAria: 'Acciones de la tarjeta {{title}}', cardActionsMenuAria: 'Acciones para {{title}}', editedByTitle: 'Editado por {{email}}', editedByAria: 'Editado por {{email}}', color: { clear: 'Quitar color' }, deleteConfirm: '¿Eliminar la tarjeta "{{title}}"?', membersCount_one: '{{count}} miembro', membersCount_other: '{{count}} miembros',
+      },
+      cardMembers: { title: 'Miembros de la tarjeta', loading: 'Cargando...', noEligible: 'No hay miembros elegibles.', add: 'Añadir', remove: 'Quitar' },
+      archived: { title: 'Tarjetas archivadas', loading: 'Cargando...', empty: 'No hay tarjetas archivadas.', selectAll: 'Seleccionar todas', fromList: 'De "{{name}}"', unknownList: 'Lista desconocida', unknownUser: 'Usuario desconocido', restoreHint: 'Las tarjetas seleccionadas se restaurarán al final de "{{name}}".', selected: '{{count}} seleccionada(s)', applying: 'Aplicando...', apply: 'Aplicar', close: 'Cerrar' },
+      members: { title: 'Miembros', loading: 'Cargando...', empty: 'Todavía no hay miembros.', emailPlaceholder: 'Dirección de correo electrónico', add: 'Añadir', close: 'Cerrar', removeTitle: 'Quitar miembro' },
+      help: { title: 'Ayuda no invasiva de Nello', dismissAria: 'Cerrar ayuda', items: ['A Nello le encantan los amigos: crea un tablero compartido terminando su nombre con $. Ese sufijo es permanente.', 'En un tablero compartido que te pertenezca, usa el botón 👤 para invitar o quitar miembros.', 'Nello se explica por sí mismo'] },
+      errors: {
+        generic: 'Se produjo un error', apiLoadBoards: 'No se pudieron cargar los tableros', apiReloadBoard: 'No se pudo recargar el tablero', apiActionFailed: 'No se pudo {{action}}',
+        backend: {
+          AUTH_REQUIRED: 'Debes iniciar sesión para continuar.', AUTH_TOKEN_INVALID: 'Tu sesión no es válida o ha expirado.', AUTH_USER_NOT_FOUND: 'No se pudo encontrar tu cuenta de usuario.', AUTH_CREDENTIALS_REQUIRED: 'El correo electrónico y la contraseña son obligatorios.', AUTH_INVALID_CREDENTIALS: 'Correo electrónico o contraseña no válidos.', REGISTER_FIELDS_REQUIRED: 'El correo electrónico, la clave de invitación y la contraseña son obligatorios.', REGISTER_PASSWORD_INVALID: 'La contraseña no cumple los requisitos.', REGISTER_KEY_INVALID_OR_EXHAUSTED: 'Clave de invitación no válida o agotada.', REGISTER_EMAIL_NOT_ELIGIBLE: 'El correo electrónico no es elegible para esta clave de invitación.', REGISTER_EMAIL_ALREADY_REGISTERED: 'El correo electrónico ya está registrado.', REGISTER_KEY_JUST_EXHAUSTED: 'La clave de invitación se acaba de agotar.', PASSWORD_CHANGE_UNAUTHORIZED: 'No autorizado.', PASSWORD_CHANGE_FIELDS_REQUIRED: 'La contraseña actual y la nueva contraseña son obligatorias.', PASSWORD_CHANGE_PASSWORD_INVALID: 'La nueva contraseña debe tener al menos 12 caracteres', PASSWORD_CHANGE_CURRENT_INVALID: 'Contraseña actual no válida', BOARD_NAME_REQUIRED: 'El nombre del tablero es obligatorio.', BOARD_NOT_FOUND: 'Tablero no encontrado.', BOARD_DELETE_FORBIDDEN: 'Solo el propietario del tablero puede eliminarlo.', BOARD_SHARED_SUFFIX_REQUIRED: "Los tableros compartidos deben conservar el sufijo '$'.", BOARD_NOT_SHARED: "El tablero no es compartido (el nombre debe terminar con '$').", LIST_NAME_REQUIRED: 'El nombre de la lista es obligatorio.', LIST_NOT_FOUND: 'Lista no encontrada.', CARD_TITLE_REQUIRED: 'El título de la tarjeta es obligatorio.', CARD_NOT_FOUND: 'Tarjeta no encontrada.', CARD_LIST_NOT_FOUND: 'Lista no encontrada.', CARD_MEMBER_OUTSIDE_BOARD: 'El usuario no tiene acceso a este tablero.', MEMBER_USER_NOT_FOUND: 'Usuario no encontrado.', MEMBER_SELF_ADD_FORBIDDEN: 'No puedes añadirte a ti mismo como miembro.', MEMBER_ALREADY_EXISTS: 'El usuario ya es miembro.', MEMBER_NOT_FOUND: 'Miembro no encontrado.', MEMBER_ADD_FORBIDDEN: 'Solo el propietario del tablero puede añadir miembros.', MEMBER_REMOVE_FORBIDDEN: 'Solo el propietario del tablero puede quitar miembros.', SERVICE_UNDER_PRESSURE: 'Servicio bajo presión. :( Inténtalo más tarde', TEST_FALLBACK_ONLY: 'Mensaje solo de respaldo',
         },
       },
     },

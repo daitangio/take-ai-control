@@ -22,6 +22,9 @@ function detectInitialLocale(): SupportedLocale {
 
   const browserLang = navigator.language?.toLowerCase() ?? '';
   if (browserLang.startsWith('it')) return 'it';
+  if (browserLang.startsWith('fr')) return 'fr';
+  if (browserLang.startsWith('de')) return 'de';
+  if (browserLang.startsWith('es')) return 'es';
   return DEFAULT_LOCALE;
 }
 

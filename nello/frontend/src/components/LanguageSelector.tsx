@@ -1,9 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { SUPPORTED_LOCALES, type SupportedLocale } from '../i18n/resources';
 
-const LOCALE_OPTIONS: Array<{ locale: SupportedLocale; flag: string; labelKey: 'english' | 'italian' }> = [
+const LOCALE_OPTIONS: Array<{ locale: SupportedLocale; flag: string; labelKey: 'english' | 'italian' | 'french' | 'german' | 'spanish' }> = [
   { locale: 'en', flag: '🇬🇧', labelKey: 'english' },
   { locale: 'it', flag: '🇮🇹', labelKey: 'italian' },
+  { locale: 'fr', flag: '🇫🇷', labelKey: 'french' },
+  { locale: 'de', flag: '🇩🇪', labelKey: 'german' },
+  { locale: 'es', flag: '🇪🇸', labelKey: 'spanish' },
 ];
 
 export function LanguageSelector() {
