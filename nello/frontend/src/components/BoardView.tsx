@@ -16,6 +16,7 @@ import { CardMemberDialog } from './CardMemberDialog';
 import { ArchivedItemsDialog } from './ArchivedItemsDialog';
 import { useTranslation } from 'react-i18next';
 import './ListColumn.css';
+import { CapacityWarning } from './CapacityWarning';
 
 export function BoardView() {
   const { state, apiDispatch, searchQuery } = useStore();
@@ -199,6 +200,7 @@ export function BoardView() {
       onDragEnd={handleDragEnd}
     >
       <div className="board-content">
+        <CapacityWarning resource="lists" capacity={board.capacity?.lists} />
         <SortableContext
           items={visibleListIds}
           strategy={horizontalListSortingStrategy}

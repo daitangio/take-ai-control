@@ -120,7 +120,10 @@ export interface BoardBrief {
   listIds: string[];
   isShared: boolean;
   isOwner: boolean;
+  capacity?: { boards: CapacityUsage; lists: CapacityUsage } | null;
 }
+
+export interface CapacityUsage { used: number; limit: number; }
 
 export interface CardBrief {
   id: string;
@@ -143,12 +146,14 @@ export interface ListBrief {
   id: string;
   name: string;
   cards: CardBrief[];
+  cardCapacity?: CapacityUsage;
 }
 
 export interface BoardDetail {
   id: string;
   name: string;
   lists: ListBrief[];
+  capacity?: { boards: CapacityUsage; lists: CapacityUsage } | null;
 }
 
 export function getBoards() {
@@ -184,6 +189,7 @@ export interface ListResponse {
   boardId: string;
   name: string;
   cardIds: string[];
+  capacity?: CapacityUsage;
 }
 
 export function createList(id: string, boardId: string, name: string) {
@@ -228,6 +234,7 @@ export interface CardResponse {
   modifiedBy: string | null;
   modifiedByEmail: string | null;
   isModifiedByCurrentUser: boolean | null;
+  capacity?: { cards: CapacityUsage };
 }
 
 export function createCard(id: string, listId: string, title: string) {

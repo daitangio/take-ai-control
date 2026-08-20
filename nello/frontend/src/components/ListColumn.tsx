@@ -7,6 +7,7 @@ import { useStore } from '../state/StoreContext';
 import { CardTile } from './CardTile';
 import { useTranslation } from 'react-i18next';
 import './ListColumn.css';
+import { CapacityWarning } from './CapacityWarning';
 
 interface Props {
   listId: string;
@@ -128,6 +129,7 @@ export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, o
       className="list-column"
       style={style}
     >
+      <CapacityWarning resource="cards" capacity={list.cardCapacity} />
       <div className="list-header">
         <button
           type="button"

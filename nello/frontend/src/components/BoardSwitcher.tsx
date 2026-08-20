@@ -3,12 +3,14 @@ import { useStore } from '../state/StoreContext';
 import { MemberDialog } from './MemberDialog';
 import { useTranslation } from 'react-i18next';
 import './Board.css';
+import { CapacityWarning } from './CapacityWarning';
 
 export function BoardSwitcher() {
   const { state, apiDispatch, loadBoards } = useStore();
   const { t } = useTranslation();
   const boards = Object.values(state.boards);
   const activeId = state.activeBoardId;
+  const activeBoard = activeId ? state.boards[activeId] : null;
 
   const [creating, setCreating] = useState(false);
   const [createName, setCreateName] = useState('');
@@ -49,6 +51,7 @@ export function BoardSwitcher() {
 
   return (
     <div className="board-tabs">
+      {activeBoard?.isOwner !== false && <CapacityWarning resource="boards" capacity={activeBoard?.capacity?.boards} />}
       {boards.map((board) => (
         <div
           key={board.id}

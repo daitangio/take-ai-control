@@ -5,6 +5,17 @@ export const users = sqliteTable("user", {
   id: text("id").primaryKey(),
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
+  tierId: integer("tier_id").notNull().default(0).references(() => userTiers.id),
+  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
+});
+
+export const userTiers = sqliteTable("user_tier", {
+  id: integer("id").primaryKey(),
+  name: text("name"),
+  description: text("description"),
+  boardsLimit: integer("boards_limit"),
+  listsPerBoardLimit: integer("lists_per_board_limit"),
+  cardsPerListLimit: integer("cards_per_list_limit"),
   createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
 });
 

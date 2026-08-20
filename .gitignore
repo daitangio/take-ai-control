@@ -48,3 +48,4 @@ var/pi-agent/trust.json
 nello-backend.log
 headroom/zscaler-root-ca.pem
 nello-pilot.code-workspace
+resume.sh

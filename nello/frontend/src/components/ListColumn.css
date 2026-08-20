@@ -719,3 +719,8 @@
     min-height: 40px;
   }
 }
+.capacity-warning {
+  margin: 0.35rem 0;
+  color: #9a5b00;
+  font-size: 0.82rem;
+}

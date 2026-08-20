@@ -16,6 +16,7 @@ export function reducer(state: State, action: Action): State {
         listIds: [] as string[],
         isShared: action.isShared,
         isOwner: action.isOwner,
+        capacity: action.capacity,
       };
       return {
         ...state,
@@ -37,6 +38,7 @@ export function reducer(state: State, action: Action): State {
             name: action.name.trim(),
             isShared: action.isShared ?? b.isShared,
             isOwner: action.isOwner ?? b.isOwner,
+            capacity: action.capacity ?? b.capacity,
           },
         },
       };
@@ -109,7 +111,7 @@ export function reducer(state: State, action: Action): State {
           nextCards[card.id] = card;
           cardIds.push(card.id);
         }
-        nextLists[list.id] = { id: list.id, name: list.name, cardIds };
+        nextLists[list.id] = { id: list.id, name: list.name, cardIds, cardCapacity: list.cardCapacity };
         nextListIds.push(list.id);
       }
 
@@ -119,7 +121,7 @@ export function reducer(state: State, action: Action): State {
         cards: nextCards,
         boards: {
           ...state.boards,
-          [action.boardId]: { ...board, listIds: nextListIds },
+          [action.boardId]: { ...board, listIds: nextListIds, capacity: action.capacity ?? board.capacity },
         },
       };
     }
@@ -130,7 +132,7 @@ export function reducer(state: State, action: Action): State {
       const board = state.boards[action.boardId];
       if (!board) return state;
       const { listId, name } = action;
-      const list = { id: listId, name: name.trim(), cardIds: [] as string[] };
+      const list = { id: listId, name: name.trim(), cardIds: [] as string[], cardCapacity: action.cardCapacity };
       // Idempotent: don't append if already present (prevents duplicates from concurrent loadBoards)
       const nextListIds = board.listIds.includes(listId)
         ? board.listIds

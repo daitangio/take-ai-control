@@ -82,10 +82,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     try {
       const boards = await api.getBoards();
       for (const board of boards) {
-        dispatch({ type: 'board/create', boardId: board.id, name: board.name, isShared: board.isShared, isOwner: board.isOwner });
+        dispatch({ type: 'board/create', boardId: board.id, name: board.name, isShared: board.isShared, isOwner: board.isOwner, capacity: board.capacity });
         const detail = await api.getBoard(board.id);
         for (const list of detail.lists) {
-          dispatch({ type: 'list/create', listId: list.id, boardId: board.id, name: list.name });
+          dispatch({ type: 'list/create', listId: list.id, boardId: board.id, name: list.name, cardCapacity: list.cardCapacity });
           for (const card of list.cards) {
             dispatch({
               type: 'card/create',
@@ -121,9 +121,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       dispatch({
         type: 'board/reload',
         boardId,
+        capacity: detail.capacity,
         lists: detail.lists.map((list) => ({
           id: list.id,
           name: list.name,
+          cardCapacity: list.cardCapacity,
           cards: list.cards.map((card) => ({
             id: card.id,
             title: card.title,
@@ -159,6 +161,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           name: board.name,
           isShared: board.isShared,
           isOwner: board.isOwner,
+          capacity: board.capacity,
         });
       } else if (action.type === 'card/create' || action.type === 'card/edit') {
         const card = result as api.CardResponse;

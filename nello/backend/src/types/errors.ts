@@ -21,15 +21,18 @@ export const ErrorCode = {
   boardNotFound: "BOARD_NOT_FOUND",
   boardDeleteForbidden: "BOARD_DELETE_FORBIDDEN",
   boardSharedSuffixRequired: "BOARD_SHARED_SUFFIX_REQUIRED",
+  boardLimitReached: "BOARD_LIMIT_REACHED",
   boardNotShared: "BOARD_NOT_SHARED",
 
   listNameRequired: "LIST_NAME_REQUIRED",
   listNotFound: "LIST_NOT_FOUND",
+  listLimitReached: "LIST_LIMIT_REACHED",
 
   cardTitleRequired: "CARD_TITLE_REQUIRED",
   cardNotFound: "CARD_NOT_FOUND",
   cardListNotFound: "CARD_LIST_NOT_FOUND",
   cardMemberOutsideBoard: "CARD_MEMBER_OUTSIDE_BOARD",
+  cardLimitReached: "CARD_LIMIT_REACHED",
 
   memberUserNotFound: "MEMBER_USER_NOT_FOUND",
   memberSelfAddForbidden: "MEMBER_SELF_ADD_FORBIDDEN",

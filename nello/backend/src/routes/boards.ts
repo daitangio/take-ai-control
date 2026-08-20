@@ -5,6 +5,7 @@ import { eq, and, isNull, asc, sql as sqlDrizzle } from "drizzle-orm";
 import { authenticate, checkBoardAccess } from "../middleware/auth.js";
 import { sendError } from "../utils/apiError.js";
 import { ErrorCode } from "../types/errors.js";
+import { boardCapacity, boardCapacities, cardCapacity, withCapacityLock } from "../utils/capacity.js";
 
 interface BoardCreateBody {
   id: string;
@@ -55,6 +56,7 @@ export default async function boardRoutes(app: FastifyInstance) {
         listIds: listRows.map(l => l.id),
         isShared: board.name.endsWith("$"),
         isOwner: board.isOwner,
+        capacity: await boardCapacities(db, board.id),
       });
     }
 
@@ -71,7 +73,15 @@ export default async function boardRoutes(app: FastifyInstance) {
     }
 
     const trimmedName = name.trim();
-    await db.insert(boards).values({ id, userId: user.id, name: trimmedName });
+    const outcome = await withCapacityLock(async () => {
+      const capacity = await boardCapacity(db, user.id);
+      if (capacity.used >= capacity.limit) return { limited: true as const };
+
+      app.log.info("Board Capacity already used: "+capacity.used+"/"+capacity.limit);
+      await db.insert(boards).values({ id, userId: user.id, name: trimmedName });
+      return { limited: false as const, capacity: await boardCapacity(db, user.id) };
+    });
+    if (outcome.limited) return sendError(reply, 409, ErrorCode.boardLimitReached, "Board limit reached");
 
     reply.code(201).send({
       id,
@@ -79,6 +89,7 @@ export default async function boardRoutes(app: FastifyInstance) {
       listIds: [] as string[],
       isShared: trimmedName.endsWith("$"),
       isOwner: true,
+      capacity: { boards: outcome.capacity, lists: { used: 0, limit: (await boardCapacities(db, id))?.lists.limit ?? 0 } },
     });
   });
 
@@ -139,10 +150,11 @@ export default async function boardRoutes(app: FastifyInstance) {
         id: lr.id,
         name: lr.name,
         cards: cardResults,
+        cardCapacity: await cardCapacity(db, lr.id),
       });
     }
 
-    return { id: board.id, name: board.name, lists: listResults };
+    return { id: board.id, name: board.name, lists: listResults, capacity: await boardCapacities(db, boardId) };
   });
 
   // PATCH /boards/:id
@@ -176,6 +188,7 @@ export default async function boardRoutes(app: FastifyInstance) {
       listIds: listRows.map(l => l.id),
       isShared: newName.endsWith("$"),
       isOwner: role === "owner",
+      capacity: await boardCapacities(db, boardId),
     };
   });
 

@@ -5,6 +5,7 @@ import { eq, and, isNull, asc, sql } from "drizzle-orm";
 import { authenticate, checkBoardAccess } from "../middleware/auth.js";
 import { sendError } from "../utils/apiError.js";
 import { ErrorCode } from "../types/errors.js";
+import { listCapacity, withCapacityLock } from "../utils/capacity.js";
 
 interface ListCreateBody {
   id: string;
@@ -35,25 +36,25 @@ export default async function listRoutes(app: FastifyInstance) {
 
     const trimmedName = name.trim();
 
-    // Get max position
-    const [maxRow] = await db
-      .select({ mx: sql<number>`COALESCE(MAX(${lists.position}), -1)` })
-      .from(lists)
-      .leftJoin(listArchive, eq(lists.id, listArchive.listId))
-      .where(and(eq(lists.boardId, boardId), isNull(listArchive.listId)));
-
-    await db.insert(lists).values({
-      id,
-      boardId,
-      name: trimmedName,
-      position: (maxRow?.mx ?? -1) + 1,
+    const outcome = await withCapacityLock(async () => {
+      const capacity = await listCapacity(db, boardId);
+      if (capacity.used >= capacity.limit) return { limited: true as const };
+      const [maxRow] = await db
+        .select({ mx: sql<number>`COALESCE(MAX(${lists.position}), -1)` })
+        .from(lists)
+        .leftJoin(listArchive, eq(lists.id, listArchive.listId))
+        .where(and(eq(lists.boardId, boardId), isNull(listArchive.listId)));
+      await db.insert(lists).values({ id, boardId, name: trimmedName, position: (maxRow?.mx ?? -1) + 1 });
+      return { limited: false as const, capacity: await listCapacity(db, boardId) };
     });
+    if (outcome.limited) return sendError(reply, 409, ErrorCode.listLimitReached, "List limit reached");
 
     reply.code(201).send({
       id,
       boardId,
       name: trimmedName,
       cardIds: [],
+      capacity: outcome.capacity,
     });
   });
 

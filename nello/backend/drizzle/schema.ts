@@ -5,6 +5,7 @@ export const user = sqliteTable("user", {
 	id: text().primaryKey(),
 	email: text().notNull(),
 	password: text().notNull(),
+	tierId: integer("tier_id").default(0).notNull().references(() => userTier.id),
 	createdAt: text("created_at").default(sql`datetime('now')`).notNull(),
 },
 (table) => [uniqueIndex("user_email_unique").on(table.email),
@@ -15,6 +16,16 @@ export const board = sqliteTable("board", {
 	id: text().primaryKey(),
 	userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" } ),
 	name: text().notNull(),
+	createdAt: text("created_at").default(sql`datetime('now')`).notNull(),
+});
+
+export const userTier = sqliteTable("user_tier", {
+	id: integer().primaryKey(),
+	name: text(),
+	description: text(),
+	boardsLimit: integer("boards_limit"),
+	listsPerBoardLimit: integer("lists_per_board_limit"),
+	cardsPerListLimit: integer("cards_per_list_limit"),
 	createdAt: text("created_at").default(sql`datetime('now')`).notNull(),
 });
 
@@ -76,4 +87,3 @@ export const registerKey = sqliteTable("register_key", {
 	availCount: integer("avail_count").notNull(),
 	createdAt: text("created_at").default(sql`datetime('now')`).notNull(),
 });
-

@@ -182,3 +182,32 @@ Model: DeepSeek v4 Pro [1m]
 - Frontend tests and lint passed; lint retains three pre-existing warnings in unrelated files.
 - Remaining: none.
 - Model: Codex / GPT-5 Luna
+
+## Capacity limits (implementation in progress)
+
+- 2026-08-20: Implemented existing tier limits for board, active-list, and active-card capacity, with stable 409 error codes, active-archive accounting, owner-tier behavior for shared boards, and capacity metadata on board/list/card flows.
+- Added localized capacity warnings at the 75% threshold in English, Italian, French, German, and Spanish, plus backend and frontend boundary coverage. Existing user migration was verified in an isolated SQLite copy (`tier_id = 0`, `free`).
+- Automated verification: backend tests (102) and frontend tests (119) pass; backend/frontend builds pass.
+- Remaining: human task 4.2 (exercise the threshold, capacity rejection, archive release, and shared-board flow in the running UI).
+- Model: Codex / GPT-5.6 Terra
+
+## Capacity limits (planning ready)
+
+- 2026-08-20: Created OpenSpec change `capacity-limits` with proposal, design, capacity/data/API/i18n delta specs, and an implementation task list.
+- Scope: enforce existing tier quotas transactionally; publish compact capacity metadata; show localized non-blocking warnings from 75% use; return localized 409 errors at capacity.
+- Remaining: apply the implementation plan with `/opsx:apply capacity-limits`.
+- Model: Codex / GPT-5.6 Terra
+
+## Tier-based board, list, and card limits (exploration)
+
+- 2026-08-20: Inspected `nello/backend/db-init/004-limits.sql` and the board/list/card creation and archive flows. The existing `user_tier` data model defines free (3 boards, 12 lists per board, 48 cards per list), `nello-remindme` (12/12/48), and `nello-one` (60/60/60) limits, but it is not yet mapped in Drizzle or enforced by the API.
+- Identified the required enforcement points: create board; create list; create card; card move across lists; and card unarchive. Limits should use the board owner's tier and count only active entities, consistent with current archive visibility behavior.
+- Remaining: decide the public limit-error contract/status and whether archived entities free capacity; then create an OpenSpec proposal before implementation.
+- Model: Codex / GPT-5.6 Terra
+
+## Tier-based capacity warnings (exploration)
+
+- 2026-08-20: Added the `capacity-limits` OpenSpec requirement for a non-blocking, localized warning at or above 75% usage, including the current usage and applicable limit for boards, active lists, and active cards.
+- 2026-08-20: Added explicit enforcement requirements: creation, card restoration, and cross-list moves cannot exceed the applicable tier limit; rejections preserve data and use a stable localizable error; archived lists and cards free active capacity.
+- Remaining: decide the presentation timing and surface (for example, dashboard summary, contextual creation dialog, or both) before proposal and implementation.
+- Model: Codex / GPT-5.6 Terra

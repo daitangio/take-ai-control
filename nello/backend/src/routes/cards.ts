@@ -5,6 +5,7 @@ import { eq, ne, and, asc, sql } from "drizzle-orm";
 import { authenticate, checkBoardAccess } from "../middleware/auth.js";
 import { sendError } from "../utils/apiError.js";
 import { ErrorCode } from "../types/errors.js";
+import { cardCapacity, withCapacityLock } from "../utils/capacity.js";
 
 interface CardCreateBody {
   id: string;
@@ -95,6 +96,7 @@ async function _cardResponse(requesterId: string, card: typeof cards.$inferSelec
     modifiedBy: card.modifiedBy,
     modifiedByEmail,
     isModifiedByCurrentUser: meta.isModifiedByCurrentUser,
+    capacity: { cards: await cardCapacity(db, card.listId) },
   };
 }
 
@@ -113,18 +115,16 @@ export default async function cardRoutes(app: FastifyInstance) {
       return sendError(reply, 404, ErrorCode.cardListNotFound, "List not found");
     }
 
-    const [maxRow] = await db
-      .select({ mx: sql<number>`COALESCE(MAX(${cards.position}), -1)` })
-      .from(cards)
-      .where(eq(cards.listId, listId));
+    const outcome = await withCapacityLock(async () => {
+      const capacity = await cardCapacity(db, listId);
+      if (capacity.used >= capacity.limit) return { limited: true as const };
 
-    await db.insert(cards).values({
-      id,
-      listId,
-      title: title.trim(),
-      position: (maxRow?.mx ?? -1) + 1,
-      modifiedBy: user.id,
+      app.log.info("Card Capacity already used: "+capacity.used+"/"+capacity.limit);
+      const [maxRow] = await db.select({ mx: sql<number>`COALESCE(MAX(${cards.position}), -1)` }).from(cards).where(eq(cards.listId, listId));
+      await db.insert(cards).values({ id, listId, title: title.trim(), position: (maxRow?.mx ?? -1) + 1, modifiedBy: user.id });
+      return { limited: false as const };
     });
+    if (outcome.limited) return sendError(reply, 409, ErrorCode.cardLimitReached, "Card limit reached");
 
     const created = await _cardRow(id);
     reply.code(201).send(await _cardResponse(user.id, created!));
@@ -224,19 +224,16 @@ export default async function cardRoutes(app: FastifyInstance) {
         return sendError(reply, 404, ErrorCode.cardListNotFound, "Target list not found");
       }
 
-      await db.delete(cardArchive).where(eq(cardArchive.cardId, cardId));
-
-      const [maxRow] = await db
-        .select({ mx: sql<number>`COALESCE(MAX(${cards.position}), -1)` })
-        .from(cards)
-        .where(eq(cards.listId, targetListId));
-
-      await db
-        .update(cards)
-        .set({ listId: targetListId, position: (maxRow?.mx ?? -1) + 1, modifiedBy: user.id })
-        .where(eq(cards.id, cardId));
-
-      reply.code(204).send();
+      const outcome = await withCapacityLock(async () => {
+        const capacity = await cardCapacity(db, targetListId);
+        if (capacity.used >= capacity.limit) return { limited: true as const };
+        const [maxRow] = await db.select({ mx: sql<number>`COALESCE(MAX(${cards.position}), -1)` }).from(cards).where(eq(cards.listId, targetListId));
+        await db.delete(cardArchive).where(eq(cardArchive.cardId, cardId));
+        await db.update(cards).set({ listId: targetListId, position: (maxRow?.mx ?? -1) + 1, modifiedBy: user.id }).where(eq(cards.id, cardId));
+        return { limited: false as const, capacity: await cardCapacity(db, targetListId) };
+      });
+      if (outcome.limited) return sendError(reply, 409, ErrorCode.cardLimitReached, "Card limit reached");
+      return { status: "ok", capacity: { cards: outcome.capacity } };
     },
   );
 
@@ -358,41 +355,29 @@ export default async function cardRoutes(app: FastifyInstance) {
         return sendError(reply, 404, ErrorCode.cardListNotFound, "Target list not found");
       }
 
-      // Get old list's cards
-      const oldCards = await db
-        .select({ id: cards.id })
-        .from(cards)
-        .where(eq(cards.listId, card.listId))
-        .orderBy(asc(cards.position));
-
-      // Reorder old list (excluding the moved card)
-      let pos = 0;
-      for (const cr of oldCards) {
-        if (cr.id !== cardId) {
-          await db.update(cards).set({ position: pos }).where(eq(cards.id, cr.id));
-          pos++;
-        } else {
-          await db.update(cards).set({ position: -1 }).where(eq(cards.id, cr.id));
+      const outcome = await withCapacityLock(async () => {
+        if (card.listId !== toListId) {
+          const capacity = await cardCapacity(db, toListId);
+          if (capacity.used >= capacity.limit) return { limited: true as const };
         }
-      }
-
-      // Get target list's cards
-      const targetCards = await db
-        .select({ id: cards.id })
-        .from(cards)
-        .where(and(eq(cards.listId, toListId), ne(cards.id, cardId)))
-        .orderBy(asc(cards.position));
-
-      const ids = targetCards.map(tc => tc.id);
-      const clamped = Math.max(0, Math.min(index, ids.length));
-      ids.splice(clamped, 0, cardId);
-
-      await db.update(cards).set({ listId: toListId, modifiedBy: user.id }).where(eq(cards.id, cardId));
-      for (let i = 0; i < ids.length; i++) {
-        await db.update(cards).set({ position: i }).where(eq(cards.id, ids[i]));
-      }
-
-      return { status: "ok" };
+        const oldCards = await db.select({ id: cards.id }).from(cards).where(eq(cards.listId, card.listId)).orderBy(asc(cards.position));
+        let pos = 0;
+        for (const cr of oldCards) {
+          if (cr.id !== cardId) {
+            await db.update(cards).set({ position: pos++ }).where(eq(cards.id, cr.id));
+          } else {
+            await db.update(cards).set({ position: -1 }).where(eq(cards.id, cr.id));
+          }
+        }
+        const targetCards = await db.select({ id: cards.id }).from(cards).where(and(eq(cards.listId, toListId), ne(cards.id, cardId))).orderBy(asc(cards.position));
+        const ids = targetCards.map(tc => tc.id);
+        ids.splice(Math.max(0, Math.min(index, ids.length)), 0, cardId);
+        await db.update(cards).set({ listId: toListId, modifiedBy: user.id }).where(eq(cards.id, cardId));
+        for (let i = 0; i < ids.length; i++) await db.update(cards).set({ position: i }).where(eq(cards.id, ids[i]));
+        return { limited: false as const, capacity: await cardCapacity(db, toListId) };
+      });
+      if (outcome.limited) return sendError(reply, 409, ErrorCode.cardLimitReached, "Card limit reached");
+      return { status: "ok", capacity: { cards: outcome.capacity } };
     },
   );
 }
