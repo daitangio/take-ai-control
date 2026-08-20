@@ -174,3 +174,11 @@ Model: DeepSeek v4 Pro [1m]
 - Made Spanish selectable in the language dropdown and available through browser-locale detection.
 - Remaining: none.
 - Model: Codex / GPT-5 Terra
+
+## Nello intro page
+
+- 2026-08-20: Added a responsive unauthenticated intro page to `nello/frontend` with sign-in and registration actions, a board preview, and a feature list including multi-language support, shared boards, drag-and-drop workflow, and focused workspace design.
+- Added localized intro copy and auth navigation for English, Italian, French, German, and Spanish. Existing authenticated board behavior is unchanged.
+- Frontend tests and lint passed; lint retains three pre-existing warnings in unrelated files.
+- Remaining: none.
+- Model: Codex / GPT-5 Luna

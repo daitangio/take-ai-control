@@ -4,9 +4,10 @@ import { useTranslation } from "react-i18next";
 
 interface RegisterFormProps {
   onSwitchToLogin: () => void;
+  onBackToIntro?: () => void;
 }
 
-export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
+export function RegisterForm({ onSwitchToLogin, onBackToIntro }: RegisterFormProps) {
   const { register, loading, error } = useAuth();
   const { t } = useTranslation();
   const [email, setEmail] = useState("");
@@ -70,6 +71,11 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
             {t("auth.toLogin")}
           </button>
         </p>
+        {onBackToIntro && (
+          <button type="button" className="login-back" onClick={onBackToIntro}>
+            {t("auth.backToIntro")}
+          </button>
+        )}
       </form>
     </div>
   );

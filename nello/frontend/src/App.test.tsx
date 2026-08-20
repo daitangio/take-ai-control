@@ -62,11 +62,13 @@ describe('App smoke tests', () => {
     expect(screen.getByPlaceholderText('Filter...')).toBeDefined();
   });
 
-  it('keeps the narrow login form controls reachable', () => {
+  it('keeps the narrow login form controls reachable', async () => {
     Object.defineProperty(window, 'innerWidth', { configurable: true, value: 375 });
     api.setToken(null);
+    const user = userEvent.setup();
     render(<App />);
 
+    await user.click(screen.getByRole('button', { name: 'Sign in' }));
     expect(screen.getByLabelText('Email')).toBeDefined();
     expect(screen.getByLabelText('Password')).toBeDefined();
     expect(screen.getByRole('button', { name: 'Login' })).toBeDefined();
@@ -218,9 +220,21 @@ describe('App smoke tests', () => {
   it('login form appears when no token is set', () => {
     api.setToken(null);
     render(<App />);
-    // With no token, user sees the login form instead of boards
-    expect(screen.getByText(/Sign in to your boards/)).toBeDefined();
+    // With no token, user sees the intro page instead of boards
+    expect(screen.getByText('Multi-language support')).toBeDefined();
+    expect(screen.getByText(/Bring your work into focus/)).toBeDefined();
     expect(screen.queryByRole('complementary', { name: 'Nello non-invasive help' })).toBeNull();
+  });
+
+  it('opens the login form from the intro page', async () => {
+    const user = userEvent.setup();
+    api.setToken(null);
+    render(<App />);
+
+    await user.click(screen.getByRole('button', { name: 'Sign in' }));
+
+    expect(screen.getByText(/Sign in to your boards/)).toBeDefined();
+    expect(screen.getByRole('button', { name: 'Back to intro' })).toBeDefined();
   });
 
   it('uses API metadata after creating a shared board', async () => {

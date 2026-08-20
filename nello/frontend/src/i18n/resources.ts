@@ -18,6 +18,28 @@ export const resources = {
         german: 'Deutsch',
         spanish: 'Español',
       },
+      intro: {
+        eyebrow: 'A clearer way to work',
+        title: 'Bring your work into focus.',
+        description: 'Nello keeps projects, tasks, and conversations in one calm, flexible workspace.',
+        signIn: 'Sign in',
+        register: 'Create an account',
+        note: 'Built for teams who like work to feel simple.',
+        featuresEyebrow: 'Made for momentum',
+        featuresHeading: 'Everything you need to keep moving',
+        features: {
+          multilingual: { title: 'Multi-language support', description: 'Work comfortably in English, Italian, French, German, or Spanish.' },
+          sharedBoards: { title: 'Shared boards', description: 'Invite teammates and keep everyone aligned in one shared space.' },
+          dragAndDrop: { title: 'Drag-and-drop flow', description: 'Move lists and cards naturally as work changes shape.' },
+          focusedWorkspace: { title: 'A focused workspace', description: 'Keep the next step visible without adding unnecessary noise.' },
+        },
+        previewAria: 'Preview of a Nello board',
+        previewColumnTodo: 'To do',
+        previewColumnDoing: 'In progress',
+        previewColumnDone: 'Done',
+        previewCard: 'Shape the next step',
+        footer: 'Nello · simple boards for focused work',
+      },
       auth: {
         heading: 'Nello RuleZ',
         loginSubtitle: 'Sign in to your boards',
@@ -30,6 +52,7 @@ export const resources = {
         pleaseWait: 'Please wait...',
         toRegister: "Don't have an account? Register",
         toLogin: 'Already have an account? Login',
+        backToIntro: 'Back to intro',
         sessionExpired: 'Your session expired. Please sign in again.',
       },
       userMenu: {
@@ -201,6 +224,11 @@ export const resources = {
         german: 'Deutsch',
         spanish: 'Español',
       },
+      intro: {
+        eyebrow: 'Un modo più chiaro di lavorare', title: 'Metti a fuoco il tuo lavoro.', description: 'Nello riunisce progetti, attività e conversazioni in uno spazio calmo e flessibile.', signIn: 'Accedi', register: 'Crea un account', note: 'Pensato per team che amano la semplicità.', featuresEyebrow: 'Per mantenere il ritmo', featuresHeading: 'Tutto ciò che ti serve per andare avanti', features: {
+          multilingual: { title: 'Supporto multilingue', description: 'Lavora in inglese, italiano, francese, tedesco o spagnolo.' }, sharedBoards: { title: 'Bacheche condivise', description: 'Invita il team e resta allineato in un unico spazio condiviso.' }, dragAndDrop: { title: 'Flusso drag-and-drop', description: 'Sposta liste e schede in modo naturale mentre il lavoro cambia.' }, focusedWorkspace: { title: 'Uno spazio concentrato', description: 'Tieni visibile il prossimo passo senza rumore inutile.' },
+        }, previewAria: 'Anteprima di una bacheca Nello', previewColumnTodo: 'Da fare', previewColumnDoing: 'In corso', previewColumnDone: 'Fatto', previewCard: 'Definisci il prossimo passo', footer: 'Nello · bacheche semplici per un lavoro concentrato',
+      },
       auth: {
         heading: 'Nello RuleZ',
         loginSubtitle: 'Accedi alle tue bacheche',
@@ -213,6 +241,7 @@ export const resources = {
         pleaseWait: 'Attendere...',
         toRegister: "Non hai un account? Registrati",
         toLogin: 'Hai già un account? Accedi',
+        backToIntro: 'Torna all’introduzione',
         sessionExpired: 'La sessione è scaduta. Effettua di nuovo l’accesso.',
       },
       userMenu: {
@@ -373,8 +402,9 @@ export const resources = {
     translation: {
       app: { title: 'Nello', filterPlaceholder: 'Filtrer...' },
       language: { label: 'Langue', english: 'English', italian: 'Italiano', french: 'Français', german: 'Deutsch' },
+      intro: { eyebrow: 'Une façon plus claire de travailler', title: 'Donnez de la clarté à votre travail.', description: 'Nello réunit projets, tâches et conversations dans un espace calme et flexible.', signIn: 'Se connecter', register: 'Créer un compte', note: 'Pensé pour les équipes qui aiment la simplicité.', featuresEyebrow: 'Pour garder le rythme', featuresHeading: 'Tout ce dont vous avez besoin pour avancer', features: { multilingual: { title: 'Support multilingue', description: 'Travaillez en anglais, italien, français, allemand ou espagnol.' }, sharedBoards: { title: 'Tableaux partagés', description: 'Invitez votre équipe et restez alignés dans un espace commun.' }, dragAndDrop: { title: 'Flux glisser-déposer', description: 'Déplacez listes et cartes naturellement au fil du travail.' }, focusedWorkspace: { title: 'Un espace concentré', description: 'Gardez la prochaine étape visible sans bruit inutile.' } }, previewAria: 'Aperçu d’un tableau Nello', previewColumnTodo: 'À faire', previewColumnDoing: 'En cours', previewColumnDone: 'Terminé', previewCard: 'Préparer la prochaine étape', footer: 'Nello · des tableaux simples pour un travail concentré' },
       auth: {
-        heading: 'Nello RuleZ', loginSubtitle: 'Connectez-vous à vos tableaux', registerSubtitle: 'Créez votre compte', email: 'E-mail', password: 'Mot de passe', invitationKey: 'Clé d’invitation', login: 'Connexion', register: 'S’inscrire', pleaseWait: 'Veuillez patienter...', toRegister: 'Vous n’avez pas de compte ? Inscrivez-vous', toLogin: 'Vous avez déjà un compte ? Connectez-vous', sessionExpired: 'Votre session a expiré. Veuillez vous reconnecter.',
+        heading: 'Nello RuleZ', loginSubtitle: 'Connectez-vous à vos tableaux', registerSubtitle: 'Créez votre compte', email: 'E-mail', password: 'Mot de passe', invitationKey: 'Clé d’invitation', login: 'Connexion', register: 'S’inscrire', pleaseWait: 'Veuillez patienter...', toRegister: 'Vous n’avez pas de compte ? Inscrivez-vous', toLogin: 'Vous avez déjà un compte ? Connectez-vous', backToIntro: 'Retour à l’introduction', sessionExpired: 'Votre session a expiré. Veuillez vous reconnecter.',
       },
       userMenu: { ariaLabel: 'Menu utilisateur', settings: 'Paramètres', logout: 'Déconnexion', userFallback: 'Utilisateur' },
       settings: { title: 'Paramètres utilisateur', changePasswordTitle: 'Modifier le mot de passe', currentPassword: 'Mot de passe actuel', newPassword: 'Nouveau mot de passe', minimumLength: '12 caractères minimum', changing: 'Modification...', changePassword: 'Modifier le mot de passe', backToBoard: 'Retour au tableau', success: 'Mot de passe modifié avec succès' },
@@ -401,8 +431,9 @@ export const resources = {
     translation: {
       app: { title: 'Nello', filterPlaceholder: 'Filtern...' },
       language: { label: 'Sprache', english: 'English', italian: 'Italiano', french: 'Français', german: 'Deutsch' },
+      intro: { eyebrow: 'Eine klarere Art zu arbeiten', title: 'Bringe deine Arbeit in den Fokus.', description: 'Nello vereint Projekte, Aufgaben und Gespräche in einem ruhigen, flexiblen Arbeitsbereich.', signIn: 'Anmelden', register: 'Konto erstellen', note: 'Für Teams, die es gerne einfach halten.', featuresEyebrow: 'Für stetigen Fortschritt', featuresHeading: 'Alles, was du zum Weiterkommen brauchst', features: { multilingual: { title: 'Mehrsprachige Unterstützung', description: 'Arbeite auf Englisch, Italienisch, Französisch, Deutsch oder Spanisch.' }, sharedBoards: { title: 'Geteilte Boards', description: 'Lade dein Team ein und bleibt in einem gemeinsamen Bereich auf dem Laufenden.' }, dragAndDrop: { title: 'Drag-and-drop-Ablauf', description: 'Verschiebe Listen und Karten ganz natürlich, wenn sich die Arbeit verändert.' }, focusedWorkspace: { title: 'Ein fokussierter Arbeitsbereich', description: 'Behalte den nächsten Schritt sichtbar, ohne unnötige Ablenkung.' } }, previewAria: 'Vorschau eines Nello-Boards', previewColumnTodo: 'Zu erledigen', previewColumnDoing: 'In Arbeit', previewColumnDone: 'Erledigt', previewCard: 'Nächsten Schritt planen', footer: 'Nello · einfache Boards für fokussierte Arbeit' },
       auth: {
-        heading: 'Nello RuleZ', loginSubtitle: 'Melde dich bei deinen Boards an', registerSubtitle: 'Erstelle dein Konto', email: 'E-Mail', password: 'Passwort', invitationKey: 'Einladungsschlüssel', login: 'Anmelden', register: 'Registrieren', pleaseWait: 'Bitte warten...', toRegister: 'Noch kein Konto? Registrieren', toLogin: 'Du hast bereits ein Konto? Anmelden', sessionExpired: 'Deine Sitzung ist abgelaufen. Bitte melde dich erneut an.',
+        heading: 'Nello RuleZ', loginSubtitle: 'Melde dich bei deinen Boards an', registerSubtitle: 'Erstelle dein Konto', email: 'E-Mail', password: 'Passwort', invitationKey: 'Einladungsschlüssel', login: 'Anmelden', register: 'Registrieren', pleaseWait: 'Bitte warten...', toRegister: 'Noch kein Konto? Registrieren', toLogin: 'Du hast bereits ein Konto? Anmelden', backToIntro: 'Zurück zur Einführung', sessionExpired: 'Deine Sitzung ist abgelaufen. Bitte melde dich erneut an.',
       },
       userMenu: { ariaLabel: 'Benutzermenü', settings: 'Einstellungen', logout: 'Abmelden', userFallback: 'Benutzer' },
       settings: { title: 'Benutzereinstellungen', changePasswordTitle: 'Passwort ändern', currentPassword: 'Aktuelles Passwort', newPassword: 'Neues Passwort', minimumLength: 'Mindestens 12 Zeichen', changing: 'Wird geändert...', changePassword: 'Passwort ändern', backToBoard: 'Zurück zum Board', success: 'Passwort erfolgreich geändert' },
@@ -429,8 +460,9 @@ export const resources = {
     translation: {
       app: { title: 'Nello', filterPlaceholder: 'Filtrar...' },
       language: { label: 'Idioma', english: 'English', italian: 'Italiano', french: 'Français', german: 'Deutsch', spanish: 'Español' },
+      intro: { eyebrow: 'Una forma más clara de trabajar', title: 'Pon tu trabajo en foco.', description: 'Nello reúne proyectos, tareas y conversaciones en un espacio de trabajo tranquilo y flexible.', signIn: 'Iniciar sesión', register: 'Crear una cuenta', note: 'Pensado para equipos que prefieren la sencillez.', featuresEyebrow: 'Para seguir avanzando', featuresHeading: 'Todo lo que necesitas para avanzar', features: { multilingual: { title: 'Soporte multilingüe', description: 'Trabaja en inglés, italiano, francés, alemán o español.' }, sharedBoards: { title: 'Tableros compartidos', description: 'Invita a tu equipo y manteneos alineados en un espacio común.' }, dragAndDrop: { title: 'Flujo de arrastrar y soltar', description: 'Mueve listas y tarjetas con naturalidad cuando cambie el trabajo.' }, focusedWorkspace: { title: 'Un espacio enfocado', description: 'Mantén visible el siguiente paso sin ruido innecesario.' } }, previewAria: 'Vista previa de un tablero de Nello', previewColumnTodo: 'Por hacer', previewColumnDoing: 'En curso', previewColumnDone: 'Hecho', previewCard: 'Definir el siguiente paso', footer: 'Nello · tableros sencillos para un trabajo enfocado' },
       auth: {
-        heading: 'Nello RuleZ', loginSubtitle: 'Inicia sesión en tus tableros', registerSubtitle: 'Crea tu cuenta', email: 'Correo electrónico', password: 'Contraseña', invitationKey: 'Clave de invitación', login: 'Iniciar sesión', register: 'Registrarse', pleaseWait: 'Espera, por favor...', toRegister: '¿No tienes una cuenta? Regístrate', toLogin: '¿Ya tienes una cuenta? Inicia sesión', sessionExpired: 'Tu sesión ha expirado. Inicia sesión de nuevo.',
+        heading: 'Nello RuleZ', loginSubtitle: 'Inicia sesión en tus tableros', registerSubtitle: 'Crea tu cuenta', email: 'Correo electrónico', password: 'Contraseña', invitationKey: 'Clave de invitación', login: 'Iniciar sesión', register: 'Registrarse', pleaseWait: 'Espera, por favor...', toRegister: '¿No tienes una cuenta? Regístrate', toLogin: '¿Ya tienes una cuenta? Inicia sesión', backToIntro: 'Volver a la introducción', sessionExpired: 'Tu sesión ha expirado. Inicia sesión de nuevo.',
       },
       userMenu: { ariaLabel: 'Menú de usuario', settings: 'Configuración', logout: 'Cerrar sesión', userFallback: 'Usuario' },
       settings: { title: 'Configuración de usuario', changePasswordTitle: 'Cambiar contraseña', currentPassword: 'Contraseña actual', newPassword: 'Nueva contraseña', minimumLength: 'Mínimo 12 caracteres', changing: 'Cambiando...', changePassword: 'Cambiar contraseña', backToBoard: 'Volver al tablero', success: 'Contraseña cambiada correctamente' },
