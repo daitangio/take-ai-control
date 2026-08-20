@@ -6,7 +6,7 @@ interface IntroPageProps {
   onRegister: () => void;
 }
 
-const FEATURE_KEYS = ['multilingual', 'sharedBoards', 'dragAndDrop', 'focusedWorkspace'] as const;
+const FEATURE_KEYS = ['multilingual', 'sharedBoards', 'feature3', 'feature4'] as const;
 
 export function IntroPage({ onSignIn, onRegister }: IntroPageProps) {
   const { t } = useTranslation();
