@@ -10,7 +10,7 @@ const dndMocks = vi.hoisted(() => ({
 
 const mockApiDispatch = vi.fn().mockResolvedValue(undefined);
 const mockState = {
-  boards: {} as Record<string, { id: string; name: string; listIds: string[] }>,
+  boards: {} as Record<string, { id: string; name: string; background?: 'mountain' | 'sea' | 'sport' | null; listIds: string[] }>,
   lists: {} as Record<string, { id: string; name: string; cardIds: string[] }>,
   cards: {},
   activeBoardId: 'b-1' as string | null,
@@ -92,6 +92,18 @@ describe('ListColumn action menu', () => {
 
     expect(mockApiDispatch).toHaveBeenCalledWith({ type: 'list/archive', listId: 'l-1' });
     expect(screen.queryByRole('menu')).toBeNull();
+  });
+
+  it('moves background selection into the list action menu', async () => {
+    const user = userEvent.setup();
+    render(<ListColumn listId="l-1" boardId="b-1" onCardClick={() => {}} onCardMembersClick={() => {}} onCardArchived={() => {}} />);
+
+    await user.click(screen.getByRole('button', { name: 'List actions for Todo' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Board background' }));
+    expect(screen.getByRole('menuitemradio', { name: 'Sea' })).toBeDefined();
+    await user.click(screen.getByRole('menuitemradio', { name: 'Sea' }));
+
+    expect(mockApiDispatch).toHaveBeenCalledWith({ type: 'board/background', boardId: 'b-1', background: 'sea' });
   });
 
   it('closes the menu on Escape and outside click', async () => {

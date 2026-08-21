@@ -1,11 +1,13 @@
 export type BoardId = string;
 export type ListId = string;
 export type CardId = string;
+export type BoardBackground = 'mountain' | 'sea' | 'sport' | null;
 export interface CapacityUsage { used: number; limit: number; }
 
 export interface Board {
   id: BoardId;
   name: string;
+  background?: BoardBackground;
   listIds: ListId[];
   isShared?: boolean;
   isOwner?: boolean;
@@ -57,11 +59,12 @@ export function createInitialState(): State {
 
 export type Action =
   // Board
-  | { type: 'board/create'; boardId: BoardId; name: string; isShared?: boolean; isOwner?: boolean; capacity?: Board['capacity'] }
-  | { type: 'board/rename'; boardId: BoardId; name: string; isShared?: boolean; isOwner?: boolean; capacity?: Board['capacity'] }
+  | { type: 'board/create'; boardId: BoardId; name: string; background?: BoardBackground; isShared?: boolean; isOwner?: boolean; capacity?: Board['capacity'] }
+  | { type: 'board/rename'; boardId: BoardId; name: string; background?: BoardBackground; isShared?: boolean; isOwner?: boolean; capacity?: Board['capacity'] }
+  | { type: 'board/background'; boardId: BoardId; background: BoardBackground }
   | { type: 'board/delete'; boardId: BoardId }
   | { type: 'board/switch'; boardId: BoardId }
-  | { type: 'board/reload'; boardId: BoardId; capacity?: Board['capacity']; lists: Array<{ id: ListId; name: string; cardCapacity?: CapacityUsage; cards: Card[] }> }
+  | { type: 'board/reload'; boardId: BoardId; background?: BoardBackground; capacity?: Board['capacity']; lists: Array<{ id: ListId; name: string; cardCapacity?: CapacityUsage; cards: Card[] }> }
   // List
   | { type: 'list/create'; listId: ListId; boardId: BoardId; name: string; cardCapacity?: CapacityUsage }
   | { type: 'list/rename'; listId: ListId; name: string }

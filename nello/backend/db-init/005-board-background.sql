@@ -1,0 +1,1 @@
+ALTER TABLE board ADD COLUMN background TEXT DEFAULT NULL;

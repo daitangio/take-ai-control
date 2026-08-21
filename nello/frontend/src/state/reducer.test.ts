@@ -38,7 +38,7 @@ describe('board/create', () => {
       boardId: 'b1',
       name: 'Work',
     });
-    expect(next.boards.b1).toEqual({ id: 'b1', name: 'Work', listIds: [] });
+    expect(next.boards.b1).toEqual({ id: 'b1', name: 'Work', background: null, listIds: [] });
     expect(next.activeBoardId).toBe('b1');
   });
 

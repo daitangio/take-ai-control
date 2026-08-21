@@ -23,6 +23,7 @@ export const boards = sqliteTable("board", {
   id: text("id").primaryKey(),
   userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
+  background: text("background"),
   createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
 });
 

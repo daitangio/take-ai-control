@@ -13,10 +13,11 @@ export function reducer(state: State, action: Action): State {
       const board = {
         id: boardId,
         name: name.trim(),
+        background: action.background ?? null,
         listIds: [] as string[],
-        isShared: action.isShared,
-        isOwner: action.isOwner,
-        capacity: action.capacity,
+        ...(action.isShared !== undefined ? { isShared: action.isShared } : {}),
+        ...(action.isOwner !== undefined ? { isOwner: action.isOwner } : {}),
+        ...(action.capacity !== undefined ? { capacity: action.capacity } : {}),
       };
       return {
         ...state,
@@ -36,12 +37,19 @@ export function reducer(state: State, action: Action): State {
           [action.boardId]: {
             ...b,
             name: action.name.trim(),
+            background: action.background !== undefined ? action.background : b.background,
             isShared: action.isShared ?? b.isShared,
             isOwner: action.isOwner ?? b.isOwner,
             capacity: action.capacity ?? b.capacity,
           },
         },
       };
+    }
+
+    case 'board/background': {
+      const board = state.boards[action.boardId];
+      if (!board) return state;
+      return { ...state, boards: { ...state.boards, [action.boardId]: { ...board, background: action.background } } };
     }
 
     case 'board/delete': {
@@ -121,7 +129,7 @@ export function reducer(state: State, action: Action): State {
         cards: nextCards,
         boards: {
           ...state.boards,
-          [action.boardId]: { ...board, listIds: nextListIds, capacity: action.capacity ?? board.capacity },
+          [action.boardId]: { ...board, listIds: nextListIds, background: action.background !== undefined ? action.background : board.background, capacity: action.capacity ?? board.capacity },
         },
       };
     }

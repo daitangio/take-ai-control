@@ -4,6 +4,7 @@ import {
   authHeadersFor,
   type TestApp,
 } from "./helpers.js";
+import { boardMembers } from "../src/db/schema.js";
 
 async function _createBoard(
   env: TestApp,
@@ -34,6 +35,7 @@ describe("CreateBoard", () => {
     const data = JSON.parse(res.body);
     expect(data.name).toBe("Work");
     expect(data.listIds).toEqual([]);
+    expect(data.background).toBeNull();
   });
 
   it("rejects a whitespace-only name with 422", async () => {
@@ -144,6 +146,54 @@ describe("UpdateBoard", () => {
     });
     expect(res.statusCode).toBe(200);
     expect(JSON.parse(res.body).name).toBe("Work 2026");
+  });
+
+  it("updates a board background without changing its name", async () => {
+    await _createBoard(env, auth, "board-1", "Work");
+    const res = await env.app.inject({
+      method: "PATCH",
+      url: "/api/boards/board-1",
+      headers: auth,
+      payload: { background: "sea" },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(JSON.parse(res.body)).toMatchObject({ name: "Work", background: "sea" });
+
+    const listed = await env.app.inject({ method: "GET", url: "/api/boards", headers: auth });
+    expect(JSON.parse(listed.body)[0].background).toBe("sea");
+    const detail = await env.app.inject({ method: "GET", url: "/api/boards/board-1", headers: auth });
+    expect(JSON.parse(detail.body).background).toBe("sea");
+  });
+
+  it("rejects an unknown board background without overwriting the saved selection", async () => {
+    await _createBoard(env, auth, "board-1", "Work");
+    await env.app.inject({ method: "PATCH", url: "/api/boards/board-1", headers: auth, payload: { background: "mountain" } });
+    const res = await env.app.inject({
+      method: "PATCH",
+      url: "/api/boards/board-1",
+      headers: auth,
+      payload: { background: "custom-url" },
+    });
+    expect(res.statusCode).toBe(422);
+    expect(JSON.parse(res.body).error_code).toBe("BOARD_BACKGROUND_INVALID");
+
+    const detail = await env.app.inject({ method: "GET", url: "/api/boards/board-1", headers: auth });
+    expect(JSON.parse(detail.body).background).toBe("mountain");
+  });
+
+  it("allows a shared-board member to update its shared background", async () => {
+    const member = await authHeadersFor(env.app, env.db, "member@example.com", "secret456");
+    await _createBoard(env, auth, "board-1", "Team$");
+    await env.db.insert(boardMembers).values({ boardId: "board-1", userId: "member@example.com" });
+
+    const res = await env.app.inject({
+      method: "PATCH",
+      url: "/api/boards/board-1",
+      headers: member,
+      payload: { background: "sport" },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(JSON.parse(res.body).background).toBe("sport");
   });
 
   it("returns 404 when renaming another user's board", async () => {

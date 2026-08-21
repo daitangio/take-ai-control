@@ -7,7 +7,7 @@ const mockDispatch = vi.fn();
 const mockApiDispatch = vi.fn().mockResolvedValue(undefined);
 
 const mockState = {
-  boards: {} as Record<string, { id: string; name: string; listIds: string[]; isShared?: boolean; isOwner?: boolean }>,
+  boards: {} as Record<string, { id: string; name: string; background: 'mountain' | 'sea' | 'sport' | null; listIds: string[]; isShared?: boolean; isOwner?: boolean }>,
   lists: {},
   cards: {},
   activeBoardId: 'b-1' as string | null,
@@ -29,8 +29,8 @@ beforeEach(() => {
   mockDispatch.mockClear();
   mockState.activeBoardId = 'b-1';
   mockState.boards = {
-    'b-1': { id: 'b-1', name: 'Board One', listIds: [], isOwner: true, isShared: false },
-    'b-2': { id: 'b-2', name: 'Board Two', listIds: [], isOwner: true, isShared: false },
+    'b-1': { id: 'b-1', name: 'Board One', background: null, listIds: [], isOwner: true, isShared: false },
+    'b-2': { id: 'b-2', name: 'Board Two', background: null, listIds: [], isOwner: true, isShared: false },
   };
 });
 
@@ -52,4 +52,5 @@ describe('BoardSwitcher reload on switch', () => {
 
     expect(mockLoadBoards).not.toHaveBeenCalled();
   });
+
 });

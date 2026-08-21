@@ -28,7 +28,13 @@
   overflow-y: hidden;
   padding: 20px;
   -webkit-overflow-scrolling: touch;
+  background-color: var(--color-bg);
+  background-position: center;
+  background-size: cover;
 }
+.app-board--background-mountain { background-image: linear-gradient(rgba(255,255,255,.18), rgba(255,255,255,.18)), url('./assets/board-backgrounds/mountain.svg'); }
+.app-board--background-sea { background-image: linear-gradient(rgba(255,255,255,.18), rgba(255,255,255,.18)), url('./assets/board-backgrounds/sea.svg'); }
+.app-board--background-sport { background-image: linear-gradient(rgba(255,255,255,.22), rgba(255,255,255,.22)), url('./assets/board-backgrounds/sport.svg'); }
 
 /* ── Search ───────────────────────────── */
 

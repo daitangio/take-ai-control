@@ -12,8 +12,12 @@ interface BoardCreateBody {
   name: string;
 }
 
+const boardBackgrounds = ["mountain", "sea", "sport"] as const;
+type BoardBackground = (typeof boardBackgrounds)[number] | null;
+
 interface BoardUpdateBody {
-  name: string;
+  name?: string;
+  background?: BoardBackground;
 }
 
 export default async function boardRoutes(app: FastifyInstance) {
@@ -36,9 +40,9 @@ export default async function boardRoutes(app: FastifyInstance) {
       .where(eq(boardMembers.userId, user.id))
       .orderBy(asc(boards.name));
 
-    const allBoards: { id: string; name: string; isOwner: boolean }[] = [
-      ...ownBoards.map(b => ({ id: b.id, name: b.name, isOwner: true })),
-      ...sharedRows.map(r => ({ id: r.board.id, name: r.board.name, isOwner: false })),
+    const allBoards: { id: string; name: string; background: string | null; isOwner: boolean }[] = [
+      ...ownBoards.map(b => ({ id: b.id, name: b.name, background: b.background, isOwner: true })),
+      ...sharedRows.map(r => ({ id: r.board.id, name: r.board.name, background: r.board.background, isOwner: false })),
     ];
 
     const result = [];
@@ -53,6 +57,7 @@ export default async function boardRoutes(app: FastifyInstance) {
       result.push({
         id: board.id,
         name: board.name,
+        background: board.background,
         listIds: listRows.map(l => l.id),
         isShared: board.name.endsWith("$"),
         isOwner: board.isOwner,
@@ -86,6 +91,7 @@ export default async function boardRoutes(app: FastifyInstance) {
     reply.code(201).send({
       id,
       name: trimmedName,
+      background: null,
       listIds: [] as string[],
       isShared: trimmedName.endsWith("$"),
       isOwner: true,
@@ -154,7 +160,7 @@ export default async function boardRoutes(app: FastifyInstance) {
       });
     }
 
-    return { id: board.id, name: board.name, lists: listResults, capacity: await boardCapacities(db, boardId) };
+    return { id: board.id, name: board.name, background: board.background, lists: listResults, capacity: await boardCapacities(db, boardId) };
   });
 
   // PATCH /boards/:id
@@ -165,14 +171,28 @@ export default async function boardRoutes(app: FastifyInstance) {
     const role = await checkBoardAccess(boardId, user.id);
     if (!role) return sendError(reply, 404, ErrorCode.boardNotFound, "Board not found");
 
-    const [current] = await db.select({ name: boards.name }).from(boards).where(eq(boards.id, boardId)).limit(1);
-    const newName = request.body.name.trim();
+    const [current] = await db.select({ name: boards.name, background: boards.background }).from(boards).where(eq(boards.id, boardId)).limit(1);
+    const body = request.body ?? {};
+    const hasName = body.name !== undefined;
+    const hasBackground = Object.hasOwn(body, "background");
 
+    if (!hasName && !hasBackground) {
+      return sendError(reply, 422, ErrorCode.boardNameRequired, "Board name or background is required");
+    }
+    if (hasName && (!body.name || !body.name.trim())) {
+      return sendError(reply, 422, ErrorCode.boardNameRequired, "Board name is required");
+    }
+    if (hasBackground && body.background !== null && !boardBackgrounds.includes(body.background as Exclude<BoardBackground, null>)) {
+      return sendError(reply, 422, ErrorCode.boardBackgroundInvalid, "Board background is invalid");
+    }
+
+    const newName = hasName ? body.name!.trim() : current.name;
+    const newBackground = hasBackground ? body.background! : current.background;
     if (current.name.endsWith("$") && !newName.endsWith("$")) {
       return sendError(reply, 409, ErrorCode.boardSharedSuffixRequired, "Shared boards must keep the '$' suffix");
     }
 
-    await db.update(boards).set({ name: newName }).where(eq(boards.id, boardId));
+    await db.update(boards).set({ name: newName, background: newBackground }).where(eq(boards.id, boardId));
 
     // Fetch listIds for response
     const listRows = await db
@@ -185,6 +205,7 @@ export default async function boardRoutes(app: FastifyInstance) {
     return {
       id: boardId,
       name: newName,
+      background: newBackground,
       listIds: listRows.map(l => l.id),
       isShared: newName.endsWith("$"),
       isOwner: role === "owner",

@@ -25,7 +25,9 @@ function actionToApiCall(action: Action): Promise<unknown> {
     case 'board/create':
       return api.createBoard(action.boardId, action.name);
     case 'board/rename':
-      return api.updateBoard(action.boardId, action.name);
+      return api.updateBoard(action.boardId, { name: action.name });
+    case 'board/background':
+      return api.updateBoard(action.boardId, { background: action.background });
     case 'board/delete':
       return api.deleteBoard(action.boardId);
     case 'board/switch':
@@ -82,7 +84,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     try {
       const boards = await api.getBoards();
       for (const board of boards) {
-        dispatch({ type: 'board/create', boardId: board.id, name: board.name, isShared: board.isShared, isOwner: board.isOwner, capacity: board.capacity });
+        dispatch({ type: 'board/create', boardId: board.id, name: board.name, background: board.background, isShared: board.isShared, isOwner: board.isOwner, capacity: board.capacity });
         const detail = await api.getBoard(board.id);
         for (const list of detail.lists) {
           dispatch({ type: 'list/create', listId: list.id, boardId: board.id, name: list.name, cardCapacity: list.cardCapacity });
@@ -121,6 +123,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       dispatch({
         type: 'board/reload',
         boardId,
+        background: detail.background,
         capacity: detail.capacity,
         lists: detail.lists.map((list) => ({
           id: list.id,
@@ -153,12 +156,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
     try {
       const result = await actionToApiCall(action);
-      if (action.type === 'board/create' || action.type === 'board/rename') {
+      if (action.type === 'board/create' || action.type === 'board/rename' || action.type === 'board/background') {
         const board = result as api.BoardBrief;
         dispatch({
           type: 'board/rename',
           boardId: board.id,
           name: board.name,
+          background: board.background,
           isShared: board.isShared,
           isOwner: board.isOwner,
           capacity: board.capacity,

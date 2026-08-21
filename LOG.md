@@ -222,6 +222,55 @@ Model: DeepSeek v4 Pro [1m]
 - Remaining: none; final frontend build is running.
 Model: Codex / GPT-5 [2026-08-21]
 
+## Board backgrounds (planning ready)
+
+- 2026-08-21: Created OpenSpec change `add-board-backgrounds` with proposal, design, task plan, and delta specs for new `board-backgrounds` behavior and modified `board-persistence`.
+- Scope: fixed, locally bundled decorative SVG choices (None, Mountain, Sea, Sport), accessible menu previews, per-board persistence, validation, shared-board consistency, and focused backend/frontend/human verification.
+- Validation: `rtk openspec validate add-board-backgrounds --strict` passed.
+- Remaining: implement the plan with `/opsx:apply add-board-backgrounds`.
+Model: Codex / GPT-5 [2026-08-21]
+
+## Board backgrounds (list-menu placement)
+
+- 2026-08-21: Moved the Board background picker from the header into the existing list `...` action menu and retained its previews, accessible radio options, and persistence action.
+- Verification: frontend tests (123) and final frontend production build pass.
+- Remaining: the existing human migration and UI verification tasks.
+Model: Codex / GPT-5 [2026-08-21]
+
+## Board backgrounds (implementation in progress)
+
+- 2026-08-21: Implemented persisted board backgrounds with SQLite migration `005-board-background.sql` (`background TEXT DEFAULT NULL`), backend validation and API responses, and locally bundled Mountain, Sea, and Sport SVG artwork.
+- Added an accessible, localized Board background menu with previews and selected state; selection is optimistically applied, persisted per board, and restored from the server after API errors.
+- Verification: backend tests (106) and build pass; frontend tests (123), production build, and strict OpenSpec validation pass.
+- Remaining: human migration review (task 1.6) and human UI verification (task 3.3).
+Model: Codex / GPT-5 [2026-08-21]
+
+## Board backgrounds (implementation blocked)
+
+- 2026-08-21: Began backend implementation: added the planned board-background schema mapping, API validation/response work, migration file, and focused route coverage.
+- Blocker: the project LibSQL/SQLite test database rejects `ALTER TABLE ... ADD COLUMN IF NOT EXISTS` with `near "EXISTS": syntax error`; the required migration syntax prevents the backend suite from initializing.
+- Remaining: decide whether to use compatible `ALTER TABLE ... ADD COLUMN background TEXT` syntax or introduce a migration runner that conditionally skips an already-existing column.
+Model: Codex / GPT-5 [2026-08-21]
+
+## Board backgrounds (migration task-plan update)
+
+- 2026-08-21: Updated the confirmed `add-board-backgrounds` task plan to create `nello/backend/db-init/005-board-background.sql` with `IF NOT EXISTS`, then added a separate human migration-review task.
+- Validation: `rtk openspec validate add-board-backgrounds --strict` passed.
+- Remaining: implement the plan with `/opsx:apply add-board-backgrounds`.
+Model: Codex / GPT-5 [2026-08-21]
+
+## Board backgrounds (plan reconciliation in progress)
+
+- 2026-08-21: Reviewed the user-updated `add-board-backgrounds/design.md`. The added migration requirement is coherent with the behavior specs; the pending task-plan update will name `nello/backend/db-init/005-board-background.sql`, require `IF NOT EXISTS`, and add a human migration-review task.
+- Remaining: user confirmation before revising `tasks.md`, as required by the OpenSpec update workflow.
+Model: Codex / GPT-5 [2026-08-21]
+
+## Board backgrounds (exploration)
+
+- 2026-08-21: Explored a fixed menu of three SVG board backgrounds: Mountain, Sea, and Sport. No application code or OpenSpec change artifacts were created.
+- Remaining: choose the preferred visual direction and create a change proposal before implementation.
+Model: Codex / GPT-5 [2026-08-21]
+
 ## Capacity limits — board deletion warning fix
 
 - 2026-08-21: Reload board summaries after a successful board deletion so the active board receives current capacity usage and clears stale warnings.
@@ -241,4 +290,12 @@ Model: Codex / GPT-5 [2026-08-21]
 - 2026-08-21: Moved the Tier Limits tab before Password and renamed it from Limits; localized the new label in all supported locales.
 - Verification: focused Settings tests pass.
 - Remaining: none; final frontend build is running.
+Model: Codex / GPT-5 [2026-08-21]
+
+## Board backgrounds (planning ready)
+
+- 2026-08-21: Created OpenSpec change `add-board-backgrounds` with proposal, design, task plan, and delta specs for new `board-backgrounds` behavior and modified `board-persistence`.
+- Scope: fixed, locally bundled decorative SVG choices (None, Mountain, Sea, Sport), accessible menu previews, per-board persistence, validation, shared-board consistency, and focused backend/frontend/human verification.
+- Validation: `rtk openspec validate add-board-backgrounds --strict` passed.
+- Remaining: implement the plan with `/opsx:apply add-board-backgrounds`.
 Model: Codex / GPT-5 [2026-08-21]

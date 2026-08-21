@@ -27,6 +27,7 @@ function AppInner() {
 
   const hasBoards = Object.keys(state.boards).length > 0;
   const hasActiveBoard = state.activeBoardId !== null;
+  const activeBoard = state.activeBoardId ? state.boards[state.activeBoardId] : null;
 
   return (
     <div className="app">
@@ -57,7 +58,7 @@ function AppInner() {
           {token && <UserMenu onSettingsClick={() => setShowSettings(true)} />}
         </div>
       </header>
-      <main className="app-board">
+      <main className={`app-board${activeBoard?.background ? ` app-board--background-${activeBoard.background}` : ''}`}>
         {showSettings ? (
           <UserSettings onBack={() => setShowSettings(false)} />
         ) : !hasBoards ? (

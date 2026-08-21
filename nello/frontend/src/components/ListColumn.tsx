@@ -28,6 +28,7 @@ export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, o
   const [addingCard, setAddingCard] = useState(false);
   const [cardTitle, setCardTitle] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [backgroundMenuOpen, setBackgroundMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   // Sortable for list reordering
@@ -71,6 +72,7 @@ export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, o
   }, [menuOpen]);
 
   if (!list) return null;
+  const board = state.boards[boardId];
 
   // Filter cards based on search query
   const visibleCardIds = list.cardIds.filter(cardId => {
@@ -216,6 +218,46 @@ export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, o
                 >
                   {t('list.showArchived')}
                 </button>
+              )}
+              {board && (
+                <>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className="list-menu-item"
+                    aria-expanded={backgroundMenuOpen}
+                    onClick={() => setBackgroundMenuOpen((open) => !open)}
+                  >
+                    {t('board.background')}
+                  </button>
+                  {backgroundMenuOpen && (
+                    <div className="board-background-menu" role="group" aria-label={t('board.background')}>
+                      {([
+                        [null, 'none'],
+                        ['mountain', 'mountain'],
+                        ['sea', 'sea'],
+                        ['sport', 'sport'],
+                      ] as const).map(([background, label]) => (
+                        <button
+                          key={label}
+                          type="button"
+                          role="menuitemradio"
+                          aria-checked={board.background === background}
+                          className={`board-background-option board-background-option--${label}`}
+                          onClick={() => {
+                            apiDispatch({ type: 'board/background', boardId, background });
+                            setBackgroundMenuOpen(false);
+                            setMenuOpen(false);
+                          }}
+                        >
+                          <span className="board-background-preview" aria-hidden="true" />
+                          <span>{t(`board.background${label[0].toUpperCase()}${label.slice(1)}`)}</span>
+                          {board.background === background && <span aria-hidden="true">✓</span>}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
               <button
                 type="button"

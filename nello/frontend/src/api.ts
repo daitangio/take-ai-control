@@ -128,6 +128,7 @@ export function getUserTier() {
 export interface BoardBrief {
   id: string;
   name: string;
+  background?: BoardBackground;
   listIds: string[];
   isShared: boolean;
   isOwner: boolean;
@@ -163,6 +164,7 @@ export interface ListBrief {
 export interface BoardDetail {
   id: string;
   name: string;
+  background?: BoardBackground;
   lists: ListBrief[];
   capacity?: { boards: CapacityUsage; lists: CapacityUsage } | null;
 }
@@ -182,10 +184,12 @@ export function getBoard(boardId: string) {
   return fetchWithAuth<BoardDetail>(`/boards/${boardId}`);
 }
 
-export function updateBoard(boardId: string, name: string) {
+export type BoardBackground = 'mountain' | 'sea' | 'sport' | null;
+
+export function updateBoard(boardId: string, update: { name?: string; background?: BoardBackground }) {
   return fetchWithAuth<BoardBrief>(`/boards/${boardId}`, {
     method: "PATCH",
-    body: JSON.stringify({ name }),
+    body: JSON.stringify(update),
   });
 }
 

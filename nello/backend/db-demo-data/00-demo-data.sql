@@ -5,8 +5,8 @@ INSERT INTO user(id,email,password) VALUES('alfa','alfa@gioorgi.com','$2b$12$KFG
 INSERT INTO user(id,email,password) VALUES('beta','beta@gioorgi.com','$2b$12$/nQ7NUZOkCjtA6r7fm9cBuPsETGCMPgB7TJ4m4giKhhoNDVke9y.q');
 INSERT INTO user(id,email,password) VALUES('gamma','gamma@gioorgi.com','$2b$12$bKZ8En1lWBnTDIE.3HSgZOqVwBF8iOB/J3FsdngVqhw1Nd4psVn/i');
 
-INSERT INTO board VALUES('ab3f9f54-6ad8-42d1-9842-3af3dddb2c89','alfa','SharedDemo$','2026-07-20 11:34:52');
-INSERT INTO board VALUES('intro','alfa','Nello Intro$','2026-07-26 10:22:20');
+INSERT INTO board(id,user_id,name,created_at) VALUES('ab3f9f54-6ad8-42d1-9842-3af3dddb2c89','alfa','SharedDemo$','2026-07-20 11:34:52');
+INSERT INTO board(id,user_id,name,created_at) VALUES('intro','alfa','Nello Intro$','2026-07-26 10:22:20');
 
 INSERT INTO list VALUES('todo-id','ab3f9f54-6ad8-42d1-9842-3af3dddb2c89','TODO',0,'2026-07-20 11:34:57');
 INSERT INTO list VALUES('inprogress-id','ab3f9f54-6ad8-42d1-9842-3af3dddb2c89','In Progress',2,'2026-07-20 11:35:03');

@@ -110,3 +110,28 @@ describe('apiDispatch board/delete', () => {
     });
   });
 });
+
+describe('apiDispatch board/background', () => {
+  beforeEach(() => {
+    vi.spyOn(api, 'getToken').mockReturnValue('t');
+    vi.spyOn(api, 'getBoards').mockResolvedValue([
+      { id: 'b0', name: 'Board 0', background: 'mountain', listIds: [], isShared: false, isOwner: true },
+    ]);
+    vi.spyOn(api, 'getBoard').mockResolvedValue({ id: 'b0', name: 'Board 0', background: 'mountain', lists: [] });
+    vi.spyOn(api, 'updateBoard').mockRejectedValue(new Error('rejected'));
+  });
+
+  afterEach(() => vi.restoreAllMocks());
+
+  it('restores the server background after a failed optimistic selection', async () => {
+    const { result } = renderHook(() => useStore(), { wrapper });
+    await act(async () => { await result.current.loadBoards(); });
+
+    await act(async () => {
+      await result.current.apiDispatch({ type: 'board/background', boardId: 'b0', background: 'sea' });
+    });
+
+    expect(api.updateBoard).toHaveBeenCalledWith('b0', { background: 'sea' });
+    expect(result.current.state.boards.b0.background).toBe('mountain');
+  });
+});

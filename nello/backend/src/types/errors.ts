@@ -21,6 +21,7 @@ export const ErrorCode = {
   boardNotFound: "BOARD_NOT_FOUND",
   boardDeleteForbidden: "BOARD_DELETE_FORBIDDEN",
   boardSharedSuffixRequired: "BOARD_SHARED_SUFFIX_REQUIRED",
+  boardBackgroundInvalid: "BOARD_BACKGROUND_INVALID",
   boardLimitReached: "BOARD_LIMIT_REACHED",
   boardNotShared: "BOARD_NOT_SHARED",
 
