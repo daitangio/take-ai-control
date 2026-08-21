@@ -1,21 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" fill="none">
   <defs>
     <linearGradient id="arena" x1="80" y1="40" x2="1370" y2="860" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#4C1D95"/>
-      <stop offset=".48" stop-color="#1D4ED8"/>
-      <stop offset="1" stop-color="#0891B2"/>
+      <stop stop-color="#EDE9FE"/>
+      <stop offset=".48" stop-color="#BFDBFE"/>
+      <stop offset="1" stop-color="#BAE6FD"/>
     </linearGradient>
     <linearGradient id="ball" x1="950" y1="220" x2="1270" y2="690" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#FDE047"/>
-      <stop offset=".42" stop-color="#FB923C"/>
-      <stop offset="1" stop-color="#F43F5E"/>
+      <stop stop-color="#FDE68A"/>
+      <stop offset=".42" stop-color="#FDBA74"/>
+      <stop offset="1" stop-color="#FB7185"/>
     </linearGradient>
     <radialGradient id="shine" cx="0" cy="0" r="1" gradientTransform="matrix(145 185 -185 145 1032 324)" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#FFF" stop-opacity=".62"/>
+      <stop stop-color="#FFF" stop-opacity=".48"/>
       <stop offset="1" stop-color="#FFF" stop-opacity="0"/>
     </radialGradient>
     <pattern id="dots" width="34" height="34" patternUnits="userSpaceOnUse">
-      <circle cx="4" cy="4" r="3" fill="#FFF" fill-opacity=".18"/>
+      <circle cx="4" cy="4" r="3" fill="#4338CA" fill-opacity=".1"/>
     </pattern>
     <clipPath id="ballClip">
       <circle cx="1112" cy="455" r="224"/>
@@ -25,11 +25,11 @@
   <rect width="1440" height="900" fill="url(#arena)"/>
   <rect width="1440" height="900" fill="url(#dots)"/>
 
-  <path d="M-120 715 410 185h260L140 715h-260Z" fill="#EC4899" fill-opacity=".72"/>
-  <path d="M18 900 700 218h164L182 900H18Z" fill="#A3E635" fill-opacity=".73"/>
-  <path d="M505 900 1120 285h154L659 900H505Z" fill="#22D3EE" fill-opacity=".45"/>
+  <path d="M-120 715 410 185h260L140 715h-260Z" fill="#F9A8D4" fill-opacity=".62"/>
+  <path d="M18 900 700 218h164L182 900H18Z" fill="#BEF264" fill-opacity=".56"/>
+  <path d="M505 900 1120 285h154L659 900H505Z" fill="#67E8F9" fill-opacity=".48"/>
 
-  <g stroke="#FFF" stroke-opacity=".3" stroke-width="11">
+  <g stroke="#4338CA" stroke-opacity=".2" stroke-width="11">
     <path d="M-20 120h594a330 330 0 0 1 0 660H-20"/>
     <path d="M-20 450h770"/>
     <circle cx="584" cy="450" r="108"/>
@@ -37,10 +37,10 @@
   </g>
 
   <g transform="rotate(-11 1112 455)">
-    <circle cx="1130" cy="478" r="230" fill="#111827" fill-opacity=".32"/>
+    <circle cx="1130" cy="478" r="230" fill="#334155" fill-opacity=".18"/>
     <circle cx="1112" cy="455" r="224" fill="url(#ball)"/>
     <circle cx="1112" cy="455" r="224" fill="url(#shine)"/>
-    <g clip-path="url(#ballClip)" stroke="#7C2D12" stroke-width="15">
+    <g clip-path="url(#ballClip)" stroke="#9A3412" stroke-opacity=".72" stroke-width="15">
       <path d="M1112 215c-88 112-88 368 0 480"/>
       <path d="M1112 215c88 112 88 368 0 480"/>
       <path d="M874 455c116-65 360-65 476 0"/>
@@ -50,8 +50,8 @@
   </g>
 
   <g fill="#FFF">
-    <path d="m217 166 14 31 34 4-25 23 7 34-30-17-30 17 7-34-25-23 34-4 14-31Z" fill-opacity=".82"/>
-    <circle cx="337" cy="118" r="10" fill-opacity=".64"/>
-    <circle cx="396" cy="158" r="6" fill-opacity=".48"/>
+    <path d="m217 166 14 31 34 4-25 23 7 34-30-17-30 17 7-34-25-23 34-4 14-31Z" fill="#6366F1" fill-opacity=".55"/>
+    <circle cx="337" cy="118" r="10" fill="#6366F1" fill-opacity=".42"/>
+    <circle cx="396" cy="158" r="6" fill="#6366F1" fill-opacity=".32"/>
   </g>
 </svg>

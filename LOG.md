@@ -230,6 +230,15 @@ Model: Codex / GPT-5 [2026-08-21]
 - Remaining: implement the plan with `/opsx:apply add-board-backgrounds`.
 Model: Codex / GPT-5 [2026-08-21]
 
+## Board backgrounds (Sport artwork refinement)
+
+- 2026-08-21: Reimplemented `sport.svg` as a locally bundled basketball composition with an arena gradient, court markings, halftone texture, and energetic color bands.
+- Softened the artwork to a pale lavender-and-sky base with translucent pastel accents and a muted warm basketball, aligning its saturation with the Mountain and Sea backgrounds.
+- Preserved the decorative 1440×900 SVG format and subdued supporting details so board lists, cards, controls, and scrolling remain usable over the artwork.
+- Verification: SVG XML validation, rendered visual review, diff checks, and final frontend production build pass.
+- Remaining: none.
+Model: Codex / GPT-5 [2026-08-21]
+
 ## Board backgrounds (list-menu placement)
 
 - 2026-08-21: Moved the Board background picker from the header into the existing list `...` action menu and retained its previews, accessible radio options, and persistence action.
