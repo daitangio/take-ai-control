@@ -230,6 +230,12 @@ Model: Codex / GPT-5 [2026-08-21]
 - Remaining: implement the plan with `/opsx:apply add-board-backgrounds`.
 Model: Codex / GPT-5 [2026-08-21]
 
+## List action translations
+
+- 2026-08-21: Retranslated the Italian, French, German, and Spanish `list.archive` and `list.archiveConfirm` labels to match the updated English delete-all-list-content behavior.
+- Remaining: none.
+Model: GPT-5.6 Luna [v1.0.78]
+
 ## Board backgrounds (Sport artwork refinement)
 
 - 2026-08-21: Reimplemented `sport.svg` as a locally bundled basketball composition with an arena gradient, court markings, halftone texture, and energetic color bands.

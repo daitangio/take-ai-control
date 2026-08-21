@@ -134,6 +134,7 @@ export default async function listRoutes(app: FastifyInstance) {
     const role = await checkBoardAccess(listRow.boardId, user.id);
     if (!role) return sendError(reply, 404, ErrorCode.listNotFound, "List not found");
 
+    // FIXME: Now archive but there is no yet an unarchive
     await db
       .insert(listArchive)
       .values({ listId, boardId: listRow.boardId, archivedBy: user.id })
