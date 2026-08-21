@@ -73,3 +73,40 @@ describe('apiDispatch card/move', () => {
     expect(result.current.state.activeBoardId).toBe('b0');
   });
 });
+
+describe('apiDispatch board/delete', () => {
+  beforeEach(() => {
+    vi.spyOn(api, 'getToken').mockReturnValue('t');
+    vi.spyOn(api, 'deleteBoard').mockResolvedValue(undefined);
+    vi.spyOn(api, 'getBoards').mockResolvedValue([
+      { id: 'b1', name: 'Board 1', listIds: [], isShared: false, isOwner: true, capacity: { boards: { used: 2, limit: 3 }, lists: { used: 0, limit: 12 } } },
+    ]);
+    vi.spyOn(api, 'getBoard').mockResolvedValue({
+      id: 'b1', name: 'Board 1', lists: [], capacity: { boards: { used: 2, limit: 3 }, lists: { used: 0, limit: 12 } },
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('reloads board capacity after deletion to clear a stale warning', async () => {
+    const { result } = renderHook(() => useStore(), { wrapper });
+    act(() => {
+      result.current.dispatch({ type: 'board/create', boardId: 'b0', name: 'Board 0', capacity: { boards: { used: 3, limit: 3 }, lists: { used: 0, limit: 12 } } });
+      result.current.dispatch({ type: 'board/create', boardId: 'b1', name: 'Board 1', capacity: { boards: { used: 3, limit: 3 }, lists: { used: 0, limit: 12 } } });
+      result.current.dispatch({ type: 'board/switch', boardId: 'b0' });
+    });
+
+    await act(async () => {
+      await result.current.apiDispatch({ type: 'board/delete', boardId: 'b0' });
+    });
+
+    expect(api.deleteBoard).toHaveBeenCalledWith('b0');
+    await waitFor(() => {
+      expect(result.current.state.boards).toEqual(expect.objectContaining({
+        b1: expect.objectContaining({ capacity: expect.objectContaining({ boards: { used: 2, limit: 3 } }) }),
+      }));
+    });
+  });
+});

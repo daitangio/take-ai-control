@@ -182,6 +182,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         dispatch({ type: 'card/member/add', cardId: action.cardId, member });
       } else if (action.type === 'card/move') {
         if (activeBefore) await reloadBoard(activeBefore);
+      } else if (action.type === 'board/delete') {
+        await loadBoards();
       }
     } catch (err) {
       console.debug('[nello:api]', action.type, 'failed:', err);

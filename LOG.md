@@ -222,6 +222,13 @@ Model: DeepSeek v4 Pro [1m]
 - Remaining: none; final frontend build is running.
 Model: Codex / GPT-5 [2026-08-21]
 
+## Capacity limits — board deletion warning fix
+
+- 2026-08-21: Reload board summaries after a successful board deletion so the active board receives current capacity usage and clears stale warnings.
+- Added a StoreContext regression test for the 3/3 to 2/3 capacity transition.
+- Remaining: none; final frontend build is running.
+Model: Codex / GPT-5 [2026-08-21]
+
 ## Capacity limits — tier explanation
 
 - 2026-08-21: Added the Tier Limits explanatory sentence beneath the tab heading, with English, Italian, French, German, and Spanish translations.
