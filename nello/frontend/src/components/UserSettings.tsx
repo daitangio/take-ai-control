@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../state/AuthContext';
-import { changePassword } from '../api';
+import { changePassword, getUserTier, type UserTierInfo } from '../api';
 import { toLocalizedErrorMessage } from '../i18n/backendErrors';
 
 interface UserSettingsProps {
@@ -16,6 +16,14 @@ export function UserSettings({ onBack }: UserSettingsProps) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState<'password' | 'limits'>('password');
+  const [tier, setTier] = useState<UserTierInfo | null>(null);
+  const [tierError, setTierError] = useState('');
+
+  useEffect(() => {
+    if (activeTab !== 'limits' || tier) return;
+    getUserTier().then(setTier).catch((err) => setTierError(toLocalizedErrorMessage(t, err)));
+  }, [activeTab, t, tier]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,7 +52,16 @@ export function UserSettings({ onBack }: UserSettingsProps) {
     <div className="user-settings-container">
       <h2 className="user-settings-title">{t('settings.title')}</h2>
 
-      <form onSubmit={handleSubmit} className="settings-form">
+      <div className="settings-tabs" role="tablist" aria-label={t('settings.title')}>
+        <button type="button" role="tab" aria-selected={activeTab === 'limits'} className={activeTab === 'limits' ? 'settings-tab active' : 'settings-tab'} onClick={() => setActiveTab('limits')}>
+          {t('settings.limitsTab')}
+        </button>
+        <button type="button" role="tab" aria-selected={activeTab === 'password'} className={activeTab === 'password' ? 'settings-tab active' : 'settings-tab'} onClick={() => setActiveTab('password')}>
+          {t('settings.passwordTab')}
+        </button>
+      </div>
+
+      {activeTab === 'password' ? <form onSubmit={handleSubmit} className="settings-form">
         <h3>{t('settings.changePasswordTitle')}</h3>
 
         {error && <div className="settings-error">{error}</div>}
@@ -82,7 +99,19 @@ export function UserSettings({ onBack }: UserSettingsProps) {
             {t('settings.backToBoard')}
           </button>
         </div>
-      </form>
+      </form> : <section role="tabpanel" className="settings-limits">
+        <h3>{t('settings.limitsTitle')}</h3>
+        <p>{t('settings.limitsIntro')}</p>
+        {tierError && <div className="settings-error">{tierError}</div>}
+        {!tier && !tierError && <p>{t('settings.loading')}</p>}
+        {tier && <dl className="settings-limit-list">
+          <div><dt>{t('settings.tierName')}</dt><dd>{tier.name}</dd></div>
+          <div><dt>{t('settings.boards')}</dt><dd>{tier.boards.used}/{tier.boards.limit}</dd></div>
+          <div><dt>{t('settings.listsPerBoard')}</dt><dd>{tier.listsPerBoardLimit}</dd></div>
+          <div><dt>{t('settings.cardsPerBoard')}</dt><dd>{tier.cardsPerListLimit}</dd></div>
+        </dl>}
+        <div className="settings-actions"><button type="button" className="btn-secondary" onClick={onBack}>{t('settings.backToBoard')}</button></div>
+      </section>}
     </div>
   );
 }

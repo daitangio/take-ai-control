@@ -91,6 +91,24 @@ describe("Token", () => {
   });
 });
 
+describe("User tier", () => {
+  it("returns the authenticated user's tier and current board capacity", async () => {
+    const env = await buildTestApp();
+    const auth = await authHeadersFor(env.app, env.db, "tier@example.com", "secret123");
+    await raw(env.db, "INSERT INTO board (id, user_id, name) VALUES (?, ?, ?)", ["tier-board", "tier@example.com", "Tier board"]);
+
+    const res = await env.app.inject({ method: "GET", url: "/api/auth/tier", headers: auth });
+
+    expect(res.statusCode).toBe(200);
+    expect(JSON.parse(res.body)).toEqual({
+      name: "free",
+      boards: { used: 1, limit: 3 },
+      listsPerBoardLimit: 12,
+      cardsPerListLimit: 48,
+    });
+  });
+});
+
 describe("Password Change", () => {
   let env: TestApp;
   let auth: Record<string, string>;

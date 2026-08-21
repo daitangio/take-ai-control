@@ -112,6 +112,17 @@ export function changePassword(currentPassword: string, newPassword: string) {
   });
 }
 
+export interface UserTierInfo {
+  name: string;
+  boards: CapacityUsage;
+  listsPerBoardLimit: number;
+  cardsPerListLimit: number;
+}
+
+export function getUserTier() {
+  return fetchWithAuth<UserTierInfo>("/auth/tier");
+}
+
 // ── Boards ──────────────────────────────────────────
 
 export interface BoardBrief {

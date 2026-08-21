@@ -786,6 +786,28 @@
   margin-bottom: 1.5rem;
 }
 
+.settings-tabs {
+  display: flex;
+  gap: .5rem;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 1.5rem;
+}
+
+.settings-tab {
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  padding: .6rem .8rem;
+}
+
+.settings-tab.active { border-bottom-color: #007bff; font-weight: 600; }
+
+.settings-limit-list { margin: 0; }
+.settings-limit-list div { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem 0; border-bottom: 1px solid var(--color-border); }
+.settings-limit-list dt { font-weight: 500; }
+.settings-limit-list dd { margin: 0; }
+
 .settings-form-group {
   margin-bottom: 1rem;
   display: flex;

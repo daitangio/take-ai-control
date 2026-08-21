@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { db } from "../db/index.js";
-import { users, registerKey } from "../db/schema.js";
+import { users, registerKey, userTiers } from "../db/schema.js";
 import { eq, and, sql } from "drizzle-orm";
 import { hashPassword, verifyPassword, validatePassword } from "../utils/password.js";
 import { createToken } from "../utils/jwt.js";
@@ -8,6 +8,7 @@ import { authenticate } from "../middleware/auth.js";
 import crypto from "node:crypto";
 import { sendError } from "../utils/apiError.js";
 import { ErrorCode } from "../types/errors.js";
+import { boardCapacity } from "../utils/capacity.js";
 
 type RateLimitConfig = {
   max: number;
@@ -139,6 +140,34 @@ export default async function authRoutes(app: FastifyInstance, opts: AuthRoutesO
 
     const token = createToken(userId);
     return { access_token: token, token_type: "bearer" };
+    },
+  );
+
+  app.get(
+    "/auth/tier",
+    { preHandler: [authenticate] },
+    async (request, reply) => {
+      const [tier] = await db
+        .select({
+          name: userTiers.name,
+          listsPerBoardLimit: userTiers.listsPerBoardLimit,
+          cardsPerListLimit: userTiers.cardsPerListLimit,
+        })
+        .from(users)
+        .innerJoin(userTiers, eq(users.tierId, userTiers.id))
+        .where(eq(users.id, request.user.id))
+        .limit(1);
+
+      if (!tier) {
+        return sendError(reply, 401, ErrorCode.authUserNotFound, "User tier not found");
+      }
+
+      return {
+        name: tier.name ?? "free",
+        boards: await boardCapacity(db, request.user.id),
+        listsPerBoardLimit: Number(tier.listsPerBoardLimit ?? 0),
+        cardsPerListLimit: Number(tier.cardsPerListLimit ?? 0),
+      };
     },
   );
 

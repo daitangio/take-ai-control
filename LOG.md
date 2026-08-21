@@ -191,6 +191,8 @@ Model: DeepSeek v4 Pro [1m]
 - Remaining: human task 4.2 (exercise the threshold, capacity rejection, archive release, and shared-board flow in the running UI).
 - Model: Codex / GPT-5.6 Terra
 
+
+
 ## Capacity limits (planning ready)
 
 - 2026-08-20: Created OpenSpec change `capacity-limits` with proposal, design, capacity/data/API/i18n delta specs, and an implementation task list.
@@ -211,3 +213,25 @@ Model: DeepSeek v4 Pro [1m]
 - 2026-08-20: Added explicit enforcement requirements: creation, card restoration, and cross-list moves cannot exceed the applicable tier limit; rejections preserve data and use a stable localizable error; archived lists and cards free active capacity.
 - Remaining: decide the presentation timing and surface (for example, dashboard summary, contextual creation dialog, or both) before proposal and implementation.
 - Model: Codex / GPT-5.6 Terra
+
+## Capacity limits — Settings tier information
+
+- 2026-08-21: Added the Settings Limits tab with the authenticated user's tier name, board usage and limit, list limit per board, and card limit per board.
+- Added authenticated `GET /api/auth/tier` API support and focused backend/frontend coverage.
+- Verification: backend tests (103) and build, frontend tests (120), and strict OpenSpec validation pass.
+- Remaining: none; final frontend build is running.
+Model: Codex / GPT-5 [2026-08-21]
+
+## Capacity limits — tier explanation
+
+- 2026-08-21: Added the Tier Limits explanatory sentence beneath the tab heading, with English, Italian, French, German, and Spanish translations.
+- Verification: focused Settings tests pass.
+- Remaining: none; final frontend build is running.
+Model: Codex / GPT-5 [2026-08-21]
+
+## Capacity limits — Settings tab refinement
+
+- 2026-08-21: Moved the Tier Limits tab before Password and renamed it from Limits; localized the new label in all supported locales.
+- Verification: focused Settings tests pass.
+- Remaining: none; final frontend build is running.
+Model: Codex / GPT-5 [2026-08-21]

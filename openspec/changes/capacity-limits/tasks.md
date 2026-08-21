@@ -22,6 +22,14 @@
 - [x] 3.5 Add frontend unit tests for the 75% threshold, below-threshold absence, usage rendering, and localized capacity errors.
 - [x] 3.6 Run `rtk npm test` and `rtk npm run build` in `nello/frontend`.
 
+## 4. Limits info on Settings
+
+- [x] Add a new tab on Settings page with the following user 's tier information:
+    - Tier name
+    - board used / max board
+    - list limit per board
+    - card limit per board
+
 ## 4. Release verification
 
 - [x] 4.1 Apply the migration process to a copy of an existing database and verify all existing users resolve to a valid tier.
