@@ -16,7 +16,7 @@ export function UserSettings({ onBack }: UserSettingsProps) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [activeTab, setActiveTab] = useState<'password' | 'limits'>('password');
+  const [activeTab, setActiveTab] = useState<'password' | 'limits'>('limits');
   const [tier, setTier] = useState<UserTierInfo | null>(null);
   const [tierError, setTierError] = useState('');
 
