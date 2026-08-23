@@ -5,6 +5,7 @@ import {
   type DragStartEvent,
   type DragEndEvent,
 } from '@dnd-kit/core';
+import { nanoid } from 'nanoid';
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 import { useStore } from '../state/StoreContext';
 import { useDndSensors } from '../dnd/useDndSensors';
@@ -41,7 +42,8 @@ export function BoardView() {
     if (listName.trim() && activeBoardId) {
       // GG Nice id name are better
       // If two list name are equal, we cut them and add a magic uid at end
-      var listId=listName.slice(0,36-8).toLowerCase().replaceAll(" ","-")+"-"+crypto.randomUUID().slice(0,8)
+      var listId=listName.slice(0,36-8).toLowerCase().replaceAll(" ","-").replaceAll("/","-")+"-"+
+      nanoid().slice(0,8)
       apiDispatch({
         type: 'list/create',
         listId: listId,

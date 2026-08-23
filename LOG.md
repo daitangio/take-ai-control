@@ -274,6 +274,12 @@ Model: Codex / GPT-5 [2026-08-21]
 - Remaining: implement the plan with `/opsx:apply add-board-backgrounds`.
 Model: Codex / GPT-5 [2026-08-21]
 
+## Board IDs — NanoID
+
+- 2026-08-23: Replaced `crypto.randomUUID()` with `nanoid()` when creating boards and added NanoID to the frontend dependencies.
+- Remaining: none.
+Model: GPT-5.6 Terra [2026-08-23]
+
 ## Board backgrounds (plan reconciliation in progress)
 
 - 2026-08-21: Reviewed the user-updated `add-board-backgrounds/design.md`. The added migration requirement is coherent with the behavior specs; the pending task-plan update will name `nello/backend/db-init/005-board-background.sql`, require `IF NOT EXISTS`, and add a human migration-review task.
@@ -314,3 +320,15 @@ Model: Codex / GPT-5 [2026-08-21]
 - Validation: `rtk openspec validate add-board-backgrounds --strict` passed.
 - Remaining: implement the plan with `/opsx:apply add-board-backgrounds`.
 Model: Codex / GPT-5 [2026-08-21]
+
+## Board IDs — NanoID
+
+- 2026-08-23: Replaced `crypto.randomUUID()` with `nanoid()` when creating boards and added NanoID to the frontend dependencies.
+- Remaining: none.
+Model: GPT-5.6 Terra [2026-08-23]
+
+## Frontend test expectation alignment
+
+- 2026-08-23: Updated ListColumn tests for the current localized archive-action label and switched password-flow tests to the Password tab before querying its form fields; modeled the initial tier request separately from password API responses.
+- Remaining: none.
+Model: GPT-5.6 Terra [v1.0.70]

@@ -11,6 +11,15 @@ vi.mock('../state/AuthContext', () => ({
 describe('UserSettings', () => {
   const mockOnBack = vi.fn();
   let fetchMock: any;
+  const tierResponse = () => ({
+    ok: true,
+    json: async () => ({
+      name: 'free',
+      boards: { used: 2, limit: 3 },
+      listsPerBoardLimit: 12,
+      cardsPerListLimit: 48,
+    }),
+  });
 
   beforeEach(() => {
     vi.resetAllMocks();
@@ -19,11 +28,13 @@ describe('UserSettings', () => {
     });
     api.setToken('fake-token');
     fetchMock = vi.fn();
+    fetchMock.mockResolvedValue(tierResponse());
     vi.stubGlobal('fetch', fetchMock);
   });
 
   it('renders the form correctly', () => {
     render(<UserSettings onBack={mockOnBack} />);
+    fireEvent.click(screen.getByRole('tab', {name: 'Password'}));
     expect(screen.getByText('User Settings')).toBeTruthy();
     expect(screen.getByLabelText('Current Password')).toBeTruthy();
     expect(screen.getByLabelText('New Password')).toBeTruthy();
@@ -53,6 +64,7 @@ describe('UserSettings', () => {
 
   it('shows error if new password is too short', async () => {
     render(<UserSettings onBack={mockOnBack} />);
+    fireEvent.click(screen.getByRole('tab', { name: 'Password' }));
 
     fireEvent.change(screen.getByLabelText('Current Password'), { target: { value: 'oldpass12345' } });
     fireEvent.change(screen.getByLabelText('New Password'), { target: { value: 'short' } });
@@ -60,16 +72,19 @@ describe('UserSettings', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Change Password' }));
 
     expect(await screen.findByText('New password must be at least 12 characters long')).toBeTruthy();
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalledWith('/api/auth/password', expect.anything());
   });
 
   it('calls API and shows success on successful password change', async () => {
-    fetchMock.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ detail: 'Password updated successfully' }),
-    });
+    fetchMock
+      .mockResolvedValueOnce(tierResponse())
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ detail: 'Password updated successfully' }),
+      });
 
     render(<UserSettings onBack={mockOnBack} />);
+    fireEvent.click(screen.getByRole('tab', { name: 'Password' }));
 
     fireEvent.change(screen.getByLabelText('Current Password'), { target: { value: 'oldpass12345' } });
     fireEvent.change(screen.getByLabelText('New Password'), { target: { value: 'newlongpassword123' } });
@@ -89,15 +104,18 @@ describe('UserSettings', () => {
   });
 
   it('shows error from API on failure', async () => {
-    fetchMock.mockResolvedValueOnce({
-      ok: false,
-      text: async () => JSON.stringify({
-        detail: 'Invalid current password',
-        error_code: 'PASSWORD_CHANGE_CURRENT_INVALID',
-      }),
-    });
+    fetchMock
+      .mockResolvedValueOnce(tierResponse())
+      .mockResolvedValueOnce({
+        ok: false,
+        text: async () => JSON.stringify({
+          detail: 'Invalid current password',
+          error_code: 'PASSWORD_CHANGE_CURRENT_INVALID',
+        }),
+      });
 
     render(<UserSettings onBack={mockOnBack} />);
+    fireEvent.click(screen.getByRole('tab', {name: 'Password'}));
 
     fireEvent.change(screen.getByLabelText('Current Password'), { target: { value: 'wrongpass' } });
     fireEvent.change(screen.getByLabelText('New Password'), { target: { value: 'newlongpassword123' } });

@@ -8,6 +8,7 @@ import { CardTile } from './CardTile';
 import { useTranslation } from 'react-i18next';
 import './ListColumn.css';
 import { CapacityWarning } from './CapacityWarning';
+import { nanoid } from 'nanoid';
 
 interface Props {
   listId: string;
@@ -110,7 +111,7 @@ export function ListColumn({ listId, boardId, onCardClick, onCardMembersClick, o
     if (cardTitle.trim()) {
       apiDispatch({
         type: 'card/create',
-        cardId: crypto.randomUUID(),
+        cardId: nanoid(),
         listId,
         title: cardTitle,
       });

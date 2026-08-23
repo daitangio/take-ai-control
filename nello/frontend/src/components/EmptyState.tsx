@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useStore } from '../state/StoreContext';
 import './Board.css';
 import { useTranslation } from 'react-i18next';
+import { nanoid } from 'nanoid';
 
 export function EmptyState() {
   const { apiDispatch } = useStore();
@@ -12,7 +13,7 @@ export function EmptyState() {
     if (name.trim()) {
       apiDispatch({
         type: 'board/create',
-        boardId: crypto.randomUUID(),
+        boardId: nanoid(),
         name,
       });
       setName('');

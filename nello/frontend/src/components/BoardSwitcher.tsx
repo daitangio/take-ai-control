@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { nanoid } from 'nanoid';
 import { useStore } from '../state/StoreContext';
 import { MemberDialog } from './MemberDialog';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +23,7 @@ export function BoardSwitcher() {
     if (createName.trim()) {
       apiDispatch({
         type: 'board/create',
-        boardId: crypto.randomUUID(),
+        boardId: nanoid(),
         name: createName,
       });
       setCreateName('');
