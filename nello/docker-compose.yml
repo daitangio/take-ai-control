@@ -29,7 +29,7 @@ services:
       - backend
   backup:
     cpus: 0.10
-    mem_limit: 2m
+    mem_limit: 6m
     build:
       context: ./backup-gurl
     volumes:
