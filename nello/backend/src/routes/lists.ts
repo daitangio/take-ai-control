@@ -135,6 +135,8 @@ export default async function listRoutes(app: FastifyInstance) {
     if (!role) return sendError(reply, 404, ErrorCode.listNotFound, "List not found");
 
     // FIXME: Now archive but there is no yet an unarchive
+    // GG for the meantime, zap list and archive the cards
+    
     await db
       .insert(listArchive)
       .values({ listId, boardId: listRow.boardId, archivedBy: user.id })

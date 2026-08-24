@@ -339,3 +339,12 @@ Model: GPT-5.6 Terra [v1.0.70]
 - Focused UserMenu and ListColumn tests pass (12 tests); frontend production build passes.
 - Remaining: none.
 Model: GPT-5.6 Terra [v1.0.80]
+
+## Archive add-board-backgrounds
+
+- 2026-08-24: Archived the completed OpenSpec change `add-board-backgrounds` to `openspec/changes/archive/2026-08-24-add-board-backgrounds/`.
+- Pre-archive checks passed: all 4 planning artifacts done, all 14 tasks complete.
+- Synced delta specs to main specs: created `openspec/specs/board-backgrounds/spec.md` (3 new requirements) and updated `openspec/specs/board-persistence/spec.md` (requirement text plus 3 scenarios updated, 1 scenario added).
+- Merge note: the delta's rewritten `Reload restores state` THEN dropped "active board"; since the delta never mentions it and the requirement text still promises it, the main spec preserves "active board" alongside the new "Sea selection".
+- Remaining: none for this archive operation.
+Model: DeepSeek v4 Pro [1m]

@@ -50,7 +50,8 @@
       "Skill(openspec-propose)",
       "WebFetch(domain:stackoverflow.com)",
       "Skill(openspec-apply-change)",
-      "Bash(npx --package=typescript tsc --noEmit)"
+      "Bash(npx --package=typescript tsc --noEmit)",
+      "Skill(opsx:sync)"
     ]
   }
 }

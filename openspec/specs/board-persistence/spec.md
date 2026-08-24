@@ -8,17 +8,17 @@ Persist all boards, lists, cards, their ordering, and the active board selection
 
 ### Requirement: State persisted across sessions and devices
 
-The system SHALL persist all boards, lists, cards, their ordering, and the active board selection to the backend API, scoped to the authenticated user, so that logging in from any device restores the same state. The frontend SHALL clear all in-memory state and repopulate from the API on each login, with no duplication of entities.
+The system SHALL persist all boards, including each board's selected background, lists, cards, their ordering, and the active board selection to the backend API, scoped to the authenticated user, so that logging in from any device restores the same state. The frontend SHALL clear all in-memory state and repopulate from the API on each login, with no duplication of entities.
 
 #### Scenario: Login restores state
 
 - **WHEN** the user logs in after creating boards, lists, and cards in a previous session
-- **THEN** the same boards, lists, cards, and ordering are shown with no duplicated entities
+- **THEN** the same boards, lists, cards, ordering, and selected board backgrounds are shown with no duplicated entities
 
 #### Scenario: Reload restores state
 
-- **WHEN** the user creates boards, lists, and cards, then reloads the page
-- **THEN** the same boards, lists, cards, ordering, and active board are shown with no duplicated entities
+- **WHEN** the user creates boards, lists, and cards, selects Sea for a board, then reloads the page
+- **THEN** the same boards, lists, cards, ordering, active board, and Sea selection are shown with no duplicated entities
 
 #### Scenario: Re-login does not duplicate entities
 
@@ -33,7 +33,12 @@ The system SHALL persist all boards, lists, cards, their ordering, and the activ
 #### Scenario: State is per-user
 
 - **WHEN** user A logs in on device 1 and user B logs in on device 2
-- **THEN** each user sees only their own boards, lists, and cards
+- **THEN** each user sees only their own boards, lists, cards, and board-background selections
+
+#### Scenario: New board defaults to no background
+
+- **WHEN** a user creates a board
+- **THEN** its persisted background selection is None
 
 ### Requirement: Graceful fallback on network or server errors
 
