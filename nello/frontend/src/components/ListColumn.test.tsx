@@ -94,16 +94,12 @@ describe('ListColumn action menu', () => {
     expect(screen.queryByRole('menu')).toBeNull();
   });
 
-  it('moves background selection into the list action menu', async () => {
+  it('does not include board background selection in the list action menu', async () => {
     const user = userEvent.setup();
     render(<ListColumn listId="l-1" boardId="b-1" onCardClick={() => {}} onCardMembersClick={() => {}} onCardArchived={() => {}} />);
 
     await user.click(screen.getByRole('button', { name: 'List actions for Todo' }));
-    await user.click(screen.getByRole('menuitem', { name: 'Board background' }));
-    expect(screen.getByRole('menuitemradio', { name: 'Sea' })).toBeDefined();
-    await user.click(screen.getByRole('menuitemradio', { name: 'Sea' }));
-
-    expect(mockApiDispatch).toHaveBeenCalledWith({ type: 'board/background', boardId: 'b-1', background: 'sea' });
+    expect(screen.queryByRole('menuitem', { name: 'Board background' })).toBeNull();
   });
 
   it('closes the menu on Escape and outside click', async () => {

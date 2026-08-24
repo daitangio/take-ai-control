@@ -332,3 +332,10 @@ Model: GPT-5.6 Terra [2026-08-23]
 - 2026-08-23: Updated ListColumn tests for the current localized archive-action label and switched password-flow tests to the Password tab before querying its form fields; modeled the initial tier request separately from password API responses.
 - Remaining: none.
 Model: GPT-5.6 Terra [v1.0.70]
+
+## Board backgrounds (user-menu placement)
+
+- 2026-08-24: Moved the board-background picker from each list action menu into the user menu, immediately above Settings; it applies to the active board and retains its previews and radio selection behavior.
+- Focused UserMenu and ListColumn tests pass (12 tests); frontend production build passes.
+- Remaining: none.
+Model: GPT-5.6 Terra [v1.0.80]

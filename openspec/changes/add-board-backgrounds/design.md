@@ -36,7 +36,7 @@ Inline arbitrary SVG markup and external asset hosting were rejected: bundled as
 
 ### Use a compact header control
 
-Place a Board background control beside the active-board controls. It opens a menu of four labelled, keyboard-accessible options; each option includes a thumbnail and the current selection has a visible selected state. A native select is an acceptable implementation if it can present both the label and selected value accessibly; otherwise use the project's existing button/menu interaction pattern.
+Place a Board background control inside user menu, above Settings. It opens a menu of four labelled, keyboard-accessible options; each option includes a thumbnail and the current selection has a visible selected state. A native select is an acceptable implementation if it can present both the label and selected value accessibly; otherwise use the project's existing button/menu interaction pattern.
 
 ### Preserve update compatibility
 

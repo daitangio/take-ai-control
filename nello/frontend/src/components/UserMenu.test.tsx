@@ -7,6 +7,21 @@ vi.mock('../state/AuthContext', () => ({
   useAuth: vi.fn(),
 }));
 
+const mockApiDispatch = vi.fn();
+const mockState = {
+  activeBoardId: 'b-1' as string | null,
+  boards: {
+    'b-1': { id: 'b-1', name: 'Board', background: null, listIds: [] },
+  },
+};
+
+vi.mock('../state/StoreContext', () => ({
+  useStore: () => ({
+    state: mockState,
+    apiDispatch: mockApiDispatch,
+  }),
+}));
+
 describe('UserMenu', () => {
   const mockOnSettingsClick = vi.fn();
   const mockLogout = vi.fn();
@@ -16,6 +31,9 @@ describe('UserMenu', () => {
     (AuthContext.useAuth as any).mockReturnValue({
       logout: mockLogout,
     });
+    mockApiDispatch.mockClear();
+    mockState.activeBoardId = 'b-1';
+    mockState.boards['b-1'].background = null;
   });
 
   it('renders closed by default', () => {
@@ -48,5 +66,18 @@ describe('UserMenu', () => {
     fireEvent.click(screen.getByText('Logout'));
     
     expect(mockLogout).toHaveBeenCalledTimes(1);
+  });
+
+  it('places board background selection above Settings', () => {
+    render(<UserMenu onSettingsClick={mockOnSettingsClick} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'User Menu' }));
+    const menuItems = screen.getAllByRole('button').map((button) => button.textContent);
+    expect(menuItems.indexOf('Board background')).toBeLessThan(menuItems.indexOf('Settings'));
+
+    fireEvent.click(screen.getByRole('button', { name: 'Board background' }));
+    fireEvent.click(screen.getByRole('menuitemradio', { name: 'Sea' }));
+
+    expect(mockApiDispatch).toHaveBeenCalledWith({ type: 'board/background', boardId: 'b-1', background: 'sea' });
   });
 });
