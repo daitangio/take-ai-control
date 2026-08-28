@@ -9,14 +9,14 @@ FROM ${PYTHON_BASE_IMAGE}
 ARG TAKE_PROJECT_NAME
 ARG DEV_UID=501
 ARG DEV_GID=20
-ARG PI_CODING_AGENT_VERSION=0.80.7
-ARG CLAUDE_CODE_VERSION=2.1.210
+ARG PI_CODING_AGENT_VERSION=0.83.0
+ARG CLAUDE_CODE_VERSION=2.1.212
 ARG COPILOT_VERSION=1.0.70
-ARG OPEN_SPEC_VERSION=1.6.0
+ARG OPEN_SPEC_VERSION=1.11.0
 RUN pip install --upgrade pip
 
 # Ensure basic pi.dev is installed
-RUN apt update && apt install -y git curl xz-utils sudo
+RUN apt update && apt install -y git curl xz-utils sudo sqlite3
 
 ENV DEV_UID=${DEV_UID}
 ENV DEV_GID=${DEV_GID}
