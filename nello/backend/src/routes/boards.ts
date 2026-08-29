@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { db } from "../db/index.js";
-import { boards, lists, cards, listArchive, cardArchive, cardMembers, users, boardMembers } from "../db/schema.js";
+import { boards, lists, cards,  cardArchive, cardMembers, users, boardMembers } from "../db/schema.js";
 import { eq, and, isNull, asc, sql as sqlDrizzle } from "drizzle-orm";
 import { authenticate, checkBoardAccess } from "../middleware/auth.js";
 import { sendError } from "../utils/apiError.js";
@@ -50,8 +50,7 @@ export default async function boardRoutes(app: FastifyInstance) {
       const listRows = await db
         .select({ id: lists.id })
         .from(lists)
-        .leftJoin(listArchive, eq(lists.id, listArchive.listId))
-        .where(and(eq(lists.boardId, board.id), isNull(listArchive.listId)))
+        .where(eq(lists.boardId, board.id))
         .orderBy(asc(lists.position));
 
       result.push({
@@ -111,9 +110,8 @@ export default async function boardRoutes(app: FastifyInstance) {
 
     const listRows = await db
       .select({ id: lists.id, name: lists.name })
-      .from(lists)
-      .leftJoin(listArchive, eq(lists.id, listArchive.listId))
-      .where(and(eq(lists.boardId, boardId), isNull(listArchive.listId)))
+      .from(lists)      
+      .where(eq(lists.boardId, boardId))
       .orderBy(asc(lists.position));
 
     const listResults = [];
@@ -197,9 +195,8 @@ export default async function boardRoutes(app: FastifyInstance) {
     // Fetch listIds for response
     const listRows = await db
       .select({ id: lists.id })
-      .from(lists)
-      .leftJoin(listArchive, eq(lists.id, listArchive.listId))
-      .where(and(eq(lists.boardId, boardId), isNull(listArchive.listId)))
+      .from(lists)     
+      .where(eq(lists.boardId, boardId))
       .orderBy(asc(lists.position));
 
     return {

@@ -348,3 +348,12 @@ Model: GPT-5.6 Terra [v1.0.80]
 - Merge note: the delta's rewritten `Reload restores state` THEN dropped "active board"; since the delta never mentions it and the requirement text still promises it, the main spec preserves "active board" alongside the new "Sea selection".
 - Remaining: none for this archive operation.
 Model: DeepSeek v4 Pro [1m]
+
+## Remove listArchive concept
+
+- 2026-08-29: Removed the `listArchive` table from `nello/backend/src/db/schema.ts`, the generated `drizzle/schema.ts` + `drizzle/relations.ts`, `src/utils/capacity.ts` (`listCapacity` now counts all lists of the board), and the leftover commented join in `src/routes/boards.ts`. List archive keeps deleting the list together with its cards (`POST /lists/:id/archive`, 204).
+- Added `db-init/006-drop-list-archive.sql`: deletes legacy archived lists (cards cascade) and drops the table; `001-schema1.sql` keeps a compatibility `CREATE TABLE IF NOT EXISTS list_archive` so the migration also runs on fresh databases.
+- Tests: removed `list_archive` from the cleanup table list in `tests/helpers.ts`, aligned archive test titles with delete semantics. Backend suite 106/106 pass; backend `tsc` build passes; frontend production build passes.
+- OpenSpec: created change `remove-list-archive` (proposal, tasks, delta specs for backend-api, list-management, data-persistence, backend-test-suite); `openspec validate --changes` passes for it and `capacity-limits`.
+- Remaining: review `006-drop-list-archive.sql` before deployment, then archive the change (`openspec archive remove-list-archive`) to sync main specs.
+Model: DeepSeek v4 Pro [1m]

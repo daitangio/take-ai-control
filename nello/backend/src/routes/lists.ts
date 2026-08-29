@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { db } from "../db/index.js";
-import { lists, listArchive, cards } from "../db/schema.js";
-import { eq, and, isNull, asc, sql } from "drizzle-orm";
+import { lists, cards } from "../db/schema.js";
+import { eq, and,  asc, sql } from "drizzle-orm";
 import { authenticate, checkBoardAccess } from "../middleware/auth.js";
 import { sendError } from "../utils/apiError.js";
 import { ErrorCode } from "../types/errors.js";
@@ -41,9 +41,8 @@ export default async function listRoutes(app: FastifyInstance) {
       if (capacity.used >= capacity.limit) return { limited: true as const };
       const [maxRow] = await db
         .select({ mx: sql<number>`COALESCE(MAX(${lists.position}), -1)` })
-        .from(lists)
-        .leftJoin(listArchive, eq(lists.id, listArchive.listId))
-        .where(and(eq(lists.boardId, boardId), isNull(listArchive.listId)));
+        .from(lists)        
+        .where(eq(lists.boardId, boardId));
       await db.insert(lists).values({ id, boardId, name: trimmedName, position: (maxRow?.mx ?? -1) + 1 });
       return { limited: false as const, capacity: await listCapacity(db, boardId) };
     });
@@ -134,14 +133,11 @@ export default async function listRoutes(app: FastifyInstance) {
     const role = await checkBoardAccess(listRow.boardId, user.id);
     if (!role) return sendError(reply, 404, ErrorCode.listNotFound, "List not found");
 
-    // FIXME: Now archive but there is no yet an unarchive
-    // GG for the meantime, zap list and archive the cards
-    
-    await db
-      .insert(listArchive)
-      .values({ listId, boardId: listRow.boardId, archivedBy: user.id })
-      .onConflictDoNothing();
-
+    // Delete the list and the cards: there is a on cascade relation so the first delete is not needed,
+    // but lets do anyway for more robust design
+    await db.delete(cards).where(eq(cards.listId,listId))    
+    await db.delete(lists).where(eq(lists.id,listId))
+  
     reply.code(204).send();
   });
 
@@ -157,12 +153,12 @@ export default async function listRoutes(app: FastifyInstance) {
       const role = await checkBoardAccess(boardId, user.id);
       if (!role) return sendError(reply, 404, ErrorCode.boardNotFound, "Board not found");
 
-      // Only update visible (non-archived) lists
+      // OLD: Only update visible (non-archived) lists
+      // GG Removed archive concept
       const visibleRows = await db
         .select({ id: lists.id })
-        .from(lists)
-        .leftJoin(listArchive, eq(lists.id, listArchive.listId))
-        .where(and(eq(lists.boardId, boardId), isNull(listArchive.listId)));
+        .from(lists)        
+        .where(eq(lists.boardId, boardId));
 
       const visibleIds = new Set(visibleRows.map(r => r.id));
 

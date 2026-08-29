@@ -1,5 +1,5 @@
 import { and, eq, isNull, sql } from "drizzle-orm";
-import { boards, cards, cardArchive, lists, listArchive, users, userTiers } from "../db/schema.js";
+import { boards, cards, cardArchive, lists, users, userTiers } from "../db/schema.js";
 
 export type Capacity = { used: number; limit: number };
 
@@ -55,7 +55,7 @@ export async function boardCapacity(db: any, userId: string): Promise<Capacity> 
 
 export async function listCapacity(db: any, boardId: string): Promise<Capacity> {
   const tier = await ownerTier(db, boardId);
-  const used = await count(db, db.select({ count: sql<number>`COUNT(*)` }).from(lists).leftJoin(listArchive, eq(lists.id, listArchive.listId)).where(and(eq(lists.boardId, boardId), isNull(listArchive.listId))));
+  const used = await count(db, db.select({ count: sql<number>`COUNT(*)` }).from(lists).where(eq(lists.boardId, boardId)));
   return { used, limit: tier?.listsPerBoardLimit ?? 0 };
 }
 

@@ -5,6 +5,7 @@ import {
   raw,
   type TestApp,
 } from "./helpers.js";
+import { executionAsyncId } from "node:async_hooks";
 
 async function _createBoard(env: TestApp, auth: Record<string, string>, id = "b-1", name = "Test Board") {
   await env.app.inject({ method: "POST", url: "/api/boards", headers: auth, payload: { id, name } });
@@ -123,7 +124,7 @@ describe("ArchiveList", () => {
     auth = await authHeadersFor(env.app, env.db, "test@example.com", "secret123");
   });
 
-  it("hides a list without deleting its rows and records list_archive fields", async () => {
+  it("Archiving a list removes the list from the board", async () => {
     await _createBoard(env, auth);
     await _createList(env, auth, "list-1", "b-1", "Todo");
     await env.app.inject({ method: "POST", url: "/api/cards", headers: auth, payload: { id: "card-1", listId: "list-1", title: "Task" } });
@@ -131,36 +132,27 @@ describe("ArchiveList", () => {
     const res = await env.app.inject({ method: "POST", url: "/api/lists/list-1/archive", headers: auth });
     expect(res.statusCode).toBe(204);
 
+    // No more list
     const board = JSON.parse((await env.app.inject({ method: "GET", url: "/api/boards/b-1", headers: auth })).body);
     expect(board.lists).toEqual([]);
 
-    const boardsList = JSON.parse((await env.app.inject({ method: "GET", url: "/api/boards", headers: auth })).body);
-    expect(boardsList[0].listIds).toEqual([]);
-
-    // list/card rows persist
-    expect(await raw(env.db, "SELECT id FROM list WHERE id = ?", ["list-1"])).toHaveLength(1);
-    expect(await raw(env.db, "SELECT id FROM card WHERE id = ?", ["card-1"])).toHaveLength(1);
-
-    const archive = await raw(
-      env.db,
-      "SELECT list_id, board_id, archived_by FROM list_archive WHERE list_id = ?",
-      ["list-1"],
-    );
-    expect(archive[0].list_id).toBe("list-1");
-    expect(archive[0].board_id).toBe("b-1");
-    expect(archive[0].archived_by).not.toBeNull();
+    // No more list in database
+    expect(await raw(env.db,"select id from list where name=?", ["Todo"])).toHaveLength(0);
   });
 
-  it("archiving a list is idempotent (one list_archive row)", async () => {
+  it("Archiving a list deletes all its cards", async () => {
     await _createBoard(env, auth);
     await _createList(env, auth, "list-1", "b-1", "Todo");
+    await env.app.inject({ method: "POST", url: "/api/cards", headers: auth, payload: { id: "card-1", listId: "list-1", title: "Task" } });
 
-    expect((await env.app.inject({ method: "POST", url: "/api/lists/list-1/archive", headers: auth })).statusCode).toBe(204);
-    expect((await env.app.inject({ method: "POST", url: "/api/lists/list-1/archive", headers: auth })).statusCode).toBe(204);
+    const res = await env.app.inject({ method: "POST", url: "/api/lists/list-1/archive", headers: auth });
+    expect(res.statusCode).toBe(204);
 
-    const rows = await raw(env.db, "SELECT COUNT(*) AS count FROM list_archive WHERE list_id = ?", ["list-1"]);
-    expect(Number(rows[0].count)).toBe(1);
+    expect( await raw(env.db, "select id from card WHERE id = ?", ["card-1"])).toHaveLength(0);
+    expect( await raw(env.db, "select * from card_archive WHERE card_id = ?", ["card-1"])).toHaveLength(0);
+
   });
+
 
   it("returns 404 when archiving another user's list", async () => {
     const other = await authHeadersFor(env.app, env.db, "other@example.com", "secret456");
@@ -198,7 +190,7 @@ describe("ReorderLists", () => {
     expect(board.lists.map((l: any) => l.name)).toEqual(["Third", "Second", "First"]);
   });
 
-  it("ignores archived lists when reordering", async () => {
+  it("ignores archived (deleted) lists when reordering", async () => {
     await _createBoard(env, auth);
     await _createList(env, auth, "l-1", "b-1", "First");
     await _createList(env, auth, "l-2", "b-1", "Second");

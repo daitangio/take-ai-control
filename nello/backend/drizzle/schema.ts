@@ -57,13 +57,6 @@ export const boardMember = sqliteTable("board_member", {
 (table) => [primaryKey({ columns: [table.boardId, table.userId], name: "board_member_pk"}),
 ]);
 
-export const listArchive = sqliteTable("list_archive", {
-	listId: text("list_id").primaryKey().references(() => list.id, { onDelete: "cascade" } ),
-	boardId: text("board_id").notNull().references(() => board.id, { onDelete: "cascade" } ),
-	archivedBy: text("archived_by").references(() => user.id, { onDelete: "set null" } ),
-	archivedAt: text("archived_at").default(sql`datetime('now')`).notNull(),
-});
-
 export const cardArchive = sqliteTable("card_archive", {
 	cardId: text("card_id").primaryKey().references(() => card.id, { onDelete: "cascade" } ),
 	listId: text("list_id").notNull().references(() => list.id, { onDelete: "cascade" } ),

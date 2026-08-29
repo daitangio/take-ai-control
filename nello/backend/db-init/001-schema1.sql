@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS board_member (
     added_at    TEXT NOT NULL DEFAULT (datetime('now')),
     PRIMARY KEY (board_id, user_id)
 );
+-- Compatibility shim for legacy DBs: removed by 006-drop-list-archive.sql.
 CREATE TABLE IF NOT EXISTS list_archive (
     list_id     TEXT PRIMARY KEY REFERENCES list(id) ON DELETE CASCADE,
     board_id    TEXT NOT NULL REFERENCES board(id) ON DELETE CASCADE,

@@ -11,7 +11,7 @@ INSERT INTO board(id,user_id,name,created_at) VALUES('intro','alfa','Nello Intro
 INSERT INTO list VALUES('todo-id','ab3f9f54-6ad8-42d1-9842-3af3dddb2c89','TODO',0,'2026-07-20 11:34:57');
 INSERT INTO list VALUES('inprogress-id','ab3f9f54-6ad8-42d1-9842-3af3dddb2c89','In Progress',2,'2026-07-20 11:35:03');
 INSERT INTO list VALUES('done-id','ab3f9f54-6ad8-42d1-9842-3af3dddb2c89','DONE',3,'2026-07-20 11:35:06');
-INSERT INTO list VALUES('mvp-38c4db5a','ab3f9f54-6ad8-42d1-9842-3af3dddb2c89','MVP',4,'2026-07-21 13:38:51');
+
 INSERT INTO list VALUES('test-results-a079359d','ab3f9f54-6ad8-42d1-9842-3af3dddb2c89','BUGS',4,'2026-07-21 16:03:03');
 INSERT INTO list VALUES('todo-architecture-c3e77a1d','ab3f9f54-6ad8-42d1-9842-3af3dddb2c89','ColorMap',1,'2026-07-21 19:25:20');
 INSERT INTO list VALUES('weelcome-to-nello-6ab048fe','intro','Wellcome to Nello',0,'2026-07-26 10:22:28');
@@ -62,8 +62,6 @@ INSERT INTO board_member VALUES('ab3f9f54-6ad8-42d1-9842-3af3dddb2c89','gamma','
 INSERT INTO board_member VALUES('ab3f9f54-6ad8-42d1-9842-3af3dddb2c89','alfa','2026-07-21 19:17:03');
 INSERT INTO board_member VALUES('intro','beta','2026-07-26 19:45:18');
 INSERT INTO board_member VALUES('intro','gamma','2026-07-26 19:45:18');
-
-INSERT INTO list_archive VALUES('mvp-38c4db5a','ab3f9f54-6ad8-42d1-9842-3af3dddb2c89','alfa','2026-07-21 14:14:15');
 
 INSERT INTO card_archive VALUES('2f5af671-74d3-4b02-b576-cbe1de1485a5','todo-architecture-c3e77a1d','alfa','2026-07-25 15:52:17');
 INSERT INTO card_archive VALUES('92267e52-21b5-46f3-bfb7-c6835999208d','shared-boards-c5d71ad2','alfa','2026-07-26 20:08:35');

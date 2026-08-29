@@ -35,13 +35,6 @@ export const lists = sqliteTable("list", {
   createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
 });
 
-export const listArchive = sqliteTable("list_archive", {
-  listId: text("list_id").primaryKey().references(() => lists.id, { onDelete: "cascade" }),
-  boardId: text("board_id").notNull().references(() => boards.id, { onDelete: "cascade" }),
-  archivedBy: text("archived_by").references(() => users.id, { onDelete: "set null" }),
-  archivedAt: text("archived_at").notNull().default(sql`(datetime('now'))`),
-});
-
 export const cards = sqliteTable("card", {
   id: text("id").primaryKey(),
   listId: text("list_id").notNull().references(() => lists.id, { onDelete: "cascade" }),
