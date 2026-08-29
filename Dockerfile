@@ -10,13 +10,13 @@ ARG TAKE_PROJECT_NAME
 ARG DEV_UID=501
 ARG DEV_GID=20
 ARG PI_CODING_AGENT_VERSION=0.83.0
-ARG CLAUDE_CODE_VERSION=2.1.212
-ARG COPILOT_VERSION=1.0.70
+ARG CLAUDE_CODE_VERSION=2.1.251
+ARG COPILOT_VERSION=1.0.81
 ARG OPEN_SPEC_VERSION=1.11.0
 RUN pip install --upgrade pip
 
 # Ensure basic pi.dev is installed
-RUN apt update && apt install -y git curl xz-utils sudo sqlite3
+RUN apt update && apt install -y git curl xz-utils sudo sqlite3 less
 
 ENV DEV_UID=${DEV_UID}
 ENV DEV_GID=${DEV_GID}
@@ -26,6 +26,7 @@ RUN if ! getent group "${DEV_GID}" >/dev/null; then groupadd --gid "${DEV_GID}" 
     && useradd --shell /bin/bash --uid "${DEV_UID}" --gid "${DEV_GID}" -m devcontainer \
     && echo "devcontainer ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/devcontainer \
     && chmod 0440 /etc/sudoers.d/devcontainer
+
 
 # Install Node.js from official image (multi-stage, arch-independent)
 COPY --from=node-donor /usr/local/bin/node /usr/local/bin/node
