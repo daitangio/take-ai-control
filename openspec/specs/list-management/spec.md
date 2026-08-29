@@ -22,12 +22,12 @@ The system SHALL show a compact list action menu trigger in each list header ins
 - **THEN** the menu closes and an archived items dialog opens showing all archived cards across the board
 
 ### Requirement: List archival
-The system SHALL allow the user to archive a list from the list action menu. Archiving a list MUST remove it from the active board view without deleting the list record or its cards.
+The system SHALL allow the user to archive a list from the list action menu. Archiving a list MUST remove it from the active board view and delete the list together with all its cards.
 
 #### Scenario: Archive a list with cards
 - **WHEN** the user archives list "Backlog" containing 3 cards
 - **THEN** the list "Backlog" no longer appears on the active board
-- **AND** the archived list record and its 3 cards remain persisted
+- **AND** the list record and its 3 cards are deleted
 
 #### Scenario: Archive menu closes after action
 - **WHEN** the user chooses `Archive` from a list action menu

@@ -63,17 +63,6 @@ The suite SHALL cover board lifecycle and sharing-visibility contracts: create (
 - **WHEN** two users each create a board and one of them lists boards
 - **THEN** only that user's boards are returned
 
-### Requirement: List tests reproduce Python test_lists behavior
-The suite SHALL cover list lifecycle and ordering contracts: create (incl. other-user-board `404` and unauthenticated `401`), rename, rename other-user `404`, delete cascade-to-cards, archive (hides lists without deleting rows, idempotent, other-user `404`), reorder, and reorder ignoring archived lists. Archive tests SHALL assert via raw SQL that list/card rows persist and `list_archive` rows are present.
-
-#### Scenario: Delete list cascades to its cards
-- **WHEN** a list containing a card is deleted
-- **THEN** the response is `204` and fetching the board shows zero lists
-
-#### Scenario: Archive list hides it but keeps rows and is idempotent
-- **WHEN** a list with a card is archived twice
-- **THEN** both archive responses are `204`, the board/detail/list responses no longer include the list, and raw SQL shows the `list`/`card` rows still exist and exactly one `list_archive` row exists
-
 ### Requirement: Card tests reproduce Python test_cards behavior
 The suite SHALL cover card lifecycle, archive, members, move, and editor-metadata contracts: create (incl. whitespace-title `422` and other-user-list `404`), edit title/description, set/clear/preserve `dueDate`, empty-title `422`, delete, archive (hides without deleting rows, idempotent, other-user `404`, member assignments preserved), card members (multi-assign with duplicate dedup so `201` for duplicates but only distinct rows in DB, member-options include owner + board members, reject assignment for user outside the board with `409`, remove member), move (same-list index, cross-list, to-empty-list), and editor metadata (`isModifiedByCurrentUser`/`modifiedByEmail` for own-create, own in board detail, other-editor, and legacy null-`modified_by` card).
 
@@ -106,3 +95,14 @@ The suite SHALL provide a test helper module exposing equivalents of the Python 
 #### Scenario: Helper provides a fresh database and authenticated client per test
 - **WHEN** a test initializes via `buildTestApp()` and `loginUser(app, ...)`
 - **THEN** the test sees an empty in-memory database, an authenticated `app.inject` target, and a usable `Authorization` header
+
+### Requirement: List tests cover list lifecycle and ordering contracts
+The suite SHALL cover list lifecycle and ordering contracts: create (incl. other-user-board `404` and unauthenticated `401`), rename, rename other-user `404`, delete cascade-to-cards, archive (deletes the list and its cards, other-user `404`), reorder, and reorder ignoring archived lists. Archive tests SHALL assert via raw SQL that the `list` and `card` rows are deleted and no `card_archive` rows remain.
+
+#### Scenario: Delete list cascades to its cards
+- **WHEN** a list containing a card is deleted
+- **THEN** the response is `204` and fetching the board shows zero lists
+
+#### Scenario: Archive list removes it and deletes its cards
+- **WHEN** a list with a card is archived
+- **THEN** the response is `204`, the board no longer includes the list, and raw SQL shows the `list` row and its `card` rows are deleted
