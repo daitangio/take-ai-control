@@ -65,6 +65,7 @@ export type Action =
   | { type: 'board/delete'; boardId: BoardId }
   | { type: 'board/switch'; boardId: BoardId }
   | { type: 'board/reload'; boardId: BoardId; background?: BoardBackground; capacity?: Board['capacity']; lists: Array<{ id: ListId; name: string; cardCapacity?: CapacityUsage; cards: Card[] }> }
+  | { type: 'boards/refresh'; boards: Array<{ id: BoardId; name: string; background?: BoardBackground; isShared?: boolean; isOwner?: boolean; capacity?: Board['capacity'] }> }
   // List
   | { type: 'list/create'; listId: ListId; boardId: BoardId; name: string; cardCapacity?: CapacityUsage }
   | { type: 'list/rename'; listId: ListId; name: string }

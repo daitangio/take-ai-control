@@ -13,7 +13,7 @@ interface Props {
 }
 
 export function ArchivedItemsDialog({ boardId, sourceListId, listName, onClose }: Props) {
-  const { state, loadBoards } = useStore();
+  const { state, reloadBoard } = useStore();
   const { t, i18n } = useTranslation();
   const [archivedCards, setArchivedCards] = useState<ArchivedCard[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,7 +69,7 @@ export function ArchivedItemsDialog({ boardId, sourceListId, listName, onClose }
         ),
       );
       onClose();
-      loadBoards();
+      reloadBoard(boardId);
     } catch (err) {
       setError(toLocalizedErrorMessage(t, err));
       setApplying(false);

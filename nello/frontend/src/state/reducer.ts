@@ -96,6 +96,67 @@ export function reducer(state: State, action: Action): State {
       return { ...state, activeBoardId: action.boardId };
     }
 
+    case 'boards/refresh': {
+      const incoming = new Set(action.boards.map((b) => b.id));
+
+      // Drop boards absent from the list, together with their lists and cards
+      const nextBoards = { ...state.boards };
+      const nextLists = { ...state.lists };
+      const nextCards = { ...state.cards };
+      for (const [id, board] of Object.entries(state.boards)) {
+        if (incoming.has(id)) continue;
+        delete nextBoards[id];
+        for (const listId of board.listIds) {
+          const list = state.lists[listId];
+          if (list) {
+            for (const cardId of list.cardIds) delete nextCards[cardId];
+          }
+          delete nextLists[listId];
+        }
+      }
+
+      // Upsert briefs: merge metadata onto existing boards, insert new ones
+      for (const brief of action.boards) {
+        const existing = nextBoards[brief.id];
+        if (existing) {
+          nextBoards[brief.id] = {
+            ...existing,
+            name: brief.name,
+            background: brief.background !== undefined ? brief.background : existing.background,
+            isShared: brief.isShared ?? existing.isShared,
+            isOwner: brief.isOwner ?? existing.isOwner,
+            capacity: brief.capacity ?? existing.capacity,
+          };
+        } else {
+          nextBoards[brief.id] = {
+            id: brief.id,
+            name: brief.name,
+            background: brief.background ?? null,
+            listIds: [] as string[],
+            ...(brief.isShared !== undefined ? { isShared: brief.isShared } : {}),
+            ...(brief.isOwner !== undefined ? { isOwner: brief.isOwner } : {}),
+            ...(brief.capacity !== undefined ? { capacity: brief.capacity } : {}),
+          };
+        }
+      }
+
+      // Re-point the active board when it disappeared from the list
+      let nextActive = state.activeBoardId;
+      if (nextActive && !nextBoards[nextActive]) {
+        const ids = Object.keys(nextBoards);
+        nextActive = ids.length > 0 ? ids[0] : null;
+      }
+
+      return {
+        ...state,
+        boards: nextBoards,
+        lists: nextLists,
+        cards: nextCards,
+        activeBoardId: nextActive,
+      };
+    }
+
+
     case 'board/reload': {
       const board = state.boards[action.boardId];
       if (!board) return state;

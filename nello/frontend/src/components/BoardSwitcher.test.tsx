@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { BoardSwitcher } from './BoardSwitcher';
 
-const mockLoadBoards = vi.fn().mockResolvedValue(undefined);
+const mockSelectBoard = vi.fn().mockResolvedValue(undefined);
 const mockDispatch = vi.fn();
 const mockApiDispatch = vi.fn().mockResolvedValue(undefined);
 
@@ -18,14 +18,14 @@ vi.mock('../state/StoreContext', () => ({
     state: mockState,
     dispatch: mockDispatch,
     apiDispatch: mockApiDispatch,
-    loadBoards: mockLoadBoards,
+    selectBoard: mockSelectBoard,
     toast: null,
     clearToast: vi.fn(),
   }),
 }));
 
 beforeEach(() => {
-  mockLoadBoards.mockClear();
+  mockSelectBoard.mockClear();
   mockDispatch.mockClear();
   mockState.activeBoardId = 'b-1';
   mockState.boards = {
@@ -34,23 +34,23 @@ beforeEach(() => {
   };
 });
 
-describe('BoardSwitcher reload on switch', () => {
-  it('calls loadBoards when switching to a different board', () => {
+describe('BoardSwitcher select on switch', () => {
+  it('calls selectBoard when switching to a different board', () => {
     render(<BoardSwitcher />);
 
     const boardTwoBtn = screen.getByText('Board Two');
     fireEvent.click(boardTwoBtn);
 
-    expect(mockLoadBoards).toHaveBeenCalledWith('b-2');
+    expect(mockSelectBoard).toHaveBeenCalledWith('b-2');
   });
 
-  it('does NOT call loadBoards when clicking the already-active board', () => {
+  it('does NOT call selectBoard when clicking the already-active board', () => {
     render(<BoardSwitcher />);
 
     const boardOneBtn = screen.getByText('Board One');
     fireEvent.click(boardOneBtn);
 
-    expect(mockLoadBoards).not.toHaveBeenCalled();
+    expect(mockSelectBoard).not.toHaveBeenCalled();
   });
 
 });

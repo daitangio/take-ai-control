@@ -7,7 +7,7 @@ import './Board.css';
 import { CapacityWarning } from './CapacityWarning';
 
 export function BoardSwitcher() {
-  const { state, apiDispatch, loadBoards } = useStore();
+  const { state, apiDispatch, selectBoard } = useStore();
   const { t } = useTranslation();
   const boards = Object.values(state.boards);
   const activeId = state.activeBoardId;
@@ -79,7 +79,7 @@ export function BoardSwitcher() {
                 type="button"
                 className="board-tab-name"
                 onClick={() => {
-                  if (board.id !== activeId) loadBoards(board.id);
+                  if (board.id !== activeId) selectBoard(board.id);
                 }}
                 style={{
                   background: 'none',

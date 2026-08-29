@@ -151,6 +151,73 @@ describe('board/switch', () => {
   });
 });
 
+describe('boards/refresh', () => {
+  it('upserts metadata on existing boards and keeps their listIds', () => {
+    const state = s(2, 2);
+    const next = reducer(state, {
+      type: 'boards/refresh',
+      boards: [
+        { id: 'b0', name: 'Renamed', background: 'sea', isShared: false, isOwner: true, capacity: { boards: { used: 1, limit: 3 }, lists: { used: 2, limit: 12 } } },
+        { id: 'b1', name: 'Board 1', background: null },
+      ],
+    });
+
+    expect(next.boards.b0.name).toBe('Renamed');
+    expect(next.boards.b0.background).toBe('sea');
+    expect(next.boards.b0.capacity).toEqual({ boards: { used: 1, limit: 3 }, lists: { used: 2, limit: 12 } });
+    expect(next.boards.b0.listIds).toEqual(state.boards.b0.listIds);
+    expect(next.lists.l0).toEqual(state.lists.l0);
+  });
+
+  it('inserts boards not yet in state with empty listIds', () => {
+    const state = s(1);
+    const next = reducer(state, {
+      type: 'boards/refresh',
+      boards: [
+        { id: 'b0', name: 'Board 0' },
+        { id: 'b2', name: 'Fresh', isShared: true, isOwner: false },
+      ],
+    });
+
+    expect(next.boards.b2).toEqual({ id: 'b2', name: 'Fresh', background: null, listIds: [], isShared: true, isOwner: false });
+  });
+
+  it('removes boards absent from the list along with their lists and cards', () => {
+    const state = s(2, 4, 6); // l0,l1 -> b0, l2,l3 -> b1; c0,c1 -> l0, c2,c3 -> l1...
+    const next = reducer(state, { type: 'boards/refresh', boards: [{ id: 'b1', name: 'Board 1' }] });
+
+    expect(next.boards.b0).toBeUndefined();
+    expect(next.lists.l0).toBeUndefined();
+    expect(next.lists.l1).toBeUndefined();
+    expect(next.cards.c0).toBeUndefined();
+    expect(next.cards.c1).toBeUndefined();
+    // Other board untouched
+    expect(next.boards.b1).toBeDefined();
+    expect(next.lists.l2).toEqual(state.lists.l2);
+    expect(next.cards.c2).toEqual(state.cards.c2);
+  });
+
+  it('re-points the active board when it disappears from the list', () => {
+    const state = s(2);
+    state.activeBoardId = 'b0';
+    const next = reducer(state, { type: 'boards/refresh', boards: [{ id: 'b1', name: 'Board 1' }] });
+    expect(next.activeBoardId).toBe('b1');
+  });
+
+  it('keeps the active board when it is still in the list', () => {
+    const state = s(2);
+    state.activeBoardId = 'b1';
+    const next = reducer(state, {
+      type: 'boards/refresh',
+      boards: [
+        { id: 'b0', name: 'Board 0' },
+        { id: 'b1', name: 'Board 1' },
+      ],
+    });
+    expect(next.activeBoardId).toBe('b1');
+  });
+});
+
 // ── List actions ───────────────────────────────────────
 
 describe('list/create', () => {

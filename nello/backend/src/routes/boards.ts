@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { db } from "../db/index.js";
-import { boards, lists, cards,  cardArchive, cardMembers, users, boardMembers } from "../db/schema.js";
-import { eq, and, isNull, asc, sql as sqlDrizzle } from "drizzle-orm";
+import { boards, lists, cards,  cardArchive, cardMembers, users, boardMembers, userTiers } from "../db/schema.js";
+import { eq, and, isNull, asc, inArray, sql as sqlDrizzle } from "drizzle-orm";
 import { authenticate, checkBoardAccess } from "../middleware/auth.js";
 import { sendError } from "../utils/apiError.js";
 import { ErrorCode } from "../types/errors.js";
@@ -40,31 +40,63 @@ export default async function boardRoutes(app: FastifyInstance) {
       .where(eq(boardMembers.userId, user.id))
       .orderBy(asc(boards.name));
 
-    const allBoards: { id: string; name: string; background: string | null; isOwner: boolean }[] = [
-      ...ownBoards.map(b => ({ id: b.id, name: b.name, background: b.background, isOwner: true })),
-      ...sharedRows.map(r => ({ id: r.board.id, name: r.board.name, background: r.board.background, isOwner: false })),
+    const allBoards = [
+      ...ownBoards.map(b => ({ board: b, isOwner: true })),
+      ...sharedRows.map(r => ({ board: r.board, isOwner: false })),
     ];
+    if (allBoards.length === 0) return [];
 
-    const result = [];
-    for (const board of allBoards) {
-      const listRows = await db
-        .select({ id: lists.id })
+    const boardIds = allBoards.map(({ board }) => board.id);
+    const ownerIds = [...new Set(allBoards.map(({ board }) => board.userId))];
+
+    // Batch the per-board lookups so the per-click refresh stays cheap
+    const [listRows, listCountRows, tierRows, boardCountRows] = await Promise.all([
+      db.select({ boardId: lists.boardId, id: lists.id })
         .from(lists)
-        .where(eq(lists.boardId, board.id))
-        .orderBy(asc(lists.position));
+        .where(inArray(lists.boardId, boardIds))
+        .orderBy(asc(lists.position)),
+      db.select({ boardId: lists.boardId, count: sqlDrizzle<number>`COUNT(*)` })
+        .from(lists)
+        .where(inArray(lists.boardId, boardIds))
+        .groupBy(lists.boardId),
+      db.select({ userId: users.id, boardsLimit: userTiers.boardsLimit, listsPerBoardLimit: userTiers.listsPerBoardLimit })
+        .from(users)
+        .innerJoin(userTiers, eq(users.tierId, userTiers.id))
+        .where(inArray(users.id, ownerIds)),
+      db.select({ userId: boards.userId, count: sqlDrizzle<number>`COUNT(*)` })
+        .from(boards)
+        .where(inArray(boards.userId, ownerIds))
+        .groupBy(boards.userId),
+    ]);
 
-      result.push({
+    const listIdsByBoard = new Map<string, string[]>();
+    for (const row of listRows) {
+      const ids = listIdsByBoard.get(row.boardId);
+      if (ids) ids.push(row.id);
+      else listIdsByBoard.set(row.boardId, [row.id]);
+    }
+    const listCountByBoard = new Map(listCountRows.map(r => [r.boardId, Number(r.count)]));
+    const tierByOwner = new Map(tierRows.map(r => [r.userId, r]));
+    const boardCountByOwner = new Map(boardCountRows.map(r => [r.userId, Number(r.count)]));
+
+    return allBoards.map(({ board, isOwner }) => {
+      const tier = tierByOwner.get(board.userId);
+      const capacity = tier && tier.boardsLimit != null && tier.listsPerBoardLimit != null
+        ? {
+            boards: { used: boardCountByOwner.get(board.userId) ?? 0, limit: Number(tier.boardsLimit) },
+            lists: { used: listCountByBoard.get(board.id) ?? 0, limit: Number(tier.listsPerBoardLimit) },
+          }
+        : null;
+      return {
         id: board.id,
         name: board.name,
         background: board.background,
-        listIds: listRows.map(l => l.id),
+        listIds: listIdsByBoard.get(board.id) ?? [],
         isShared: board.name.endsWith("$"),
-        isOwner: board.isOwner,
-        capacity: await boardCapacities(db, board.id),
-      });
-    }
-
-    return result;
+        isOwner,
+        capacity,
+      };
+    });
   });
 
   // POST /boards

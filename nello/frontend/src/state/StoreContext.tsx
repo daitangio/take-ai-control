@@ -12,6 +12,8 @@ interface StoreValue {
   apiDispatch: (action: Action) => Promise<void>;
   loadBoards: (preferredBoardId?: string | null) => Promise<void>;
   reloadBoard: (boardId: string) => Promise<void>;
+  selectBoard: (boardId: string) => Promise<void>;
+  refreshBoardList: () => Promise<void>;
   toast: string | null;
   clearToast: () => void;
   searchQuery: string;
@@ -68,46 +70,93 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [toast, setToast] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const loadingRef = useRef(false);
+  const latestSelectRef = useRef<string | null>(null);
   const stateRef = useRef(state);
   stateRef.current = state;
 
   const clearToast = useCallback(() => setToast(null), []);
+
+  const refreshBoardList = useCallback(async () => {
+    const boards = await api.getBoards();
+    dispatch({ type: 'boards/refresh', boards });
+  }, []);
+
+  const fetchBoardDetail = useCallback(async (boardId: string) => {
+    const detail = await api.getBoard(boardId);
+    dispatch({
+      type: 'board/reload',
+      boardId,
+      background: detail.background,
+      capacity: detail.capacity,
+      lists: detail.lists.map((list) => ({
+        id: list.id,
+        name: list.name,
+        cardCapacity: list.cardCapacity,
+        cards: list.cards.map((card) => ({
+          id: card.id,
+          title: card.title,
+          description: card.description,
+          dueDate: card.dueDate,
+          color: card.color,
+          members: card.members,
+          modifiedBy: card.modifiedBy ?? undefined,
+          modifiedByEmail: card.modifiedByEmail,
+          isModifiedByCurrentUser: card.isModifiedByCurrentUser,
+        })),
+      })),
+    });
+  }, []);
+
+  const reloadBoard = useCallback(async (boardId: string) => {
+    try {
+      await fetchBoardDetail(boardId);
+    } catch (err) {
+      console.debug('[nello:api] reloadBoard failed:', err);
+      setToast(toLocalizedErrorMessage(i18n.t.bind(i18n), err, 'errors.apiReloadBoard'));
+    }
+  }, [fetchBoardDetail]);
+
+  // Load one board's content and make it active; the latest request wins.
+  const selectBoardContent = useCallback(async (boardId: string) => {
+    latestSelectRef.current = boardId;
+    try {
+      await fetchBoardDetail(boardId);
+    } catch (err) {
+      if (latestSelectRef.current !== boardId) return; // superseded by a newer click
+      console.debug('[nello:api] selectBoard failed:', err);
+      setToast(toLocalizedErrorMessage(i18n.t.bind(i18n), err, 'errors.apiReloadBoard'));
+      return;
+    }
+    if (latestSelectRef.current === boardId) {
+      dispatch({ type: 'board/switch', boardId });
+    }
+  }, [fetchBoardDetail]);
+
+  const selectBoard = useCallback(async (boardId: string) => {
+    try {
+      await refreshBoardList();
+    } catch (err) {
+      console.debug('[nello:api] selectBoard list refresh failed:', err);
+      setToast(toLocalizedErrorMessage(i18n.t.bind(i18n), err, 'errors.apiLoadBoards'));
+      return;
+    }
+    await selectBoardContent(boardId);
+  }, [refreshBoardList, selectBoardContent]);
 
   const loadBoards = useCallback(async (preferredBoardId?: string | null) => {
     // Guard against concurrent invocations (e.g. React StrictMode double-effect)
     if (loadingRef.current) return;
     loadingRef.current = true;
 
-    // Clear any stale state before repopulating
-    dispatch({ type: 'store/reset' });
+    // A click during the list fetch picks its own board; don't override it.
+    latestSelectRef.current = null;
 
     try {
       const boards = await api.getBoards();
-      for (const board of boards) {
-        dispatch({ type: 'board/create', boardId: board.id, name: board.name, background: board.background, isShared: board.isShared, isOwner: board.isOwner, capacity: board.capacity });
-        const detail = await api.getBoard(board.id);
-        for (const list of detail.lists) {
-          dispatch({ type: 'list/create', listId: list.id, boardId: board.id, name: list.name, cardCapacity: list.cardCapacity });
-          for (const card of list.cards) {
-            dispatch({
-              type: 'card/create',
-              cardId: card.id,
-              listId: list.id,
-              title: card.title,
-              description: card.description,
-              dueDate: card.dueDate,
-              color: card.color,
-              members: card.members,
-              modifiedBy: card.modifiedBy ?? undefined,
-              modifiedByEmail: card.modifiedByEmail,
-              isModifiedByCurrentUser: card.isModifiedByCurrentUser,
-            });
-          }
-        }
-      }
-      const nextActive = boards.find((board) => board.id === preferredBoardId) ?? boards[0];
-      if (nextActive) {
-        dispatch({ type: 'board/switch', boardId: nextActive.id });
+      dispatch({ type: 'boards/refresh', boards });
+      const target = boards.find((board) => board.id === preferredBoardId) ?? boards[0];
+      if (target && latestSelectRef.current === null) {
+        await selectBoardContent(target.id);
       }
     } catch (err) {
       console.debug('[nello:api] loadBoards failed:', err);
@@ -115,38 +164,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     } finally {
       loadingRef.current = false;
     }
-  }, []);
-
-  const reloadBoard = useCallback(async (boardId: string) => {
-    try {
-      const detail = await api.getBoard(boardId);
-      dispatch({
-        type: 'board/reload',
-        boardId,
-        background: detail.background,
-        capacity: detail.capacity,
-        lists: detail.lists.map((list) => ({
-          id: list.id,
-          name: list.name,
-          cardCapacity: list.cardCapacity,
-          cards: list.cards.map((card) => ({
-            id: card.id,
-            title: card.title,
-            description: card.description,
-            dueDate: card.dueDate,
-            color: card.color,
-            members: card.members,
-            modifiedBy: card.modifiedBy ?? undefined,
-            modifiedByEmail: card.modifiedByEmail,
-            isModifiedByCurrentUser: card.isModifiedByCurrentUser,
-          })),
-        })),
-      });
-    } catch (err) {
-      console.debug('[nello:api] reloadBoard failed:', err);
-      setToast(toLocalizedErrorMessage(i18n.t.bind(i18n), err, 'errors.apiReloadBoard'));
-    }
-  }, []);
+  }, [selectBoardContent]);
 
   const apiDispatch = useCallback(async (action: Action) => {
     const activeBefore = stateRef.current.activeBoardId;
@@ -197,17 +215,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setToast(i18n.t('errors.apiActionFailed', { action: action.type.replace('/', ' ') }));
       }
       if (api.getToken()) {
-        if (action.type === 'card/move') {
-          if (activeBefore) await reloadBoard(activeBefore);
-        } else {
-          await loadBoards(activeBefore);
-        }
+        await refreshBoardList();
+        if (activeBefore) await reloadBoard(activeBefore);
       }
     }
-  }, [loadBoards, reloadBoard]);
+  }, [loadBoards, reloadBoard, refreshBoardList]);
 
   return (
-    <StoreCtx.Provider value={{ state, dispatch, apiDispatch, loadBoards, reloadBoard, toast, clearToast, searchQuery, setSearchQuery }}>
+    <StoreCtx.Provider value={{ state, dispatch, apiDispatch, loadBoards, reloadBoard, selectBoard, refreshBoardList, toast, clearToast, searchQuery, setSearchQuery }}>
       {children}
     </StoreCtx.Provider>
   );

@@ -357,3 +357,17 @@ Model: DeepSeek v4 Pro [1m]
 - OpenSpec: created change `remove-list-archive` (proposal, tasks, delta specs for backend-api, list-management, data-persistence, backend-test-suite); `openspec validate --changes` passes for it and `capacity-limits`.
 - Remaining: review `006-drop-list-archive.sql` before deployment, then archive the change (`openspec archive remove-list-archive`) to sync main specs.
 Model: DeepSeek v4 Pro [1m]
+
+## Load selected board only (planning)
+
+- 2026-08-29: Created OpenSpec change `load-selected-board-only` (proposal, design, tasks, delta specs for board-data-sync). Board tab clicks and app start will fetch the board list plus only the selected board's content instead of reloading every board; no new backend endpoint needed, `GET /boards` gets batched queries.
+- `openspec validate load-selected-board-only` passes; all 4 planning artifacts complete.
+- Remaining: review artifacts, then run `/opsx:apply load-selected-board-only`.
+Model: DeepSeek v4 Pro [1m]
+
+## Load selected board only (apply)
+
+- 2026-08-29: Implemented change `load-selected-board-only`. Frontend: new `boards/refresh` reducer action (in-place metadata upsert, drops boards absent from the list with their lists/cards, re-points active); `loadBoards` now fetches the list plus only the target board (`store/reset` dropped); new `selectBoard` store op with latest-click-wins ref; `apiDispatch` error recovery = list refresh + active-board reload; BoardSwitcher click uses `selectBoard`; ArchivedItemsDialog unarchive uses `reloadBoard(boardId)`. Backend: `GET /boards` per-board lookups (list ids, list usage, owner tiers, board usage) batched into 4 grouped queries, response shape unchanged.
+- Tests: reducer 47/47, StoreContext + BoardSwitcher 57/57, backend 106/106, frontend build passes. Frontend suite 132/134: the 2 UserMenu failures are pre-existing (verified identical on pre-change code; i18n test-env issue).
+- Remaining: human test (task 4.2) — click each tab, check network tab shows one GET /boards + one GET /boards/:id per click; then archive the change.
+Model: DeepSeek v4 Pro [1m]
