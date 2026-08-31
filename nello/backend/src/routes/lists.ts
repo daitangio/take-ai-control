@@ -117,8 +117,8 @@ export default async function listRoutes(app: FastifyInstance) {
     reply.code(204).send();
   });
 
-  // POST /lists/:id/archive
-  app.post<{ Params: { id: string } }>("/lists/:id/archive", { preHandler: [authenticate] }, async (request, reply) => {
+  // POST /lists/:id/delete-all
+  app.post<{ Params: { id: string } }>("/lists/:id/delete-all", { preHandler: [authenticate] }, async (request, reply) => {
     const user = request.user;
     const listId = request.params.id;
 

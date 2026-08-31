@@ -226,7 +226,7 @@ export function deleteList(listId: string) {
 }
 
 export function archiveList(listId: string) {
-  return fetchWithAuth<void>(`/lists/${listId}/archive`, { method: "POST", body: JSON.stringify({listId}) });
+  return fetchWithAuth<void>(`/lists/${listId}/delete-all`, { method: "POST", body: JSON.stringify({listId}) });
 }
 
 export function reorderLists(boardId: string, listIds: string[]) {

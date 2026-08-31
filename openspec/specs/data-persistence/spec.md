@@ -41,12 +41,12 @@ The system SHALL store data in separate tables for users, boards, lists, cards, 
 
 #### Scenario: Cascade delete from list
 
-- **WHEN** a list is deleted or archived
+- **WHEN** a list is deleted
 - **THEN** all cards belonging to that list are also deleted
 
-#### Scenario: Archive references list
+#### Scenario: Delete-all references list
 
-- **WHEN** a list is archived
+- **WHEN** a list is removed via delete-all
 - **THEN** the list row and all its card rows are deleted
 
 ### Requirement: Position-based ordering
@@ -176,9 +176,9 @@ The system SHALL store card assignments in a many-to-many join table separate fr
 - **WHEN** a card is hard-deleted
 - **THEN** its assignment rows are deleted by cascade
 
-### Requirement: List archive deletion
-The system SHALL delete a list and all its cards when the list is archived. Archiving a list MUST NOT leave the list row or any of its card rows in the database.
+### Requirement: List delete-all
+The system SHALL delete a list and all its cards via the delete-all endpoint. Delete-all MUST NOT leave the list row or any of its card rows in the database.
 
-#### Scenario: Archiving a list deletes it with its cards
-- **WHEN** a list containing cards is archived
+#### Scenario: Delete-all deletes a list with its cards
+- **WHEN** a list containing cards is deleted via delete-all
 - **THEN** the list row and its card rows are deleted from the database

@@ -26,14 +26,14 @@ describe('API authentication', () => {
 });
 
 describe('list API', () => {
-  it('archives a list through the dedicated endpoint', async () => {
+  it('deletes a list with all its cards through the delete-all endpoint', async () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 204 }));
     vi.stubGlobal('fetch', fetchMock);
     setToken('test-token');
 
     await archiveList('list-1');
 
-    expect(fetchMock).toHaveBeenCalledWith('/api/lists/list-1/archive', {
+    expect(fetchMock).toHaveBeenCalledWith('/api/lists/list-1/delete-all', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

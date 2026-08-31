@@ -124,12 +124,12 @@ describe("ArchiveList", () => {
     auth = await authHeadersFor(env.app, env.db, "test@example.com", "secret123");
   });
 
-  it("Archiving a list removes the list from the board", async () => {
+  it("Delete-all removes the list from the board", async () => {
     await _createBoard(env, auth);
     await _createList(env, auth, "list-1", "b-1", "Todo");
     await env.app.inject({ method: "POST", url: "/api/cards", headers: auth, payload: { id: "card-1", listId: "list-1", title: "Task" } });
 
-    const res = await env.app.inject({ method: "POST", url: "/api/lists/list-1/archive", headers: auth });
+    const res = await env.app.inject({ method: "POST", url: "/api/lists/list-1/delete-all", headers: auth });
     expect(res.statusCode).toBe(204);
 
     // No more list
@@ -140,12 +140,12 @@ describe("ArchiveList", () => {
     expect(await raw(env.db,"select id from list where name=?", ["Todo"])).toHaveLength(0);
   });
 
-  it("Archiving a list deletes all its cards", async () => {
+  it("Delete-all deletes all its cards", async () => {
     await _createBoard(env, auth);
     await _createList(env, auth, "list-1", "b-1", "Todo");
     await env.app.inject({ method: "POST", url: "/api/cards", headers: auth, payload: { id: "card-1", listId: "list-1", title: "Task" } });
 
-    const res = await env.app.inject({ method: "POST", url: "/api/lists/list-1/archive", headers: auth });
+    const res = await env.app.inject({ method: "POST", url: "/api/lists/list-1/delete-all", headers: auth });
     expect(res.statusCode).toBe(204);
 
     expect( await raw(env.db, "select id from card WHERE id = ?", ["card-1"])).toHaveLength(0);
@@ -154,11 +154,11 @@ describe("ArchiveList", () => {
   });
 
 
-  it("returns 404 when archiving another user's list", async () => {
+  it("returns 404 for delete-all on another user's list", async () => {
     const other = await authHeadersFor(env.app, env.db, "other@example.com", "secret456");
     await _createBoard(env, other);
     await _createList(env, other, "list-1", "b-1", "Todo");
-    const res = await env.app.inject({ method: "POST", url: "/api/lists/list-1/archive", headers: auth });
+    const res = await env.app.inject({ method: "POST", url: "/api/lists/list-1/delete-all", headers: auth });
     expect(res.statusCode).toBe(404);
   });
 });
@@ -190,12 +190,12 @@ describe("ReorderLists", () => {
     expect(board.lists.map((l: any) => l.name)).toEqual(["Third", "Second", "First"]);
   });
 
-  it("ignores archived (deleted) lists when reordering", async () => {
+  it("ignores deleted lists when reordering", async () => {
     await _createBoard(env, auth);
     await _createList(env, auth, "l-1", "b-1", "First");
     await _createList(env, auth, "l-2", "b-1", "Second");
     await _createList(env, auth, "l-3", "b-1", "Third");
-    await env.app.inject({ method: "POST", url: "/api/lists/l-2/archive", headers: auth });
+    await env.app.inject({ method: "POST", url: "/api/lists/l-2/delete-all", headers: auth });
 
     const res = await env.app.inject({
       method: "PUT",

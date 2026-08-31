@@ -371,3 +371,12 @@ Model: DeepSeek v4 Pro [1m]
 - Tests: reducer 47/47, StoreContext + BoardSwitcher 57/57, backend 106/106, frontend build passes. Frontend suite 132/134: the 2 UserMenu failures are pre-existing (verified identical on pre-change code; i18n test-env issue).
 - Remaining: human test (task 4.2) — click each tab, check network tab shows one GET /boards + one GET /boards/:id per click; then archive the change.
 Model: DeepSeek v4 Pro [1m]
+
+## Rename list archive endpoint to delete-all
+
+- 2026-08-30: Renamed the backend list archive endpoint `POST /lists/:id/archive` to `POST /lists/:id/delete-all` in `nello/backend/src/routes/lists.ts`; no other endpoint touched (card archive keeps its path).
+- Frontend: `archiveList` in `src/api.ts` now calls `/lists/:id/delete-all`; internal action names (`list/archive`) and UI labels unchanged.
+- Tests: updated `backend/tests/lists.test.ts` (4 URLs + titles), `backend/tests/capacity.test.ts` (1 URL), `frontend/src/api.test.ts` (URL + title). Backend 106/106 pass, backend `tsc` clean, frontend suite 132/134 (2 UserMenu failures pre-existing, verified identical on pre-change code), frontend production build passes.
+- OpenSpec: updated main specs `backend-api` (requirement + scenarios `POST /api/lists/:id/delete-all`, reorder wording) and `data-persistence` (requirement "List delete-all" + scenarios).
+- Remaining: none.
+Model: DeepSeek v4 Pro [1m]

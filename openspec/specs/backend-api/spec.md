@@ -50,9 +50,9 @@ The system SHALL provide endpoints to create, read, update, and delete boards. B
 - **WHEN** an authenticated user sends `GET /api/boards/:id` for a board they neither own nor are a member of
 - **THEN** the system returns status 404
 
-### Requirement: List CRUD, archive, and reorder endpoints
+### Requirement: List CRUD, delete-all, and reorder endpoints
 
-The system SHALL provide endpoints to create, rename, delete, archive, and reorder lists within a board accessible by the authenticated user (as owner or member). Create, rename, delete, archive, and reorder operations MUST preserve existing authorization behavior.
+The system SHALL provide endpoints to create, rename, delete, delete-all, and reorder lists within a board accessible by the authenticated user (as owner or member). Create, rename, delete, delete-all, and reorder operations MUST preserve existing authorization behavior.
 
 #### Scenario: Create a list
 
@@ -69,14 +69,14 @@ The system SHALL provide endpoints to create, rename, delete, archive, and reord
 - **WHEN** an authenticated user sends `DELETE /api/lists/:id` for a list in a board they can access
 - **THEN** the list and all its cards are deleted, returning status 204
 
-#### Scenario: Archive a list
+#### Scenario: Delete a list with all its cards
 
-- **WHEN** an authenticated user sends `POST /api/lists/:id/archive` for a list in a board they can access
+- **WHEN** an authenticated user sends `POST /api/lists/:id/delete-all` for a list in a board they can access
 - **THEN** the list and all its cards are deleted and status 204 is returned
 
-#### Scenario: Archive cannot access another user's list
+#### Scenario: Delete-all cannot access another user's list
 
-- **WHEN** an authenticated user sends `POST /api/lists/:id/archive` for a list on a board they cannot access
+- **WHEN** an authenticated user sends `POST /api/lists/:id/delete-all` for a list on a board they cannot access
 - **THEN** the system returns status 404
 
 #### Scenario: Reorder lists
@@ -84,9 +84,9 @@ The system SHALL provide endpoints to create, rename, delete, archive, and reord
 - **WHEN** an authenticated user sends `PUT /api/boards/:id/lists/reorder` with `{listIds: ["id3", "id1", "id2"]}` for a board they can access
 - **THEN** the lists currently on the board are reordered to match the given ID sequence and status 200 is returned
 
-#### Scenario: Reorder ignores archived lists
+#### Scenario: Reorder ignores deleted lists
 
-- **WHEN** an authenticated user sends a list reorder request whose `listIds` includes ids of lists that are not on the board (e.g. already archived lists)
+- **WHEN** an authenticated user sends a list reorder request whose `listIds` includes ids of lists that are not on the board (e.g. already deleted lists)
 - **THEN** only the lists currently on the board are reordered and status 200 is returned
 
 ### Requirement: Card CRUD and move endpoints

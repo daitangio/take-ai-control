@@ -32,7 +32,7 @@ describe("Capacity limits", () => {
     await board(env, auth, "b");
     for (let i = 1; i <= 12; i++) expect((await list(env, auth, `l${i}`)).statusCode).toBe(201);
     expect((await list(env, auth, "l13")).statusCode).toBe(409);
-    expect((await env.app.inject({ method: "POST", url: "/api/lists/l1/archive", headers: auth })).statusCode).toBe(204);
+    expect((await env.app.inject({ method: "POST", url: "/api/lists/l1/delete-all", headers: auth })).statusCode).toBe(204);
     expect((await list(env, auth, "l13")).statusCode).toBe(201);
 
     await board(env, auth, "card-board");
