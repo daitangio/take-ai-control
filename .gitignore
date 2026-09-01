@@ -49,3 +49,6 @@ nello-backend.log
 headroom/zscaler-root-ca.pem
 nello-pilot.code-workspace
 resume.sh
+
+# graphify-axet
+.graphify/

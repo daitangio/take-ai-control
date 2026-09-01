@@ -371,3 +371,12 @@ Model: DeepSeek v4 Pro [1m]
 - Tests: reducer 47/47, StoreContext + BoardSwitcher 57/57, backend 106/106, frontend build passes. Frontend suite 132/134: the 2 UserMenu failures are pre-existing (verified identical on pre-change code; i18n test-env issue).
 - Remaining: human test (task 4.2) — click each tab, check network tab shows one GET /boards + one GET /boards/:id per click; then archive the change.
 Model: DeepSeek v4 Pro [1m]
+
+## Archive capacity-limits
+
+- 2026-09-01: Archived OpenSpec change `capacity-limits` as `2026-09-01-capacity-limits` via `rtk openspec archive "capacity-limits" -y`.
+- Spec sync during archive updated:
+  - `openspec/specs/data-persistence/spec.md` (+1 added)
+  - `openspec/specs/multilingual-support/spec.md` (+1 added)
+- Remaining: none for this archive operation.
+- Model: GPT-5.2 (2026-09-01) Axet Gaia
