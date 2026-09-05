@@ -190,7 +190,11 @@ export default async function boardRoutes(app: FastifyInstance) {
       });
     }
 
-    return { id: board.id, name: board.name, background: board.background, lists: listResults, capacity: await boardCapacities(db, boardId) };
+    // GG: This API will be used also for the json export, so some extra bits are needed
+    // to identify it server side: added just apiVersion for the meantime
+    return { 
+      apiVersion: "Nello202609",
+      id: board.id, name: board.name, background: board.background, lists: listResults, capacity: await boardCapacities(db, boardId) };
   });
 
   // PATCH /boards/:id
