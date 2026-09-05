@@ -380,3 +380,17 @@ Model: DeepSeek v4 Pro [1m]
 - OpenSpec: updated main specs `backend-api` (requirement + scenarios `POST /api/lists/:id/delete-all`, reorder wording) and `data-persistence` (requirement "List delete-all" + scenarios).
 - Remaining: none.
 Model: DeepSeek v4 Pro [1m]
+
+## Collapse boards into combo box (planning)
+
+- 2026-08-31: Created OpenSpec change `collapse-boards-combo` (proposal, specs, design, tasks). When a user has more than 3 boards, the BoardSwitcher tabs are replaced by a native `<select>` listing all boards, with the active board's rename/delete/member actions kept next to it; 3 or fewer boards keep the current tabs. Responsive requirement added per user request: combo box must be touch-operable and viewport-safe at phone widths.
+- Delta specs: `board-management` (MODIFIED "Board switching" with collapse scenarios) and `responsive-user-interface` (ADDED "Responsive collapsed board switcher"). `openspec validate collapse-boards-combo` passes; all 4 planning artifacts complete.
+- Remaining: review artifacts, then run `/opsx:apply collapse-boards-combo`.
+Model: DeepSeek v4 Pro [1m]
+
+## Collapse boards into combo box (apply)
+
+- 2026-08-31: Implemented change `collapse-boards-combo`. `BoardSwitcher.tsx`: `COLLAPSE_THRESHOLD = 3`; when `boards.length > 3` the tabs are replaced by a native `<select>` (all boards, active selected, `aria-label={t('board.switcher')}`, onChange -> `selectBoard`, no-op on active); per-board action buttons extracted into `renderActions` and rendered next to the combo for the active board; rename input replaces the select while editing. `Board.css`: `.board-combo`/`.board-combo-wrap` styles + 36px touch target in the 767px media block. `i18n/resources.ts`: `board.switcher` added to en/it/fr/de.
+- Tests: BoardSwitcher 10/10 (8 new collapsed-mode tests). Full suite 140/142 — the 2 UserMenu failures are the same pre-existing i18n test-env issues. Production build passes.
+- Remaining: human test (task 5.1) — create a 4th board, check combo on desktop + phone viewport, switch/rename/delete/members, delete down to 3 to see tabs return. Then archive the change.
+Model: DeepSeek v4 Pro [1m]

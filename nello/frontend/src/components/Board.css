@@ -74,6 +74,29 @@
   background: rgba(0, 0, 0, 0.15);
 }
 
+.board-combo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.board-combo {
+  min-height: 32px;
+  padding: 4px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: 13px;
+  max-width: min(220px, 40vw);
+  outline: none;
+}
+
+.board-combo:focus {
+  border-color: var(--color-primary);
+}
+
 .board-create {
   display: flex;
   align-items: center;
@@ -211,7 +234,8 @@
   .board-tab,
   .board-create-btn,
   .board-create-submit,
-  .board-create-cancel {
+  .board-create-cancel,
+  .board-combo {
     min-height: 36px;
   }
 

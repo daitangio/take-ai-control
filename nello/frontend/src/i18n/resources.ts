@@ -94,6 +94,7 @@ export const resources = {
         backgroundSea: 'Sea',
         backgroundSport: 'Sport',
         deleteConfirm: 'Delete board "{{name}}" and all its contents?',
+        switcher: 'Switch board',
       },
       list: {
         dragAria: 'Drag list',
@@ -289,6 +290,7 @@ export const resources = {
         manageMembersTitle: 'Gestisci membri',
         background: 'Sfondo della bacheca', backgroundNone: 'Nessuno', backgroundMountain: 'Montagna', backgroundSea: 'Mare', backgroundSport: 'Sport',
         deleteConfirm: 'Eliminare la bacheca "{{name}}" e tutto il contenuto?',
+        switcher: 'Cambia bacheca',
       },
       list: {
         dragAria: 'Trascina lista',
@@ -426,7 +428,7 @@ export const resources = {
       userMenu: { ariaLabel: 'Menu utilisateur', settings: 'Paramètres', logout: 'Déconnexion', userFallback: 'Utilisateur' },
       settings: { title: 'Paramètres utilisateur', changePasswordTitle: 'Modifier le mot de passe', currentPassword: 'Mot de passe actuel', newPassword: 'Nouveau mot de passe', minimumLength: '12 caractères minimum', changing: 'Modification...', changePassword: 'Modifier le mot de passe', backToBoard: 'Retour au tableau', success: 'Mot de passe modifié avec succès', passwordTab: 'Mot de passe', limitsTab: 'Limites du forfait', limitsTitle: 'Vos limites', limitsIntro: 'Nello propose différents forfaits. Vous trouverez ci-dessous les limites et les fonctionnalités de votre forfait actuel.', loading: 'Chargement...', tierName: 'Forfait', boards: 'Tableaux', listsPerBoard: 'Listes par tableau', cardsPerBoard: 'Cartes par tableau' },
       emptyState: { message: 'Aucun tableau pour le moment. Créez votre premier tableau pour commencer.', boardNamePlaceholder: 'Nom du tableau', createBoard: 'Créer un tableau' },
-      board: { newBoard: '+ Nouveau tableau', add: 'Ajouter', cancel: 'Annuler', deleteTitle: 'Supprimer le tableau', renameTitle: 'Renommer le tableau', manageMembersTitle: 'Gérer les membres', background: 'Arrière-plan du tableau', backgroundNone: 'Aucun', backgroundMountain: 'Montagne', backgroundSea: 'Mer', backgroundSport: 'Sport', deleteConfirm: 'Supprimer le tableau « {{name}} » et tout son contenu ?' },
+      board: { newBoard: '+ Nouveau tableau', add: 'Ajouter', cancel: 'Annuler', deleteTitle: 'Supprimer le tableau', renameTitle: 'Renommer le tableau', manageMembersTitle: 'Gérer les membres', background: 'Arrière-plan du tableau', backgroundNone: 'Aucun', backgroundMountain: 'Montagne', backgroundSea: 'Mer', backgroundSport: 'Sport', deleteConfirm: 'Supprimer le tableau « {{name}} » et tout son contenu ?', switcher: 'Changer de tableau' },
       list: { dragAria: 'Faire glisser la liste', actionsAria: 'Actions de la liste {{name}}', actionsMenuAria: 'Actions pour {{name}}', showArchived: 'Afficher les éléments archivés', archive: 'Tout supprimer', archiveConfirm: 'Supprimer la liste « {{name}} » et toutes ses cartes ?', enterTitle: 'Saisissez le titre de la carte...', addCard: 'Ajouter une carte', addCardButton: '+ Ajouter une carte' },
       boardView: { listNamePlaceholder: 'Nom de la liste', addList: 'Ajouter une liste', addListButton: '+ Ajouter une liste' },
       capacity: { boards: 'Capacité des tableaux : {{used}}/{{limit}}', lists: 'Capacité des listes : {{used}}/{{limit}}', cards: 'Capacité des cartes : {{used}}/{{limit}}' },
@@ -457,7 +459,7 @@ export const resources = {
       userMenu: { ariaLabel: 'Benutzermenü', settings: 'Einstellungen', logout: 'Abmelden', userFallback: 'Benutzer' },
       settings: { title: 'Benutzereinstellungen', changePasswordTitle: 'Passwort ändern', currentPassword: 'Aktuelles Passwort', newPassword: 'Neues Passwort', minimumLength: 'Mindestens 12 Zeichen', changing: 'Wird geändert...', changePassword: 'Passwort ändern', backToBoard: 'Zurück zum Board', success: 'Passwort erfolgreich geändert', passwordTab: 'Passwort', limitsTab: 'Tariflimits', limitsTitle: 'Deine Limits', limitsIntro: 'Nello bietet verschiedene Tarife. Unten findest du die Limits und Funktionen deines aktuellen Tarifs.', loading: 'Wird geladen...', tierName: 'Tarif', boards: 'Boards', listsPerBoard: 'Listen pro Board', cardsPerBoard: 'Karten pro Board' },
       emptyState: { message: 'Noch keine Boards. Erstelle dein erstes Board, um loszulegen.', boardNamePlaceholder: 'Boardname', createBoard: 'Board erstellen' },
-      board: { newBoard: '+ Neues Board', add: 'Hinzufügen', cancel: 'Abbrechen', deleteTitle: 'Board löschen', renameTitle: 'Board umbenennen', manageMembersTitle: 'Mitglieder verwalten', background: 'Board-Hintergrund', backgroundNone: 'Keiner', backgroundMountain: 'Berg', backgroundSea: 'Meer', backgroundSport: 'Sport', deleteConfirm: 'Board „{{name}}“ und seinen gesamten Inhalt löschen?' },
+      board: { newBoard: '+ Neues Board', add: 'Hinzufügen', cancel: 'Abbrechen', deleteTitle: 'Board löschen', renameTitle: 'Board umbenennen', manageMembersTitle: 'Mitglieder verwalten', background: 'Board-Hintergrund', backgroundNone: 'Keiner', backgroundMountain: 'Berg', backgroundSea: 'Meer', backgroundSport: 'Sport', deleteConfirm: 'Board „{{name}}“ und seinen gesamten Inhalt löschen?', switcher: 'Board wechseln' },
       list: { dragAria: 'Liste ziehen', actionsAria: 'Listenaktionen für {{name}}', actionsMenuAria: 'Aktionen für {{name}}', showArchived: 'Archivierte Elemente anzeigen', archive: 'Alles löschen', archiveConfirm: 'Liste „{{name}}“ und alle ihre Karten löschen?', enterTitle: 'Kartentitel eingeben...', addCard: 'Karte hinzufügen', addCardButton: '+ Karte hinzufügen' },
       boardView: { listNamePlaceholder: 'Listenname', addList: 'Liste hinzufügen', addListButton: '+ Liste hinzufügen' },
       capacity: { boards: 'Board-Kapazität: {{used}}/{{limit}}', lists: 'Listen-Kapazität: {{used}}/{{limit}}', cards: 'Karten-Kapazität: {{used}}/{{limit}}' },
