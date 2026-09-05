@@ -17,4 +17,4 @@
 ## 4. Verification
 
 - [x] 4.1 Run `npm test` in both `nello/frontend` and `nello/backend`, then `npm run build` in `nello/frontend` as final gate — verify all suites pass and the production build succeeds
-- [ ] 4.2 Human test: log in, create several boards with lists/cards, then click each tab and confirm via the browser network tab that each click issues one `GET /boards` and one `GET /boards/:id` (not one per board); verify rapid tab switching always lands on the last clicked board, a renamed board shows the new name after refresh, and app start loads only the first board's content — verify observable behavior matches the specs
+- [x] 4.2 Human test: log in, create several boards with lists/cards, then click each tab and confirm via the browser network tab that each click issues one `GET /boards` and one `GET /boards/:id` (not one per board); verify rapid tab switching always lands on the last clicked board, a renamed board shows the new name after refresh, and app start loads only the first board's content — verify observable behavior matches the specs

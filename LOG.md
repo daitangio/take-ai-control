@@ -402,3 +402,17 @@ Model: DeepSeek v4 Pro [1m]
   - `openspec/specs/multilingual-support/spec.md` (+1 added)
 - Remaining: none for this archive operation.
 - Model: GPT-5.2 (2026-09-01) Axet Gaia
+
+## Sync + archive load-selected-board-only
+
+- 2026-09-05: Synced delta specs of change `load-selected-board-only` into `openspec/specs/board-data-sync/spec.md`: added requirements "Initial load fetches board list and selected board only", "Board switch refreshes the list and loads the selected board", "Board list refresh preserves loaded state", "Mutation failure recovery is single-board"; removed "Full load on initial app start". `openspec validate --specs` passes (27/27).
+- Archived the change as `2026-09-05-load-selected-board-only` (moved to `openspec/changes/archive/`). Warning: archived with 1 incomplete task (4.2 Human test — manual QA of tab-switch network behavior); user confirmed.
+- Remaining: none for this sync/archive operation (human test task stays open post-archive).
+Model: DeepSeek v4 Pro [1m]
+
+## Add board events (planning)
+
+- 2026-09-05: Explored real-time board updates (goal: other users see a change within 1 s) and created OpenSpec change `add-board-events` (proposal, specs, design, tasks). Decision: SSE over WebSocket, ping-only events (no payload replication) — client refetches via existing `reloadBoard`, hand-rolled stream on `reply.raw` (zero new deps, fastify 5.10 has no native SSE), EventSource auth via short-lived ticket (`POST /api/events/ticket`, 120 s TTL) so the JWT never lands in the audit-logged URL.
+- Delta specs: new capability `board-events` (10 requirements: 1 s push, member-only subscription, ticket auth, refetch-on-event, per-side kill switches `NELLO_EVENTS_ENABLED`/`VITE_EVENTS_ENABLED`, best-effort delivery, rate-limit exemption, audit exclusion, heartbeat, revoked-access stream close). `openspec validate add-board-events --strict` passes; all 4 planning artifacts complete.
+- Remaining: review artifacts, then run `/opsx:apply add-board-events`.
+Model: DeepSeek v4 Pro [1m]
