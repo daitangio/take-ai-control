@@ -86,13 +86,16 @@ Our suggestion is to get accustomed to pi.dev with a short session, then you can
 
 ## Provided Skills
 
-A compact and curated list of skills are provided.
-Main goal is to readuce tokens:
+A compact and curated list of skills will be provided.
+Main goal is to reduce tokens:
 
 - AGENTS.md provide usage of rtk tool. 
   CLAUDE.md is symlinked to it as good practice to share it
-- Under .agents (symlinked to .claude for ClaudeCode) a mark-it-down converter is provided, to convert documents in a more compact and mangeable form.
+- Under .agents (symlinked to .claude for ClaudeCode) a mark-it-down converter is provided, to convert documents in a more compact and manageable form.
 
+Also, a huge set of CLI are pre-installed in the Dockerfile: adapt to your environment (for instance uninstall muse if you are going to just use Claude Code).
+
+One of the cornerstone idea is to enable "liquid models": ability to change frontier model without changing workflow. [OpenSpec] proven to be a winner in this respect, so far.
 
 
 [PI.dev]: https://pi.dev
