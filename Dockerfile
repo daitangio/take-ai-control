@@ -57,6 +57,10 @@ RUN npm install -g @fission-ai/openspec@${OPEN_SPEC_VERSION}
 # Switch to non-root user
 USER devcontainer
 
+## Install Meta's muse spark CLI: copy the script with executable permissions
+COPY --chmod=0755 ./etc/meta-muse-installer.sh /tmp/
+RUN /tmp/meta-muse-installer.sh
+
 # Important to avoid malfunction: define the DEEPSEEK_API_KEY
 # API Key is provided by https://platform.deepseek.com/
 ENV PI_TELEMETRY=no
