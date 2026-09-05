@@ -394,3 +394,11 @@ Model: DeepSeek v4 Pro [1m]
 - Tests: BoardSwitcher 10/10 (8 new collapsed-mode tests). Full suite 140/142 — the 2 UserMenu failures are the same pre-existing i18n test-env issues. Production build passes.
 - Remaining: human test (task 5.1) — create a 4th board, check combo on desktop + phone viewport, switch/rename/delete/members, delete down to 3 to see tabs return. Then archive the change.
 Model: DeepSeek v4 Pro [1m]
+## Archive capacity-limits
+
+- 2026-09-01: Archived OpenSpec change `capacity-limits` as `2026-09-01-capacity-limits` via `rtk openspec archive "capacity-limits" -y`.
+- Spec sync during archive updated:
+  - `openspec/specs/data-persistence/spec.md` (+1 added)
+  - `openspec/specs/multilingual-support/spec.md` (+1 added)
+- Remaining: none for this archive operation.
+- Model: GPT-5.2 (2026-09-01) Axet Gaia

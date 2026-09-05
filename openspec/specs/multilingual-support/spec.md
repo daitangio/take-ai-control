@@ -48,3 +48,17 @@ The frontend SHALL localize backend-originated errors using a stable backend `er
 #### Scenario: Unknown backend error code uses fallback
 - **WHEN** the backend responds with an unrecognized or missing `error_code`
 - **THEN** the frontend renders a safe default localized generic error message
+
+### Requirement: Localized capacity feedback
+
+The frontend SHALL localize capacity-threshold warnings and board, list, and card capacity-limit errors in every supported locale.
+
+#### Scenario: Capacity warning is localized
+
+- **WHEN** a user's capacity reaches the warning threshold while a non-default locale is active
+- **THEN** the capacity warning is rendered in that locale with the current usage and limit
+
+#### Scenario: Capacity error is localized
+
+- **WHEN** the API returns a recognized capacity-limit error code while a non-default locale is active
+- **THEN** the frontend renders the corresponding localized capacity-limit message
