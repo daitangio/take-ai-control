@@ -1,7 +1,7 @@
 services:
   backend:
     cpus: 1.2
-    mem_limit: 256m
+    mem_limit: 150m    
     image: nello-jj-api:latest
     # Ports 6502 is not exposed outside the compose friends
     build:
