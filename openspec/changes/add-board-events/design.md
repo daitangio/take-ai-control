@@ -11,6 +11,7 @@ Backend: Fastify 5.10 (no native SSE route helper — the stream is hand-rolled 
 - One new code path for applying remote data (reuse `reloadBoard`).
 - Independent kill switches per side, defaulting to enabled, degrading gracefully.
 - Zero new npm dependencies; no vite proxy or CORS changes.
+- Security: ensure each user get events related only on his boards.
 
 **Non-Goals:**
 - WebSocket duplex (no second mutation path).
@@ -27,11 +28,11 @@ Backend: Fastify 5.10 (no native SSE route helper — the stream is hand-rolled 
 
 3. **Ping-only events over payload replication.** An event is `{ boardId, actorId, ts }` (~50 bytes). The client refetches via the existing `GET /boards/:id`; there is exactly one code path that updates board state, so stale-event bugs are impossible. Payload replication would duplicate every serializer on the wire.
 
-4. **Emission at mutation sites, not a central hook.** A URL-parsing `onResponse` hook cannot map list/card mutations to their board (`boardId` lives in the body, not the URL). Instead each of the ~15 successful mutation handlers calls one line: `emitBoardChange(boardId, request.user.id)` — `boardId` is already in scope from the access check. `emitBoardChange` no-ops when disabled. Failed mutations never reach the emit line.
+4. **Emission at mutation sites, not a central hook.** A URL-parsing `onResponse` hook cannot map list/card mutations to their board (`boardId` lives in the body, not the URL). Instead each of the 17 relevant successful mutation handlers (every mutation except board deletion) calls one line: `emitBoardChange(boardId, request.user.id)` — `boardId` is already in scope from the access check. The board-deletion handler calls `closeBoardStreams(boardId)` instead: there is nothing to notify, and an emit would drive subscribers to refetch a 404. `emitBoardChange` no-ops when disabled. Failed mutations never reach the emit line.
 
-5. **Ticket auth for EventSource.** Browsers cannot set the `Authorization` header on `EventSource`. A JWT in the query string would land in the audit DB (which logs URLs). So: `POST /api/events/ticket` (normal Bearer auth) returns a random opaque ticket stored in an in-memory `Map<ticket, {userId, expiresAt}>` with a 120 s TTL; the stream URL carries `?ticket=…`. Rejected alternatives: query-string JWT (leak), fetch+ReadableStream streaming (reuses Bearer but hand-rolls reconnection).
+5. **Ticket auth for EventSource.** Browsers cannot set the `Authorization` header on `EventSource`. A JWT in the query string would land in the audit DB (which logs URLs). So: `POST /api/events/ticket` (normal Bearer auth, body `{ boardId }`) returns a random opaque ticket stored in an in-memory `Map<ticket, {userId, boardId, expiresAt}>` with a 120 s TTL; the stream URL carries `?ticket=…` and the stream route rejects a ticket issued for a different board — a stolen ticket can only observe the one board it was minted for. Expired entries are purged lazily on issue/consume and by a periodic sweep (the `auditCleanupTimer` interval pattern in app.ts), keeping the map bounded. Rejected alternatives: query-string JWT (leak), fetch+ReadableStream streaming (reuses Bearer but hand-rolls reconnection).
 
-6. **Reconnect refreshes the ticket.** EventSource's auto-retry reuses the same URL, whose ticket eventually expires. The frontend subscription manager therefore closes the EventSource on `error`, requests a fresh ticket, and reopens (1 s delay). ~15 lines, still far less than a fetch-stream client.
+6. **Reconnect refreshes the ticket.** EventSource's auto-retry reuses the same URL, whose ticket eventually expires. The frontend subscription manager therefore closes the EventSource on `error`, requests a fresh ticket, and reopens with capped exponential backoff (1 s → 8 s max); a 401/404 on ticket or stream (access revoked, or backend events disabled) stops the loop permanently. All failures stay silent — no UI surface. ~15 lines, still far less than a fetch-stream client.
 
 7. **No actor filtering.** Filtering `actorId === myUserId` would break multi-tab sync of the same user. A redundant self-refetch is harmless (idempotent GET, identical data) and the `card/move` flow already refetches after mutations.
 
@@ -43,7 +44,7 @@ Backend: Fastify 5.10 (no native SSE route helper — the stream is hand-rolled 
 
 11. **Single global heartbeat timer.** One `setInterval` (~15 s) writes `: ping\n\n` to every subscriber; write errors detect dead sockets and trigger unsubscribe. No per-connection timers. Follows the existing app.ts house pattern: `timer.unref?.()` plus cleanup in the `onClose` hook.
 
-12. **Connection lifecycle.** Registry is `Map<boardId, Set<reply.raw>>`; `reply.raw.on("close", …)` removes the socket. The members route additionally calls `closeBoardStreams(boardId, removedUserId)` so a removed member stops receiving events (spec requirement).
+12. **Connection lifecycle.** Registry is `Map<boardId, Map<userId, Set<reply.raw>>>` — per-user, so streams can be closed on access revocation; `reply.raw.on("close", …)` removes the socket. The members route additionally calls `closeBoardStreams(boardId, removedUserId)` so a removed member stops receiving events, and the boards route calls `closeBoardStreams(boardId)` on deletion (spec requirement).
 
 13. **Frontend shape.** New `src/events.ts` exports `subscribeBoardEvents(boardId, onEvent) → unsubscribe` (ticket + EventSource + reconnect, per decision 6). `StoreContext` gains one effect keyed on `state.activeBoardId`: subscribe → coalesce events (~100 ms debounce) → `reloadBoard(activeBoardId)`. Cleanup on board switch/unmount.
 
@@ -52,7 +53,7 @@ Backend: Fastify 5.10 (no native SSE route helper — the stream is hand-rolled 
 ## Risks / Trade-offs
 
 - **In-memory registry lost on restart** → all clients reconnect via EventSource and resume; the app never depends on events. Multi-instance deployment would silently split subscribers and emitters — out of scope today (single process); a future fix would need Redis pub/sub or DB triggers. Documented, not designed around.
-- **Stolen ticket** → usable only until TTL (120 s) and only for one board's change pings (no content). Accepted; TTL is the mitigation.
+- **Stolen ticket** → usable only until TTL (120 s) and only for the board it was minted for, revealing just that board's change pings (no content). Accepted; TTL and board scoping are the mitigations.
 - **Self-event races with optimistic dispatch** → `apiDispatch` applies optimistic state, then the API response patches it; a concurrent `reloadBoard` from our own event lands identical data. Idempotent by design (decision 7); the debounce reduces churn further.
 - **Reload during open CardModal or drag** → CardModal keeps local state (verified), and dnd-kit tracks ids, so a board replace mid-drag is safe; `card/move` already refetches today.
 - **under-pressure plugin** → measures event loop/heap, not connection count; idle SSE connections are cheap. Fine for the tiny setup.

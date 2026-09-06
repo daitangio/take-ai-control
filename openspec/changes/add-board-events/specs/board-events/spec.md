@@ -41,15 +41,16 @@ The system SHALL allow only the board owner or a board member to open the board'
 - **THEN** the request is rejected with 401
 
 ### Requirement: Stream authentication uses a short-lived ticket
-The system SHALL authenticate event-stream connections with a short-lived opaque ticket so the JWT never appears in a URL.
+The system SHALL authenticate event-stream connections with a short-lived opaque ticket scoped to the requested board, so the JWT never appears in a URL and a ticket cannot be replayed against another board.
 
 #### Scenario: Ticket issued
-- **WHEN** an authenticated user requests a subscription ticket
+- **WHEN** an authenticated user requests a subscription ticket for a board
 - **THEN** the system returns an opaque ticket that is not the user's JWT
+- **AND** the ticket is valid only for that board's stream
 - **AND** the ticket expires after a short lifetime
 
 #### Scenario: Invalid or expired ticket
-- **WHEN** a client opens a stream with an unknown or expired ticket
+- **WHEN** a client opens a stream with an unknown, expired, or foreign-board ticket
 - **THEN** the request is rejected with 401
 
 ### Requirement: Store refreshes the active board on event
@@ -96,6 +97,10 @@ The system SHALL treat event delivery as best-effort; losing the stream must nev
 - **WHEN** subscription fails for any reason
 - **THEN** no user-visible error is shown
 
+#### Scenario: Revoked access stops reconnecting
+- **WHEN** a client's stream is closed because its access was revoked, or the stream is rejected with 401/404
+- **THEN** the client stops reconnecting and shows nothing
+
 ### Requirement: Stream traffic is exempt from the request rate limit
 The event stream SHALL NOT consume the global request rate-limit budget.
 
@@ -123,3 +128,7 @@ The system SHALL close a user's open streams for a board when that user loses ac
 #### Scenario: Member removed
 - **WHEN** a user is removed from a board's members
 - **THEN** any open stream that user holds for that board is closed
+
+#### Scenario: Board deleted
+- **WHEN** a board is deleted
+- **THEN** all open streams for that board are closed
