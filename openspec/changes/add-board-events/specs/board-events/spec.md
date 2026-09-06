@@ -36,6 +36,10 @@ The system SHALL allow only the board owner or a board member to open the board'
 - **WHEN** a user who is neither owner nor member of the board opens the stream
 - **THEN** the request is rejected with 404
 
+#### Scenario: Non-member requests a ticket
+- **WHEN** a user who is neither owner nor member of the board requests a subscription ticket for it
+- **THEN** the request is rejected with 404
+
 #### Scenario: Unauthenticated subscription
 - **WHEN** a client without a valid credential opens the stream
 - **THEN** the request is rejected with 401

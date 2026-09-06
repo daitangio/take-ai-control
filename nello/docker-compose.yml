@@ -15,6 +15,8 @@ services:
     environment:
       - NELLO_JWT_EXPIRATION_HOURS=7
       - NELLO_JWT_SECRET=nello-prod
+      - NELLO_EVENTS_ENABLED=true
+      - NELLO_EVENTS_INTERVAL_SECONDS=3
   frontend:
     cpus: 0.50
     mem_limit: 8m

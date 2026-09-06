@@ -5,6 +5,7 @@ import { eq, and, asc } from "drizzle-orm";
 import { authenticate, checkBoardAccess } from "../middleware/auth.js";
 import { sendError } from "../utils/apiError.js";
 import { ErrorCode } from "../types/errors.js";
+import { emitBoardChange, closeBoardStreams } from "../events.js";
 
 interface AddMemberBody {
   email: string;
@@ -84,6 +85,7 @@ export default async function memberRoutes(app: FastifyInstance) {
         boardId,
         userId: memberUser.id,
       });
+      emitBoardChange(boardId, user.id);
 
       reply.code(201).send({ id: memberUser.id, email: memberUser.email });
     },
@@ -135,6 +137,9 @@ export default async function memberRoutes(app: FastifyInstance) {
         }
       }
 
+      emitBoardChange(boardId, user.id);
+      // A removed member must stop receiving this board's events
+      closeBoardStreams(boardId, memberId);
       reply.code(204).send();
     },
   );

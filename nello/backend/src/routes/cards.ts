@@ -6,6 +6,7 @@ import { authenticate, checkBoardAccess } from "../middleware/auth.js";
 import { sendError } from "../utils/apiError.js";
 import { ErrorCode } from "../types/errors.js";
 import { cardCapacity, withCapacityLock } from "../utils/capacity.js";
+import { emitBoardChange } from "../events.js";
 
 interface CardCreateBody {
   id: string;
@@ -126,6 +127,7 @@ export default async function cardRoutes(app: FastifyInstance) {
     });
     if (outcome.limited) return sendError(reply, 409, ErrorCode.cardLimitReached, "Card limit reached");
 
+    emitBoardChange(boardId, user.id);
     const created = await _cardRow(id);
     reply.code(201).send(await _cardResponse(user.id, created!));
   });
@@ -163,6 +165,7 @@ export default async function cardRoutes(app: FastifyInstance) {
       if (hasColor) updateData.color = color;
 
       await db.update(cards).set(updateData).where(eq(cards.id, cardId));
+      emitBoardChange(boardId, user.id);
 
       const updated = await _cardRow(cardId);
       return await _cardResponse(user.id, updated!);
@@ -178,6 +181,7 @@ export default async function cardRoutes(app: FastifyInstance) {
       return sendError(reply, 404, ErrorCode.cardNotFound, "Card not found");
     }
     await db.delete(cards).where(eq(cards.id, cardId));
+    emitBoardChange(boardId, user.id);
     reply.code(204).send();
   });
 
@@ -198,6 +202,7 @@ export default async function cardRoutes(app: FastifyInstance) {
       .insert(cardArchive)
       .values({ cardId, listId: card.listId, archivedBy: user.id })
       .onConflictDoNothing();
+    emitBoardChange(boardId, user.id);
 
     reply.code(204).send();
   });
@@ -233,6 +238,7 @@ export default async function cardRoutes(app: FastifyInstance) {
         return { limited: false as const, capacity: await cardCapacity(db, targetListId) };
       });
       if (outcome.limited) return sendError(reply, 409, ErrorCode.cardLimitReached, "Card limit reached");
+      emitBoardChange(targetBoardId, user.id);
       return { status: "ok", capacity: { cards: outcome.capacity } };
     },
   );
@@ -307,6 +313,7 @@ export default async function cardRoutes(app: FastifyInstance) {
         .limit(1);
 
       if (!member) return sendError(reply, 404, ErrorCode.memberUserNotFound, "User not found");
+      emitBoardChange(boardId, user.id);
       reply.code(201).send(member);
     },
   );
@@ -328,6 +335,7 @@ export default async function cardRoutes(app: FastifyInstance) {
       await db
         .delete(cardMembers)
         .where(and(eq(cardMembers.cardId, cardId), eq(cardMembers.userId, memberId)));
+      emitBoardChange(boardId, user.id);
 
       reply.code(204).send();
     },
@@ -377,6 +385,9 @@ export default async function cardRoutes(app: FastifyInstance) {
         return { limited: false as const, capacity: await cardCapacity(db, toListId) };
       });
       if (outcome.limited) return sendError(reply, 409, ErrorCode.cardLimitReached, "Card limit reached");
+      // A cross-board move changes both boards
+      emitBoardChange(fromBoardId, user.id);
+      emitBoardChange(toBoardId, user.id);
       return { status: "ok", capacity: { cards: outcome.capacity } };
     },
   );

@@ -1,8 +1,13 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { StoreProvider, useStore } from './StoreContext';
+import { subscribeBoardEvents, type BoardEvent } from '../events';
 import * as api from '../api';
+
+vi.mock('../events', () => ({
+  subscribeBoardEvents: vi.fn(() => () => {}),
+}));
 
 function wrapper({ children }: { children: ReactNode }) {
   return <StoreProvider>{children}</StoreProvider>;
@@ -292,5 +297,101 @@ describe('apiDispatch board/background', () => {
 
     expect(api.updateBoard).toHaveBeenCalledWith('b0', { background: 'sea' });
     expect(result.current.state.boards.b0.background).toBe('mountain');
+  });
+});
+
+describe('board events subscription', () => {
+  let unsubscribe: Mock<() => void>;
+  let capturedBoardId: string | null = null;
+  let capturedOnEvent: ((event: BoardEvent) => void) | null = null;
+
+  beforeEach(() => {
+    unsubscribe = vi.fn<() => void>();
+    capturedBoardId = null;
+    capturedOnEvent = null;
+    vi.mocked(subscribeBoardEvents).mockImplementation((boardId: string, onEvent: (event: BoardEvent) => void) => {
+      capturedBoardId = boardId;
+      capturedOnEvent = onEvent;
+      return unsubscribe;
+    });
+  });
+
+  afterEach(() => vi.restoreAllMocks());
+
+  it('subscribes on the active board and reloads it on an event', async () => {
+    vi.spyOn(api, 'getBoard').mockResolvedValue({ id: 'b0', name: 'Board 0', lists: [] });
+    const { result, unmount } = renderHook(() => useStore(), { wrapper });
+
+    act(() => {
+      result.current.dispatch({ type: 'board/create', boardId: 'b0', name: 'Board 0' });
+      result.current.dispatch({ type: 'board/switch', boardId: 'b0' });
+    });
+    expect(capturedBoardId).toBe('b0');
+
+    act(() => {
+      capturedOnEvent!({ boardId: 'b0', actorId: 'u', ts: 't' });
+    });
+    await waitFor(() => expect(api.getBoard).toHaveBeenCalledWith('b0'));
+
+    unmount();
+    expect(unsubscribe).toHaveBeenCalled();
+  });
+
+  it('re-subscribes with the new id when the active board changes', async () => {
+    vi.spyOn(api, 'getBoard').mockResolvedValue({ id: 'b1', name: 'Board 1', lists: [] });
+    const { result } = renderHook(() => useStore(), { wrapper });
+
+    act(() => {
+      result.current.dispatch({ type: 'board/create', boardId: 'b0', name: 'Board 0' });
+      result.current.dispatch({ type: 'board/create', boardId: 'b1', name: 'Board 1' });
+      result.current.dispatch({ type: 'board/switch', boardId: 'b0' });
+    });
+    expect(capturedBoardId).toBe('b0');
+
+    act(() => {
+      result.current.dispatch({ type: 'board/switch', boardId: 'b1' });
+    });
+    expect(capturedBoardId).toBe('b1');
+    expect(unsubscribe).toHaveBeenCalledTimes(1); // previous subscription closed
+  });
+
+  it('ignores events for another board', () => {
+    vi.useFakeTimers();
+    vi.spyOn(api, 'getBoard').mockResolvedValue({ id: 'b0', name: 'Board 0', lists: [] });
+    const { result } = renderHook(() => useStore(), { wrapper });
+
+    act(() => {
+      result.current.dispatch({ type: 'board/create', boardId: 'b0', name: 'Board 0' });
+      result.current.dispatch({ type: 'board/switch', boardId: 'b0' });
+    });
+    act(() => {
+      capturedOnEvent!({ boardId: 'other', actorId: 'u', ts: 't' });
+    });
+    act(() => {
+      vi.advanceTimersByTime(200); // past the coalesce window
+    });
+    expect(api.getBoard).not.toHaveBeenCalled();
+    vi.useRealTimers();
+  });
+
+  it('coalesces a burst into a single reload', async () => {
+    vi.useFakeTimers();
+    vi.spyOn(api, 'getBoard').mockResolvedValue({ id: 'b0', name: 'Board 0', lists: [] });
+    const { result } = renderHook(() => useStore(), { wrapper });
+
+    act(() => {
+      result.current.dispatch({ type: 'board/create', boardId: 'b0', name: 'Board 0' });
+      result.current.dispatch({ type: 'board/switch', boardId: 'b0' });
+    });
+    act(() => {
+      capturedOnEvent!({ boardId: 'b0', actorId: 'u', ts: '1' });
+      capturedOnEvent!({ boardId: 'b0', actorId: 'u', ts: '2' });
+    });
+    act(() => {
+      vi.advanceTimersByTime(100);
+    });
+    await act(async () => {}); // flush the reload promise
+    expect(api.getBoard).toHaveBeenCalledTimes(1);
+    vi.useRealTimers();
   });
 });

@@ -6,6 +6,7 @@ import { authenticate, checkBoardAccess } from "../middleware/auth.js";
 import { sendError } from "../utils/apiError.js";
 import { ErrorCode } from "../types/errors.js";
 import { boardCapacity, boardCapacities, cardCapacity, withCapacityLock } from "../utils/capacity.js";
+import { emitBoardChange, closeBoardStreams } from "../events.js";
 
 interface BoardCreateBody {
   id: string;
@@ -119,6 +120,7 @@ export default async function boardRoutes(app: FastifyInstance) {
     });
     if (outcome.limited) return sendError(reply, 409, ErrorCode.boardLimitReached, "Board limit reached");
 
+    emitBoardChange(id, user.id);
     reply.code(201).send({
       id,
       name: trimmedName,
@@ -227,6 +229,7 @@ export default async function boardRoutes(app: FastifyInstance) {
     }
 
     await db.update(boards).set({ name: newName, background: newBackground }).where(eq(boards.id, boardId));
+    emitBoardChange(boardId, user.id);
 
     // Fetch listIds for response
     const listRows = await db
@@ -256,6 +259,8 @@ export default async function boardRoutes(app: FastifyInstance) {
     if (role !== "owner") return sendError(reply, 403, ErrorCode.boardDeleteForbidden, "Only the board owner can delete the board");
 
     await db.delete(boards).where(eq(boards.id, boardId));
+    // No emit: the board is gone, an event would make subscribers refetch a 404
+    closeBoardStreams(boardId);
     reply.code(204).send();
   });
 

@@ -354,3 +354,12 @@ export function removeMember(boardId: string, memberId: string) {
 export function listMembers(boardId: string) {
   return fetchWithAuth<MemberResponse[]>(`/boards/${boardId}/members`);
 }
+
+// ── Events ───────────────────────────────────────────
+
+export function requestEventTicket(boardId: string) {
+  return fetchWithAuth<{ ticket: string }>("/events/ticket", {
+    method: "POST",
+    body: JSON.stringify({ boardId }),
+  });
+}

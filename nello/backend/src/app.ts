@@ -7,6 +7,8 @@ import boardRoutes from "./routes/boards.js";
 import listRoutes from "./routes/lists.js";
 import cardRoutes from "./routes/cards.js";
 import memberRoutes from "./routes/members.js";
+import eventRoutes from "./routes/events.js";
+import { EVENTS_ENABLED, startEventTimers, stopEventTimers, closeAllEventStreams } from "./events.js";
 import { sendError } from "./utils/apiError.js";
 import { ErrorCode } from "./types/errors.js";
 import { db } from "./db/index.js";
@@ -212,9 +214,12 @@ export async function buildApp(opts: BuildAppOptions = {}): Promise<FastifyInsta
   });
 
   app.addHook("onResponse", async (request) => {
+    const url = request.raw.url ?? request.url;
+    // Never audit the event stream or its ticket endpoint
+    if (url.startsWith("/api/events/") || /^\/api\/boards\/[^/]+\/events(?:\?|$)/.test(url)) return;
     try {
       await persistAuditLog(db, {
-        url: request.raw.url ?? request.url,
+        url,
         method: request.method,
         request: serializeAuditPayload(
           request.body,
@@ -238,6 +243,15 @@ export async function buildApp(opts: BuildAppOptions = {}): Promise<FastifyInsta
   await app.register(listRoutes, { prefix: "/api" });
   await app.register(cardRoutes, { prefix: "/api" });
   await app.register(memberRoutes, { prefix: "/api" });
+
+  if (EVENTS_ENABLED) {
+    await app.register(eventRoutes, { prefix: "/api" });
+    startEventTimers();
+    app.addHook("onClose", async () => {
+      stopEventTimers();
+      closeAllEventStreams();
+    });
+  }
 
   app.get("/api/health", async () => ({ status: "ok" }));
 

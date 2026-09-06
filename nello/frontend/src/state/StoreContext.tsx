@@ -1,8 +1,9 @@
-import { createContext, useContext, useState, useReducer, useCallback, useRef, type ReactNode } from 'react';
+import { createContext, useContext, useState, useReducer, useCallback, useRef, useEffect, type ReactNode } from 'react';
 import type { Action, State } from './types';
 import { createInitialState } from './types';
 import { reducer } from './reducer';
 import * as api from '../api';
+import { subscribeBoardEvents, type BoardEvent } from '../events';
 import i18n from '../i18n';
 import { toLocalizedErrorMessage } from '../i18n/backendErrors';
 
@@ -220,6 +221,24 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       }
     }
   }, [loadBoards, reloadBoard, refreshBoardList]);
+
+  // Keep the active board in sync via SSE change pings, coalesced ~100 ms
+  const activeBoardId = state.activeBoardId;
+  useEffect(() => {
+    if (!activeBoardId) return;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const unsubscribe = subscribeBoardEvents(activeBoardId, (event: BoardEvent) => {
+      if (event.boardId !== activeBoardId) return;
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        void reloadBoard(activeBoardId);
+      }, 100);
+    });
+    return () => {
+      unsubscribe();
+      if (timer) clearTimeout(timer);
+    };
+  }, [activeBoardId, reloadBoard]);
 
   return (
     <StoreCtx.Provider value={{ state, dispatch, apiDispatch, loadBoards, reloadBoard, selectBoard, refreshBoardList, toast, clearToast, searchQuery, setSearchQuery }}>

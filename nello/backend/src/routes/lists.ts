@@ -6,6 +6,7 @@ import { authenticate, checkBoardAccess } from "../middleware/auth.js";
 import { sendError } from "../utils/apiError.js";
 import { ErrorCode } from "../types/errors.js";
 import { listCapacity, withCapacityLock } from "../utils/capacity.js";
+import { emitBoardChange } from "../events.js";
 
 interface ListCreateBody {
   id: string;
@@ -48,6 +49,7 @@ export default async function listRoutes(app: FastifyInstance) {
     });
     if (outcome.limited) return sendError(reply, 409, ErrorCode.listLimitReached, "List limit reached");
 
+    emitBoardChange(boardId, user.id);
     reply.code(201).send({
       id,
       boardId,
@@ -80,6 +82,7 @@ export default async function listRoutes(app: FastifyInstance) {
 
     const trimmedName = name.trim();
     await db.update(lists).set({ name: trimmedName }).where(eq(lists.id, listId));
+    emitBoardChange(listRow.boardId, user.id);
 
 
     // Fetch card IDs for this list
@@ -114,6 +117,7 @@ export default async function listRoutes(app: FastifyInstance) {
     if (!role) return sendError(reply, 404, ErrorCode.listNotFound, "List not found");
 
     await db.delete(lists).where(eq(lists.id, listId));
+    emitBoardChange(listRow.boardId, user.id);
     reply.code(204).send();
   });
 
@@ -135,9 +139,10 @@ export default async function listRoutes(app: FastifyInstance) {
 
     // Delete the list and the cards: there is a on cascade relation so the first delete is not needed,
     // but lets do anyway for more robust design
-    await db.delete(cards).where(eq(cards.listId,listId))    
+    await db.delete(cards).where(eq(cards.listId,listId))
     await db.delete(lists).where(eq(lists.id,listId))
-  
+    emitBoardChange(listRow.boardId, user.id);
+
     reply.code(204).send();
   });
 
@@ -170,6 +175,7 @@ export default async function listRoutes(app: FastifyInstance) {
             .where(and(eq(lists.id, listIds[i]), eq(lists.boardId, boardId)));
         }
       }
+      emitBoardChange(boardId, user.id);
 
       return { status: "ok" };
     },
