@@ -1,16 +1,21 @@
 ## Purpose
 
-Defines the server-to-client push channel that keeps every viewer's board up to date within one second of a change, with independent kill switches per side.
+Defines the server-to-client push channel that keeps every viewer's board up to date within a configurable interval (default 3 seconds) of a change, with independent kill switches per side.
 
 ## ADDED Requirements
 
-### Requirement: Board changes are pushed within one second
-The system SHALL notify every subscribed client of a successful board mutation within one second of the mutation being committed.
+### Requirement: Board changes are pushed within the configured interval
+The system SHALL notify every subscribed client of a successful board mutation within the configured event interval (`NELLO_EVENTS_INTERVAL_SECONDS`, default 3 seconds) of the mutation being committed.
 
 #### Scenario: Change visible to another viewer
 - **WHEN** user A successfully mutates a board (card, list, board, or member change) and user B is subscribed to that board's event stream
-- **THEN** user B receives an event for that board within one second
+- **THEN** user B receives an event for that board within the configured interval
 - **AND** the event identifies only the board, the acting user, and a timestamp
+
+#### Scenario: Burst of changes is coalesced
+- **WHEN** several mutations hit the same board within one interval
+- **THEN** subscribers receive at most one event for that board per interval
+- **AND** the event reflects the latest mutation
 
 #### Scenario: Failed mutation emits nothing
 - **WHEN** a mutation fails validation or authorization

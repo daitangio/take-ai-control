@@ -7,7 +7,7 @@ Backend: Fastify 5.10 (no native SSE route helper — the stream is hand-rolled 
 ## Goals / Non-Goals
 
 **Goals:**
-- Other viewers see a change within 1 second of a successful mutation.
+- Other viewers see a change within Y seconds of a successful mutation. Y is the EVENTS_INTERVAL_SECONDS
 - One new code path for applying remote data (reuse `reloadBoard`).
 - Independent kill switches per side, defaulting to enabled, degrading gracefully.
 - Zero new npm dependencies; no vite proxy or CORS changes.
@@ -46,6 +46,8 @@ Backend: Fastify 5.10 (no native SSE route helper — the stream is hand-rolled 
 12. **Connection lifecycle.** Registry is `Map<boardId, Set<reply.raw>>`; `reply.raw.on("close", …)` removes the socket. The members route additionally calls `closeBoardStreams(boardId, removedUserId)` so a removed member stops receiving events (spec requirement).
 
 13. **Frontend shape.** New `src/events.ts` exports `subscribeBoardEvents(boardId, onEvent) → unsubscribe` (ticket + EventSource + reconnect, per decision 6). `StoreContext` gains one effect keyed on `state.activeBoardId`: subscribe → coalesce events (~100 ms debounce) → `reloadBoard(activeBoardId)`. Cleanup on board switch/unmount.
+
+14. EVENTS_INTERVAL_SECONDS must be configured via environment variable NELLO_EVENTS_INTERVAL_SECONDS, which defaults to 3.
 
 ## Risks / Trade-offs
 

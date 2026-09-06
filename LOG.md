@@ -412,7 +412,13 @@ Model: DeepSeek v4 Pro [1m]
 
 ## Add board events (planning)
 
-- 2026-09-05: Explored real-time board updates (goal: other users see a change within 1 s) and created OpenSpec change `add-board-events` (proposal, specs, design, tasks). Decision: SSE over WebSocket, ping-only events (no payload replication) — client refetches via existing `reloadBoard`, hand-rolled stream on `reply.raw` (zero new deps, fastify 5.10 has no native SSE), EventSource auth via short-lived ticket (`POST /api/events/ticket`, 120 s TTL) so the JWT never lands in the audit-logged URL.
-- Delta specs: new capability `board-events` (10 requirements: 1 s push, member-only subscription, ticket auth, refetch-on-event, per-side kill switches `NELLO_EVENTS_ENABLED`/`VITE_EVENTS_ENABLED`, best-effort delivery, rate-limit exemption, audit exclusion, heartbeat, revoked-access stream close). `openspec validate add-board-events --strict` passes; all 4 planning artifacts complete.
+- 2026-09-06: Explored real-time board updates (goal: other users see a change within a configurable interval) and created OpenSpec change `add-board-events` (proposal, specs, design, tasks). Decision: SSE over WebSocket, ping-only events (no payload replication) — client refetches via existing `reloadBoard`, hand-rolled stream on `reply.raw` (zero new deps, fastify 5.10 has no native SSE), EventSource auth via short-lived ticket (`POST /api/events/ticket`, 120 s TTL) so the JWT never lands in the audit-logged URL.
+- Delta specs: new capability `board-events` (10 requirements: push within configured interval, member-only subscription, ticket auth, refetch-on-event, per-side kill switches `NELLO_EVENTS_ENABLED`/`VITE_EVENTS_ENABLED`, best-effort delivery, rate-limit exemption, audit exclusion, heartbeat, revoked-access stream close). `openspec validate add-board-events --strict` passes; all 4 planning artifacts complete.
+- Remaining: review artifacts, then run `/opsx:apply add-board-events`.
+Model: DeepSeek v4 Pro [1m]
+
+## Add board events (planning review)
+
+- 2026-09-06: Reviewed `add-board-events` after the user added design decision 14: changes are flushed at most once per `NELLO_EVENTS_INTERVAL_SECONDS` (default 3 s), so visibility is "within the configured interval" instead of 1 s. Propagated to proposal (goal wording, batched flush, docker-compose passthrough of both vars), spec (`board-events`: renamed requirement "Board changes are pushed within the configured interval" + new burst-coalescing scenario), and tasks (interval flush ticker in 1.1, emit semantics in 3.1, config/docs in 5.1, human test wording in 6.2). `openspec validate add-board-events --strict` passes.
 - Remaining: review artifacts, then run `/opsx:apply add-board-events`.
 Model: DeepSeek v4 Pro [1m]
