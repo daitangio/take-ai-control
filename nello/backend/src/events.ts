@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
 
 // Env config, read once at module load (same pattern as utils/jwt.ts)
-export const EVENTS_ENABLED = process.env.NELLO_EVENTS_ENABLED !== "false";
+export const EVENTS_ENABLED = process.env.NELLO_EVENTS_ENABLED == "true";
 export const EVENTS_INTERVAL_SECONDS = Number(process.env.NELLO_EVENTS_INTERVAL_SECONDS || 3);
 
 const TICKET_TTL_MS = 120_000;

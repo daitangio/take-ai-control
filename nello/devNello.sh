@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+export NELLO_EVENTS_ENABLED=true
 cd $(dirname $0)
 (cd backend ; ./runBackend.sh ) &
 sleep 3

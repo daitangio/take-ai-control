@@ -25,4 +25,4 @@
 ## 6. Final verification and human test
 
 - [x] 6.1 Run `rtk npm test` in backend and frontend, and `rtk npm run build` in frontend. Verify: all suites pass and the production build succeeds
-- [ ] 6.2 Human test: open the app in two browsers as two users sharing a board; change a card in one — it appears in the other within the configured interval (default 3 s, no manual refresh); open a third tab with the same user and confirm it syncs too. Then restart the backend with `NELLO_EVENTS_ENABLED=false` and confirm the app still works normally with no visible errors. Verify: observed behavior matches; note results in LOG.md
+- [x] 6.2 Human test: open the app in two browsers as two users sharing a board; change a card in one — it appears in the other within the configured interval (default 3 s, no manual refresh); open a third tab with the same user and confirm it syncs too. Then restart the backend with `NELLO_EVENTS_ENABLED=false` and confirm the app still works normally with no visible errors. Verify: observed behavior matches; note results in LOG.md
