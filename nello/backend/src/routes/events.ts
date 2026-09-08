@@ -2,7 +2,7 @@ import type { FastifyInstance } from "fastify";
 import { authenticate, checkBoardAccess } from "../middleware/auth.js";
 import { sendError } from "../utils/apiError.js";
 import { ErrorCode } from "../types/errors.js";
-import { subscribe, issueEventTicket, consumeEventTicket } from "../events.js";
+import { subscribe, issueEventTicket, claimEventStream, releaseEventStreamCapacity } from "../events.js";
 
 interface TicketBody {
   boardId: string;
@@ -33,19 +33,29 @@ export default async function eventRoutes(app: FastifyInstance) {
     { config: { rateLimit: false } },
     async (request, reply) => {
       const boardId = request.params.id;
-      const identity = consumeEventTicket(request.query.ticket, boardId);
-      if (!identity) return sendError(reply, 401, ErrorCode.authTokenInvalid, "Invalid or expired ticket");
+      const claim = claimEventStream(request.query.ticket, boardId);
+      if (claim === "invalid") return sendError(reply, 401, ErrorCode.authTokenInvalid, "Invalid or expired ticket");
+      if (claim === "limited") {
+        return sendError(reply, 429, ErrorCode.eventStreamLimitReached, "Too many open event streams");
+      }
+      const identity = claim;
       if (!(await checkBoardAccess(boardId, identity.userId))) {
+        releaseEventStreamCapacity(identity.userId);
         return sendError(reply, 404, ErrorCode.boardNotFound, "Board not found");
       }
 
-      reply.raw.writeHead(200, {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        Connection: "keep-alive",
-      });
-      reply.raw.write(": connected\n\n");
-      subscribe(boardId, identity.userId, reply.raw);
+      try {
+        reply.raw.writeHead(200, {
+          "Content-Type": "text/event-stream",
+          "Cache-Control": "no-cache",
+          Connection: "keep-alive",
+        });
+        reply.raw.write(": connected\n\n");
+        subscribe(boardId, identity.userId, reply.raw, true);
+      } catch {
+        releaseEventStreamCapacity(identity.userId);
+        throw new Error("Failed to establish event stream");
+      }
       // the reply is intentionally never completed: the stream stays open until
       // the client disconnects or the server closes the socket
     },

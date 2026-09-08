@@ -38,7 +38,7 @@ Backend: Fastify 5.10 (no native SSE route helper — the stream is hand-rolled 
 
 8. **Kill switches.** Backend: `NELLO_EVENTS_ENABLED` read once in `buildApp`; when off, the events routes are not registered and `emitBoardChange` no-ops. Frontend: `VITE_EVENTS_ENABLED` (build-time) gates the subscription effect. Both default to enabled. The spec's best-effort requirement guarantees a mismatch between the sides is invisible.
 
-9. **Rate-limit exemption per route.** `{ config: { rateLimit: false } }` on the stream route, so a long-lived connection plus reconnects never consume the shared 120 req/min budget.
+9. **REST-rate-limit exemption with stream quotas.** `{ config: { rateLimit: false } }` remains on the stream route, so a long-lived connection plus reconnects never consume the shared 120 req/min budget. The in-memory registry instead enforces `NELLO_EVENTS_MAX_CONNECTIONS_PER_USER` (default 3) and `NELLO_EVENTS_MAX_CONNECTIONS` (default 300) before retaining a socket. Both values are parsed and validated as positive integers at startup. Exceeding either quota returns 429 without consuming a ticket or registering a socket; unsubscribe, revocation, board deletion, write failure, and shutdown all release capacity. This bounds file descriptors and registry memory while allowing ordinary multi-tab use and reconnects.
 
 10. **Audit exclusion.** One-line check in the existing `onResponse` hook skips the stream and ticket URLs; otherwise the whole event stream would be serialized into the audit DB when the connection closes.
 
@@ -48,7 +48,7 @@ Backend: Fastify 5.10 (no native SSE route helper — the stream is hand-rolled 
 
 13. **Frontend shape.** New `src/events.ts` exports `subscribeBoardEvents(boardId, onEvent) → unsubscribe` (ticket + EventSource + reconnect, per decision 6). `StoreContext` gains one effect keyed on `state.activeBoardId`: subscribe → coalesce events (~100 ms debounce) → `reloadBoard(activeBoardId)`. Cleanup on board switch/unmount.
 
-14. EVENTS_INTERVAL_SECONDS must be configured via environment variable NELLO_EVENTS_INTERVAL_SECONDS, which defaults to 3.
+14. `EVENTS_INTERVAL_SECONDS` must be configured via environment variable `NELLO_EVENTS_INTERVAL_SECONDS`, which defaults to 3. `NELLO_EVENTS_MAX_CONNECTIONS_PER_USER` and `NELLO_EVENTS_MAX_CONNECTIONS` configure the bounded stream registry and default to 3 and 300 respectively.
 
 ## Risks / Trade-offs
 
@@ -58,11 +58,12 @@ Backend: Fastify 5.10 (no native SSE route helper — the stream is hand-rolled 
 - **Reload during open CardModal or drag** → CardModal keeps local state (verified), and dnd-kit tracks ids, so a board replace mid-drag is safe; `card/move` already refetches today.
 - **under-pressure plugin** → measures event loop/heap, not connection count; idle SSE connections are cheap. Fine for the tiny setup.
 - **Heartbeat write errors** → only path that reaps dead sockets if `close` never fires; acceptable.
-- **Rate-limit exemption surface** → stream still requires a valid ticket and board membership; traffic is heartbeat comments and pings.
+- **Rate-limit exemption surface** → stream still requires a valid ticket and board membership, and per-user/process-wide stream quotas bound held connections; traffic is heartbeat comments and pings.
+- **Quota reached** → a browser retries after its normal backoff and capacity is released on disconnect; default per-user capacity allows a user to view the same board in multiple tabs.
 
 ## Migration Plan
 
-1. Deploy backend first: events routes registered only when `NELLO_EVENTS_ENABLED` is unset/true; the ~15 emit lines are inert otherwise. No schema, dependency, or REST change.
+1. Deploy backend first: events routes registered only when `NELLO_EVENTS_ENABLED` is unset/true; the ~15 emit lines are inert otherwise. Configure `NELLO_EVENTS_MAX_CONNECTIONS_PER_USER` and `NELLO_EVENTS_MAX_CONNECTIONS` if the defaults do not fit the deployment. No schema, dependency, or REST change.
 2. Deploy frontend: gated by `VITE_EVENTS_ENABLED`.
 3. Rollback: set both env flags to false — the app returns to today's behavior exactly. No data to migrate.
 

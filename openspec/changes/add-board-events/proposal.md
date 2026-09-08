@@ -14,7 +14,7 @@ Nello boards are shared, but a user only sees another user's changes after a man
   - Backend: env var `NELLO_EVENTS_ENABLED` — when off, the events routes are not registered and all emits no-op.
   - Frontend: build-time env `VITE_EVENTS_ENABLED` — when off, no subscription is opened.
   - Both default to enabled; the app degrades gracefully if either side is off (REST remains the source of truth).
-- Events route is exempted from the global rate limit (a long-lived connection plus reconnects must not consume the 120 req/min budget) and excluded from the request audit log (avoid persisting the event stream).
+- Events streams do not consume the global REST rate-limit budget, but the backend enforces per-user and process-wide concurrent-stream limits so long-lived connections cannot exhaust sockets or memory. Event traffic is excluded from the request audit log (avoid persisting the event stream).
 
 ## Capabilities
 
@@ -26,7 +26,7 @@ Nello boards are shared, but a user only sees another user's changes after a man
 
 ## Impact
 
-- Backend: new `src/events.ts` (subscriber registry + emit + flush ticker) and `src/routes/events.ts` (SSE + ticket routes); `src/app.ts` registers the routes behind the env flag; 17 one-line `emit(...)` calls in `src/routes/{boards,lists,cards,members}.ts` plus `closeBoardStreams` calls in the member-removal and board-deletion handlers; one-line audit exclusion in `app.ts`; `nello/docker-compose.yml` passes `NELLO_EVENTS_ENABLED` and `NELLO_EVENTS_INTERVAL_SECONDS` through to the backend.
+- Backend: new `src/events.ts` (bounded subscriber registry + emit + flush ticker) and `src/routes/events.ts` (SSE + ticket routes); `src/app.ts` registers the routes behind the env flag; 17 one-line `emit(...)` calls in `src/routes/{boards,lists,cards,members}.ts` plus `closeBoardStreams` calls in the member-removal and board-deletion handlers; one-line audit exclusion in `app.ts`; `nello/docker-compose.yml` passes `NELLO_EVENTS_ENABLED`, `NELLO_EVENTS_INTERVAL_SECONDS`, and stream-limit configuration through to the backend.
 - Frontend: new `src/events.ts` (subscription client); `src/state/StoreContext.tsx` gains an effect that subscribes on the active board and calls `reloadBoard` on events.
 - No new npm dependencies on either side (hand-rolled SSE via `reply.raw`); no vite proxy changes.
 - No **BREAKING** changes: existing REST behavior, auth, and data flow are untouched; events are best-effort and never required for correctness.

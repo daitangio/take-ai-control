@@ -105,12 +105,26 @@ The system SHALL treat event delivery as best-effort; losing the stream must nev
 - **WHEN** a client's stream is closed because its access was revoked, or the stream is rejected with 401/404
 - **THEN** the client stops reconnecting and shows nothing
 
-### Requirement: Stream traffic is exempt from the request rate limit
-The event stream SHALL NOT consume the global request rate-limit budget.
+### Requirement: Stream traffic is isolated from REST limits and bounded
+The event stream SHALL NOT consume the global REST request rate-limit budget. The system SHALL limit open streams to a configured positive per-user maximum and a configured positive process-wide maximum, rejecting attempts that exceed either limit with 429.
 
 #### Scenario: Reconnect after heavy REST use
 - **WHEN** a client reconnects to the stream after having performed many REST requests
 - **THEN** the connection is still accepted
+
+#### Scenario: Per-user stream limit reached
+- **WHEN** a user attempts to open a stream after reaching the configured per-user concurrent-stream limit
+- **THEN** the system rejects the new stream request with 429
+- **AND** the user's existing streams remain open
+
+#### Scenario: Process-wide stream limit reached
+- **WHEN** a client attempts to open a stream after the configured process-wide concurrent-stream limit is reached
+- **THEN** the system rejects the new stream request with 429
+
+#### Scenario: Closed stream releases capacity
+- **WHEN** an open stream closes or is closed because access was revoked or its board was deleted
+- **THEN** its per-user and process-wide capacity is released
+- **AND** a later eligible stream request can use that capacity
 
 ### Requirement: Stream traffic is excluded from the audit log
 The system SHALL NOT store event-stream traffic in the request audit log.

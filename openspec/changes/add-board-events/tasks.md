@@ -26,3 +26,10 @@
 
 - [x] 6.1 Run `rtk npm test` in backend and frontend, and `rtk npm run build` in frontend. Verify: all suites pass and the production build succeeds
 - [x] 6.2 Human test: open the app in two browsers as two users sharing a board; change a card in one — it appears in the other within the configured interval (default 3 s, no manual refresh); open a third tab with the same user and confirm it syncs too. Then restart the backend with `NELLO_EVENTS_ENABLED=false` and confirm the app still works normally with no visible errors. Verify: observed behavior matches; note results in LOG.md
+
+## 7. SSE concurrent-stream exhaustion remediation
+
+- [x] 7.1 Add validated positive-integer configuration in `src/events.ts`: `NELLO_EVENTS_MAX_CONNECTIONS_PER_USER` (default 3) and `NELLO_EVENTS_MAX_CONNECTIONS` (default 300). Track active streams so the registry can decide whether a user or process has capacity before retaining a socket. Verify: unit tests cover defaults and reject zero, negative, non-integer, and non-numeric configuration.
+- [x] 7.2 Enforce the per-user and process-wide limits in `GET /api/boards/:id/events`, returning 429 before a ticket is consumed or a socket is registered when either quota is reached. Keep the route exempt from the REST request budget. Verify: route/registry tests cover per-user rejection, global rejection, and existing streams remaining open.
+- [x] 7.3 Release stream capacity on normal close, write failure, member removal, board deletion, and application shutdown. Verify: tests fill each limit, close or revoke one stream, then confirm a new eligible connection succeeds.
+- [x] 7.4 Pass the two limit variables through `nello/docker-compose.yml` and document their defaults and operational tuning in `nello/DOCKER-README.md`. Verify: configuration is present in the compose environment and documented.

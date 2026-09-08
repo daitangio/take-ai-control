@@ -3,11 +3,17 @@ import {
   subscribe,
   emitBoardChange,
   closeBoardStreams,
+  closeAllEventStreams,
   flushBoardEvents,
   startEventTimers,
   stopEventTimers,
   issueEventTicket,
   consumeEventTicket,
+  claimEventStream,
+  getEventStreamUsage,
+  readPositiveIntegerEnv,
+  releaseEventStreamCapacity,
+  EVENTS_MAX_CONNECTIONS,
   purgeExpiredEventTickets,
   type EventSocket,
 } from "../src/events.js";
@@ -145,6 +151,64 @@ describe("event tickets", () => {
   });
 });
 
+describe("event stream capacity", () => {
+  it("uses defaults and rejects invalid positive-integer configuration", () => {
+    expect(readPositiveIntegerEnv(undefined, 3, "TEST")).toBe(3);
+    expect(readPositiveIntegerEnv("7", 3, "TEST")).toBe(7);
+    for (const value of ["0", "-1", "1.5", "nope"]) {
+      expect(() => readPositiveIntegerEnv(value, 3, "TEST")).toThrow("TEST must be a positive integer");
+    }
+  });
+
+  it("limits each user, preserves existing streams, and releases a closed stream", () => {
+    const sockets = [stubSocket(), stubSocket(), stubSocket()];
+    for (const socket of sockets) {
+      const claim = claimEventStream(issueEventTicket("u-cap", "b1"), "b1");
+      expect(claim).toEqual({ userId: "u-cap" });
+      subscribe("b1", "u-cap", socket.socket, true);
+    }
+    expect(claimEventStream(issueEventTicket("u-cap", "b1"), "b1")).toBe("limited");
+    expect(getEventStreamUsage("u-cap")).toEqual({ total: 3, user: 3 });
+
+    sockets[0].listeners.close();
+    expect(getEventStreamUsage("u-cap")).toEqual({ total: 2, user: 2 });
+    const replacement = claimEventStream(issueEventTicket("u-cap", "b1"), "b1");
+    expect(replacement).toEqual({ userId: "u-cap" });
+    releaseEventStreamCapacity("u-cap");
+    sockets[1].listeners.close();
+    sockets[2].listeners.close();
+  });
+
+  it("limits total claimed streams and releases capacity", () => {
+    const users = Array.from({ length: EVENTS_MAX_CONNECTIONS }, (_, index) => `u-total-${index}`);
+    for (const userId of users) {
+      expect(claimEventStream(issueEventTicket(userId, "b1"), "b1")).toEqual({ userId });
+    }
+    expect(claimEventStream(issueEventTicket("u-overflow", "b1"), "b1")).toBe("limited");
+    for (const userId of users) releaseEventStreamCapacity(userId);
+    expect(getEventStreamUsage()).toEqual({ total: 0, user: 0 });
+  });
+
+  it("releases capacity when streams are revoked or the app shuts down", () => {
+    const revoked = stubSocket();
+    const remaining = stubSocket();
+    expect(claimEventStream(issueEventTicket("u-revoked", "b1"), "b1")).toEqual({ userId: "u-revoked" });
+    expect(claimEventStream(issueEventTicket("u-remaining", "b1"), "b1")).toEqual({ userId: "u-remaining" });
+    subscribe("b1", "u-revoked", revoked.socket, true);
+    subscribe("b1", "u-remaining", remaining.socket, true);
+
+    closeBoardStreams("b1", "u-revoked");
+    expect(revoked.end).toHaveBeenCalled();
+    expect(getEventStreamUsage("u-revoked")).toEqual({ total: 1, user: 0 });
+    expect(claimEventStream(issueEventTicket("u-revoked", "b1"), "b1")).toEqual({ userId: "u-revoked" });
+    releaseEventStreamCapacity("u-revoked");
+
+    closeAllEventStreams();
+    expect(remaining.end).toHaveBeenCalled();
+    expect(getEventStreamUsage()).toEqual({ total: 0, user: 0 });
+  });
+});
+
 describe("events disabled (NELLO_EVENTS_ENABLED=false)", () => {
   it("no-ops emit, subscribe and timers", async () => {
     vi.resetModules();
@@ -210,6 +274,29 @@ describe("events routes", () => {
   it("rejects the stream with an invalid ticket with 401", async () => {
     const res = await env.app.inject({ method: "GET", url: "/api/boards/b-1/events?ticket=nope" });
     expect(res.statusCode).toBe(401);
+  });
+
+  it("returns 429 when the authenticated user has reached the stream limit", async () => {
+    const tickets = await Promise.all(
+      Array.from({ length: 4 }, () => env.app.inject({
+        method: "POST",
+        url: "/api/events/ticket",
+        headers: memberAuth,
+        payload: { boardId: "b-1" },
+      })),
+    );
+    const values = tickets.map(response => JSON.parse(response.body).ticket as string);
+    for (const ticket of values.slice(0, 3)) {
+      expect(claimEventStream(ticket, "b-1")).toEqual({ userId: "member@example.com" });
+    }
+
+    const response = await env.app.inject({
+      method: "GET",
+      url: `/api/boards/b-1/events?ticket=${values[3]}`,
+    });
+    expect(response.statusCode).toBe(429);
+    expect(JSON.parse(response.body).error_code).toBe("EVENT_STREAM_LIMIT_REACHED");
+    for (let index = 0; index < 3; index += 1) releaseEventStreamCapacity("member@example.com");
   });
 
   it("rejects a ticket issued for a different board with 401", async () => {

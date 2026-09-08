@@ -42,6 +42,7 @@ export const ErrorCode = {
   memberAddForbidden: "MEMBER_ADD_FORBIDDEN",
   memberRemoveForbidden: "MEMBER_REMOVE_FORBIDDEN",
 
+  eventStreamLimitReached: "EVENT_STREAM_LIMIT_REACHED",
   serviceUnderPressure: "SERVICE_UNDER_PRESSURE",
 } as const;
 

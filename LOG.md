@@ -442,3 +442,11 @@ Model: DeepSeek v4 Pro [1m]
 - Tests: backend `tests/events.test.ts` (unit: interval delivery, coalescing, close-unsubscribe, closeBoardStreams per-user, heartbeat, tickets incl. foreign-board/expired/sweep, disabled no-ops; routes: ticket 200/404 non-member, stream 401 no/invalid/foreign-board ticket, 404 removed-after-issuance, no audit rows for events URLs), `tests/events-disabled.test.ts` (routes 404 + no audit when flag off), `tests/emit-points.test.ts` (17 emit sites + 2 close sites via registry stubs + inject). Backend suite 144/144, `tsc` clean. Frontend `src/events.test.ts` (7 tests) + `StoreContext.test.tsx` board-events describe (4 tests) pass; full frontend suite 151/153 — the 2 UserMenu failures are the pre-existing i18n test-env issues documented on 2026-08-31 (files untouched here). `npm run build` passes. Boot checks on port 6503/6504: with `NELLO_EVENTS_ENABLED=false` ticket endpoint 404 + health 200; enabled boot ticket endpoint 401 without auth.
 - Remaining: task 6.2 human test (two browsers, two users, change visibility within 3 s; third tab same user; restart backend with events disabled — app works silently), then `/opsx:archive add-board-events`.
 Model: DeepSeek v4 Pro [1m]
+
+## Add board events — SSE stream capacity limits
+
+- 2026-09-08: Implemented the `add-board-events` remediation tasks for concurrent SSE stream exhaustion. The backend now validates `NELLO_EVENTS_MAX_CONNECTIONS_PER_USER` (default 3) and `NELLO_EVENTS_MAX_CONNECTIONS` (default 300), atomically claims capacity with a valid ticket, returns `429 EVENT_STREAM_LIMIT_REACHED` when full, and releases capacity on disconnect, stream write failure, access revocation, board deletion, and shutdown.
+- Added capacity regression tests for invalid configuration, per-user limits, global limits, route-level 429 responses, and teardown capacity release. Wired and documented the two variables in Docker Compose and the deployment README.
+- Verification: backend TypeScript build passes; backend test suite passes (149 tests) with `NELLO_EVENTS_ENABLED=true`; OpenSpec strict validation and the frontend production build both pass.
+- Remaining: none; the change is ready to archive.
+Model: Codex / GPT-5 [2026-09-08]
