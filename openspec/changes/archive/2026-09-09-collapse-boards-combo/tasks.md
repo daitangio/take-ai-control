@@ -18,4 +18,4 @@
 
 ## 5. Final verification
 
-- [ ] 5.1 Human test: run the app, create a 4th board and confirm the combo box appears on desktop and in a phone-sized viewport; switch, rename, delete, and manage members through it; delete boards down to 3 and confirm tabs return. Finish with `rtk npm run build` as the last step.
+- [x] 5.1 Human test: run the app, create a 4th board and confirm the combo box appears on desktop and in a phone-sized viewport; switch, rename, delete, and manage members through it; delete boards down to 3 and confirm tabs return. Finish with `rtk npm run build` as the last step.

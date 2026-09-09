@@ -473,3 +473,11 @@ Model: GPT-5.2 (Axet Plugin) [2026-09-09]
 - Archive preconditions passed: all four planning artifacts were complete and every implementation, test, build, and human-verification task was checked off.
 - Remaining: none for this archive operation.
 - Model: GPT-5.6 Terra (Axet Plugin) [2026-09-09]
+
+## Archive collapse-boards-combo
+
+- 2026-09-09: Strict validation passed for `collapse-boards-combo`; all change tasks were complete.
+- Archived the change as `openspec/changes/archive/2026-09-09-collapse-boards-combo/`.
+- Archive synchronization updated `openspec/specs/board-management/spec.md` and added the responsive collapsed board-switcher requirement to `openspec/specs/responsive-user-interface/spec.md`.
+- Remaining: none for this archive operation.
+- Model: GPT-5.6 Terra (Axet Plugin) [2026-09-09]
