@@ -13,6 +13,7 @@ interface StoreValue {
   apiDispatch: (action: Action) => Promise<void>;
   loadBoards: (preferredBoardId?: string | null) => Promise<void>;
   reloadBoard: (boardId: string) => Promise<void>;
+  exportBoard: (boardId: string) => Promise<api.BoardDetail | null>;
   selectBoard: (boardId: string) => Promise<void>;
   refreshBoardList: () => Promise<void>;
   toast: string | null;
@@ -116,6 +117,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setToast(toLocalizedErrorMessage(i18n.t.bind(i18n), err, 'errors.apiReloadBoard'));
     }
   }, [fetchBoardDetail]);
+
+  const exportBoard = useCallback(async (boardId: string) => {
+    try {
+      return await api.getBoard(boardId);
+    } catch (err) {
+      console.debug('[nello:api] exportBoard failed:', err);
+      setToast(toLocalizedErrorMessage(i18n.t.bind(i18n), err, 'errors.apiReloadBoard'));
+      return null;
+    }
+  }, []);
 
   // Load one board's content and make it active; the latest request wins.
   const selectBoardContent = useCallback(async (boardId: string) => {
@@ -241,7 +252,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, [activeBoardId, reloadBoard]);
 
   return (
-    <StoreCtx.Provider value={{ state, dispatch, apiDispatch, loadBoards, reloadBoard, selectBoard, refreshBoardList, toast, clearToast, searchQuery, setSearchQuery }}>
+    <StoreCtx.Provider value={{ state, dispatch, apiDispatch, loadBoards, reloadBoard, exportBoard, selectBoard, refreshBoardList, toast, clearToast, searchQuery, setSearchQuery }}>
       {children}
     </StoreCtx.Provider>
   );

@@ -450,3 +450,26 @@ Model: DeepSeek v4 Pro [1m]
 - Verification: backend TypeScript build passes; backend test suite passes (149 tests) with `NELLO_EVENTS_ENABLED=true`; OpenSpec strict validation and the frontend production build both pass.
 - Remaining: none; the change is ready to archive.
 Model: Codex / GPT-5 [2026-09-08]
+
+
+## Export board JSON (export-board-json)
+
+- 2026-09-09: Implemented frontend-only “Export board” feature (change: `export-board-json`).
+  - StoreContext: added `exportBoard(boardId)` helper that fetches `GET /api/boards/:id`, toasts on failure, returns `BoardDetail | null`.
+  - UserMenu: added “Export board” menu item (only when an active board exists), with local `isExporting` disable state.
+  - Download: client-side JSON download via `Blob` + `URL.createObjectURL` + anchor click; file name sanitization:
+    - whitespace runs → `-`
+    - strip non `[A-Za-z0-9-]`
+    - fallback `board.json`
+  - i18n: added `userMenu.exportBoard` key to en/it/fr/de/es.
+  - Tests: added coverage for StoreContext error path and UserMenu export/download behavior (stubbing `URL.createObjectURL` / `revokeObjectURL`).
+  - Verification: `npm test` and `npm run build` passed in `nello/frontend`.
+Model: GPT-5.2 (Axet Plugin) [2026-09-09]
+
+## Archive export-board-json
+
+- 2026-09-09: Synchronized and archived the completed OpenSpec change `export-board-json` as `openspec/changes/archive/2026-09-09-export-board-json/`.
+- The archive created `openspec/specs/board-export/spec.md` with the finalized five requirements: menu visibility/placement, API-backed JSON download, sanitized filenames, in-flight disabling, and toast-only export failure handling.
+- Archive preconditions passed: all four planning artifacts were complete and every implementation, test, build, and human-verification task was checked off.
+- Remaining: none for this archive operation.
+- Model: GPT-5.6 Terra (Axet Plugin) [2026-09-09]

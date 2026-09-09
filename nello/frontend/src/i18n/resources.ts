@@ -61,6 +61,7 @@ export const resources = {
       userMenu: {
         ariaLabel: 'User Menu',
         settings: 'Settings',
+        exportBoard: 'Export board',
         logout: 'Logout',
         userFallback: 'User',
       },
@@ -261,6 +262,7 @@ export const resources = {
       userMenu: {
         ariaLabel: 'Menu utente',
         settings: 'Impostazioni',
+        exportBoard: 'Esporta bacheca',
         logout: 'Esci',
         userFallback: 'Utente',
       },
@@ -425,7 +427,7 @@ export const resources = {
       auth: {
         heading: 'Nello RuleZ', loginSubtitle: 'Connectez-vous à vos tableaux', registerSubtitle: 'Créez votre compte', email: 'E-mail', password: 'Mot de passe', invitationKey: 'Clé d’invitation', login: 'Connexion', register: 'S’inscrire', pleaseWait: 'Veuillez patienter...', toRegister: 'Vous n’avez pas de compte ? Inscrivez-vous', toLogin: 'Vous avez déjà un compte ? Connectez-vous', backToIntro: 'Retour à l’introduction', sessionExpired: 'Votre session a expiré. Veuillez vous reconnecter.',
       },
-      userMenu: { ariaLabel: 'Menu utilisateur', settings: 'Paramètres', logout: 'Déconnexion', userFallback: 'Utilisateur' },
+      userMenu: { ariaLabel: 'Menu utilisateur', settings: 'Paramètres', exportBoard: 'Exporter le tableau', logout: 'Déconnexion', userFallback: 'Utilisateur' },
       settings: { title: 'Paramètres utilisateur', changePasswordTitle: 'Modifier le mot de passe', currentPassword: 'Mot de passe actuel', newPassword: 'Nouveau mot de passe', minimumLength: '12 caractères minimum', changing: 'Modification...', changePassword: 'Modifier le mot de passe', backToBoard: 'Retour au tableau', success: 'Mot de passe modifié avec succès', passwordTab: 'Mot de passe', limitsTab: 'Limites du forfait', limitsTitle: 'Vos limites', limitsIntro: 'Nello propose différents forfaits. Vous trouverez ci-dessous les limites et les fonctionnalités de votre forfait actuel.', loading: 'Chargement...', tierName: 'Forfait', boards: 'Tableaux', listsPerBoard: 'Listes par tableau', cardsPerBoard: 'Cartes par tableau' },
       emptyState: { message: 'Aucun tableau pour le moment. Créez votre premier tableau pour commencer.', boardNamePlaceholder: 'Nom du tableau', createBoard: 'Créer un tableau' },
       board: { newBoard: '+ Nouveau tableau', add: 'Ajouter', cancel: 'Annuler', deleteTitle: 'Supprimer le tableau', renameTitle: 'Renommer le tableau', manageMembersTitle: 'Gérer les membres', background: 'Arrière-plan du tableau', backgroundNone: 'Aucun', backgroundMountain: 'Montagne', backgroundSea: 'Mer', backgroundSport: 'Sport', deleteConfirm: 'Supprimer le tableau « {{name}} » et tout son contenu ?', switcher: 'Changer de tableau' },
@@ -456,7 +458,7 @@ export const resources = {
       auth: {
         heading: 'Nello RuleZ', loginSubtitle: 'Melde dich bei deinen Boards an', registerSubtitle: 'Erstelle dein Konto', email: 'E-Mail', password: 'Passwort', invitationKey: 'Einladungsschlüssel', login: 'Anmelden', register: 'Registrieren', pleaseWait: 'Bitte warten...', toRegister: 'Noch kein Konto? Registrieren', toLogin: 'Du hast bereits ein Konto? Anmelden', backToIntro: 'Zurück zur Einführung', sessionExpired: 'Deine Sitzung ist abgelaufen. Bitte melde dich erneut an.',
       },
-      userMenu: { ariaLabel: 'Benutzermenü', settings: 'Einstellungen', logout: 'Abmelden', userFallback: 'Benutzer' },
+      userMenu: { ariaLabel: 'Benutzermenü', settings: 'Einstellungen', exportBoard: 'Board exportieren', logout: 'Abmelden', userFallback: 'Benutzer' },
       settings: { title: 'Benutzereinstellungen', changePasswordTitle: 'Passwort ändern', currentPassword: 'Aktuelles Passwort', newPassword: 'Neues Passwort', minimumLength: 'Mindestens 12 Zeichen', changing: 'Wird geändert...', changePassword: 'Passwort ändern', backToBoard: 'Zurück zum Board', success: 'Passwort erfolgreich geändert', passwordTab: 'Passwort', limitsTab: 'Tariflimits', limitsTitle: 'Deine Limits', limitsIntro: 'Nello bietet verschiedene Tarife. Unten findest du die Limits und Funktionen deines aktuellen Tarifs.', loading: 'Wird geladen...', tierName: 'Tarif', boards: 'Boards', listsPerBoard: 'Listen pro Board', cardsPerBoard: 'Karten pro Board' },
       emptyState: { message: 'Noch keine Boards. Erstelle dein erstes Board, um loszulegen.', boardNamePlaceholder: 'Boardname', createBoard: 'Board erstellen' },
       board: { newBoard: '+ Neues Board', add: 'Hinzufügen', cancel: 'Abbrechen', deleteTitle: 'Board löschen', renameTitle: 'Board umbenennen', manageMembersTitle: 'Mitglieder verwalten', background: 'Board-Hintergrund', backgroundNone: 'Keiner', backgroundMountain: 'Berg', backgroundSea: 'Meer', backgroundSport: 'Sport', deleteConfirm: 'Board „{{name}}“ und seinen gesamten Inhalt löschen?', switcher: 'Board wechseln' },
@@ -487,7 +489,7 @@ export const resources = {
       auth: {
         heading: 'Nello RuleZ', loginSubtitle: 'Inicia sesión en tus tableros', registerSubtitle: 'Crea tu cuenta', email: 'Correo electrónico', password: 'Contraseña', invitationKey: 'Clave de invitación', login: 'Iniciar sesión', register: 'Registrarse', pleaseWait: 'Espera, por favor...', toRegister: '¿No tienes una cuenta? Regístrate', toLogin: '¿Ya tienes una cuenta? Inicia sesión', backToIntro: 'Volver a la introducción', sessionExpired: 'Tu sesión ha expirado. Inicia sesión de nuevo.',
       },
-      userMenu: { ariaLabel: 'Menú de usuario', settings: 'Configuración', logout: 'Cerrar sesión', userFallback: 'Usuario' },
+      userMenu: { ariaLabel: 'Menú de usuario', settings: 'Configuración', exportBoard: 'Exportar tablero', logout: 'Cerrar sesión', userFallback: 'Usuario' },
       settings: { title: 'Configuración de usuario', changePasswordTitle: 'Cambiar contraseña', currentPassword: 'Contraseña actual', newPassword: 'Nueva contraseña', minimumLength: 'Mínimo 12 caracteres', changing: 'Cambiando...', changePassword: 'Cambiar contraseña', backToBoard: 'Volver al tablero', success: 'Contraseña cambiada correctamente', passwordTab: 'Contraseña', limitsTab: 'Límites del plan', limitsTitle: 'Tus límites', limitsIntro: 'Nello ofrece diferentes planes. A continuación encontrarás los límites y las funciones de tu plan actual.', loading: 'Cargando...', tierName: 'Plan', boards: 'Tableros', listsPerBoard: 'Listas por tablero', cardsPerBoard: 'Tarjetas por tablero' },
       emptyState: { message: 'Todavía no hay tableros. Crea tu primer tablero para empezar.', boardNamePlaceholder: 'Nombre del tablero', createBoard: 'Crear tablero' },
       board: { newBoard: '+ Nuevo tablero', add: 'Añadir', cancel: 'Cancelar', deleteTitle: 'Eliminar tablero', renameTitle: 'Renombrar tablero', manageMembersTitle: 'Gestionar miembros', background: 'Fondo del tablero', backgroundNone: 'Ninguno', backgroundMountain: 'Montaña', backgroundSea: 'Mar', backgroundSport: 'Deporte', deleteConfirm: '¿Eliminar el tablero "{{name}}" y todo su contenido?' },

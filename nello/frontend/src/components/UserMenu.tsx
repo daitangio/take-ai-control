@@ -3,6 +3,25 @@ import { useAuth } from '../state/AuthContext';
 import { useStore } from '../state/StoreContext';
 import { useTranslation } from 'react-i18next';
 
+function sanitizeExportFileName(name: string): string {
+  const sanitized = name.replace(/\s+/g, '-').replace(/[^A-Za-z0-9-]/g, '');
+  const hasAlnum = /[A-Za-z0-9]/.test(sanitized);
+  if (!hasAlnum) return 'board.json';
+  return sanitized.endsWith('.json') ? sanitized : `${sanitized}.json`;
+}
+
+function downloadJson(fileName: string, json: unknown) {
+  const blob = new Blob([JSON.stringify(json, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
 interface UserMenuProps {
   onSettingsClick: () => void;
 }
@@ -10,8 +29,9 @@ interface UserMenuProps {
 export function UserMenu({ onSettingsClick }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [backgroundMenuOpen, setBackgroundMenuOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const { logout, email } = useAuth();
-  const { state, apiDispatch } = useStore();
+  const { state, apiDispatch, exportBoard } = useStore();
   const { t } = useTranslation();
   const menuRef = useRef<HTMLDivElement>(null);
   const activeBoard = state.activeBoardId ? state.boards[state.activeBoardId] : null;
@@ -82,6 +102,27 @@ export function UserMenu({ onSettingsClick }: UserMenuProps) {
           <button className="user-menu-item" onClick={() => { setIsOpen(false); onSettingsClick(); }}>
             {displayName}'s {t('userMenu.settings')}
           </button>
+          {activeBoard && (
+            <button
+              type="button"
+              className="user-menu-item"
+              disabled={isExporting}
+              onClick={async () => {
+                setIsOpen(false);
+                setBackgroundMenuOpen(false);
+                setIsExporting(true);
+                try {
+                  const detail = await exportBoard(activeBoard.id);
+                  if (!detail) return;
+                  downloadJson(sanitizeExportFileName(detail.name), detail);
+                } finally {
+                  setIsExporting(false);
+                }
+              }}
+            >
+              {t('userMenu.exportBoard')}
+            </button>
+          )}
           <button className="user-menu-item logout-btn" onClick={logout}>
             {t('userMenu.logout')}
           </button>

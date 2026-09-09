@@ -142,6 +142,26 @@ describe('loadBoards single-board load', () => {
   });
 });
 
+describe('exportBoard', () => {
+  beforeEach(() => {
+    vi.spyOn(api, 'getBoard').mockRejectedValue(new Error('boom'));
+  });
+
+  afterEach(() => vi.restoreAllMocks());
+
+  it('toasts and returns null when the fetch fails', async () => {
+    const { result } = renderHook(() => useStore(), { wrapper });
+
+    await act(async () => {
+      const board = await result.current.exportBoard('b0');
+      expect(board).toBeNull();
+    });
+
+    // Ensures we didn't just silently return null; error goes through toast.
+    expect(result.current.toast).not.toBeNull();
+  });
+});
+
 describe('selectBoard', () => {
   beforeEach(() => {
     vi.spyOn(api, 'getBoards').mockResolvedValue([
