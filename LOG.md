@@ -481,3 +481,12 @@ Model: GPT-5.2 (Axet Plugin) [2026-09-09]
 - Archive synchronization updated `openspec/specs/board-management/spec.md` and added the responsive collapsed board-switcher requirement to `openspec/specs/responsive-user-interface/spec.md`.
 - Remaining: none for this archive operation.
 - Model: GPT-5.6 Terra (Axet Plugin) [2026-09-09]
+
+## Add card Gantt chart (planning ready)
+
+- 2026-09-09: Created OpenSpec change `add-card-gantt-chart` with proposal, design, tasks, a new `gantt-chart` capability, and deltas for `card-management` and `board-management`.
+- Confirmed design: cards receive a positive finite fractional `effortDays` field persisted as `REAL NOT NULL DEFAULT 1`; the due date is the inclusive Gantt-bar end; the start is derived as `dueDate - effortDays + 1 day`.
+- Scope includes active-board UserMenu access, a local-state Gantt dialog, timezone-safe date-only calculations, API/state/export/archive propagation, automated coverage, and human verification.
+- Validation: `rtk openspec validate "add-card-gantt-chart" --strict` passed.
+- Remaining: implement the unchecked tasks through `/opsx:apply add-card-gantt-chart`.
+- Model: GPT-5.2 (Axet Plugin) [2026-09-09]
