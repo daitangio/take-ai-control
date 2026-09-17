@@ -3,7 +3,8 @@
 # Backup nello database mounted under /app/nello/nello.db
 # Do a backup every 5 minutes
 # Rotate backup every week-day, to have up to 7 backups
-INTERVAL_MINUTES=45
+# 53 is a prime number, we like it
+INTERVAL_MINUTES=53
 
 
 while true; do
