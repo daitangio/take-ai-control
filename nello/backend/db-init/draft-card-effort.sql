@@ -2,7 +2,7 @@ PRAGMA foreign_keys = ON;
 
 -- There are limits on add column. We need to proceed with a bigger enhancement
 -- create new table, copy entries over, delete the old table and rename the new table.
-
+/*
 CREATE TABLE card (
     id          TEXT PRIMARY KEY,
     list_id     TEXT NOT NULL REFERENCES list(id) ON DELETE CASCADE,
@@ -30,3 +30,4 @@ alter table card add column ro_end_date TEXT GENERATED ALWAYS as
     (
         date(start_date,'+ '|| (effort/fte) || ' days')
     ) VIRTUAL;
+*/

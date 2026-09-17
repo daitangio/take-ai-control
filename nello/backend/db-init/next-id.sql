@@ -1,0 +1,1 @@
+select format("%-03.0i",coalesce(max(id)+1,1)) from stone_base ;

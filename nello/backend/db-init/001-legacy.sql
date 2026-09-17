@@ -1,3 +1,11 @@
+-- 000-stone-base.sql
+create table if not exists stone_base (
+    id integer primary key,
+    file text,
+    execution text created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- 001-schema1.sql
 CREATE TABLE IF NOT EXISTS user (
     id          TEXT PRIMARY KEY,
     email       TEXT UNIQUE NOT NULL,
@@ -52,4 +60,25 @@ CREATE TABLE IF NOT EXISTS card_member (
             PRIMARY KEY (card_id, user_id)
         );
 CREATE UNIQUE INDEX IF NOT EXISTS `user_email_unique` ON `user` (`email`);
+
+
+-- 002-register-key.sql
+-- New table to implement form registration with a key_pass+ an email regexp guard
+CREATE TABLE IF NOT EXISTS register_key  (
+	id                     integer PRIMARY KEY NOT NULL,
+	key_pass               text NOT NULL UNIQUE,
+	email_regexp           text NOT NULL,
+	avail_count            integer NOT NULL,
+	created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+) STRICT;
+-- 003-audit-log.sql
+CREATE table if not exists audit_log (
+    id  integer PRIMARY KEY NOT NULL, -- alias for rowid
+    url TEXT,
+    method TEXT,
+    request TEXT,
+    response TEXT,
+    user_email TEXT,
+    log_time  TEXT NOT NULL DEFAULT (datetime('now'))
+) STRICT;
 

@@ -1,3 +1,4 @@
+-- 004-limits.sql
 PRAGMA foreign_keys = ON;
 
 create table if not exists user_tier (
@@ -24,4 +25,13 @@ values('nello-remindme',12,12,48, 'Paid Nello Remind-me offers more space and ab
 
 insert into user_tier(name, boards_limit, lists_per_board_limit,cards_per_list_limit, description)
 values('nello-one',12*5,12*5,12*5, 'Nello One offers separated database and maximum flexibility.');
+
+-- 005-board-background.sql
+ALTER TABLE board ADD COLUMN background TEXT DEFAULT NULL;
+-- 006-drop-list-archive.sql
+-- Remove the list archive concept: archiving a list now deletes the list
+-- together with its cards. Legacy archived lists are deleted on upgrade.
+
+DELETE FROM list WHERE id IN (SELECT list_id FROM list_archive);
+DROP TABLE IF EXISTS list_archive;
 
