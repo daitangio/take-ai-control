@@ -13,6 +13,8 @@ ARG PI_CODING_AGENT_VERSION=0.83.0
 ARG CLAUDE_CODE_VERSION=2.1.251
 ARG COPILOT_VERSION=1.0.81
 ARG OPEN_SPEC_VERSION=1.11.0
+# https://www.npmjs.com/package/@openai/codex
+ARG CODEX_VERSION="0.154.0"
 RUN pip install --upgrade pip
 
 # Ensure basic pi.dev is installed
@@ -45,6 +47,7 @@ RUN /tmp/rtk-installer.sh
 # platform-specific native binaries. --ignore-scripts would break them.
 RUN npm install -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"
 RUN npm install -g "@github/copilot@${COPILOT_VERSION}"
+RUN npm install -g "@openai/codex@${CODEX_VERSION}"
 
 # Addons for skills
 COPY ./.agents/skills/convert-with-markitdown/requirements.txt /tmp/markitdown-requirements.txt
@@ -58,8 +61,9 @@ RUN npm install -g @fission-ai/openspec@${OPEN_SPEC_VERSION}
 USER devcontainer
 
 ## Install Meta's muse spark CLI: copy the script with executable permissions
-COPY --chmod=0755 ./etc/meta-muse-installer.sh /tmp/
-RUN /tmp/meta-muse-installer.sh
+## GG Disabled because ZScaler give us troubles
+#COPY --chmod=0755 ./etc/meta-muse-installer.sh /tmp/
+#RUN /tmp/meta-muse-installer.sh
 
 # Important to avoid malfunction: define the DEEPSEEK_API_KEY
 # API Key is provided by https://platform.deepseek.com/
