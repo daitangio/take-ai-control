@@ -38,7 +38,9 @@ export function LoginForm({ onSwitchToRegister, onBackToIntro }: LoginFormProps)
         <label htmlFor="login-email">{t("auth.email")}</label>
         <input
           id="login-email"
+          name="email"
           type="email"
+          autoComplete="username"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -48,7 +50,9 @@ export function LoginForm({ onSwitchToRegister, onBackToIntro }: LoginFormProps)
         <label htmlFor="login-password">{t("auth.password")}</label>
         <input
           id="login-password"
+          name="password"
           type="password"
+          autoComplete="current-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required

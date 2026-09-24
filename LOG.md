@@ -490,3 +490,18 @@ Model: GPT-5.2 (Axet Plugin) [2026-09-09]
 - Validation: `rtk openspec validate "add-card-gantt-chart" --strict` passed.
 - Remaining: implement the unchecked tasks through `/opsx:apply add-card-gantt-chart`.
 - Model: GPT-5.2 (Axet Plugin) [2026-09-09]
+
+## Graphify repository map
+
+- 2026-09-24: Rebuilt the repository knowledge graph from 124 code files (~52,877 words): 680 nodes, 1,496 edges, and 33 labelled communities.
+- Generated `graphify-out/graph.html`, `GRAPH_REPORT.md`, and `graph.json`; no source code changed.
+- Graph health: 16 dangling endpoint edges, 3 self-loops, and 39 undirected edge-pair collapses were reported for audit; the graph is usable.
+- Remaining: none; use `graphify query` to explore the generated map.
+- Model: Codex / GPT-5.6 [2026-09-24]
+
+## Login password-manager metadata
+
+- 2026-09-24: Added explicit `name` and `autocomplete` metadata to the Nello login email (`email` / `username`) and password (`password` / `current-password`) inputs so browser password managers can identify the credential pair reliably. Extended the login smoke test to verify these rendered attributes.
+- Verification: `rtk npm run test -- --run src/App.test.tsx` passed (16 tests).
+- Remaining: manually confirm saved-password fill and sign-in in the affected browser.
+- Model: Codex / GPT-5.6 [2026-09-24]

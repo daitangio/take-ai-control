@@ -69,8 +69,14 @@ describe('App smoke tests', () => {
     render(<App />);
 
     await user.click(screen.getByRole('button', { name: 'Sign in' }));
-    expect(screen.getByLabelText('Email')).toBeDefined();
-    expect(screen.getByLabelText('Password')).toBeDefined();
+    const email = screen.getByLabelText('Email');
+    const password = screen.getByLabelText('Password');
+    expect(email).toBeDefined();
+    expect(password).toBeDefined();
+    expect(email.getAttribute('name')).toBe('email');
+    expect(email.getAttribute('autocomplete')).toBe('username');
+    expect(password.getAttribute('name')).toBe('password');
+    expect(password.getAttribute('autocomplete')).toBe('current-password');
     expect(screen.getByRole('button', { name: 'Login' })).toBeDefined();
   });
 
