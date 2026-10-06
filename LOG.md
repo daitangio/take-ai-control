@@ -505,3 +505,10 @@ Model: GPT-5.2 (Axet Plugin) [2026-09-09]
 - Verification: `rtk npm run test -- --run src/App.test.tsx` passed (16 tests).
 - Remaining: manually confirm saved-password fill and sign-in in the affected browser.
 - Model: Codex / GPT-5.6 [2026-09-24]
+
+## Archive add-board-events
+
+- 2026-10-06: Synced the new `board-events` capability into `openspec/specs/board-events/spec.md`, preserving its 10 finalized event-stream requirements and all associated scenarios.
+- Validated all main specs (29/29) and the strict change specification, then archived the completed change at `openspec/changes/archive/2026-10-06-add-board-events/`.
+- Remaining: none for this archive operation.
+- Model: Codex / GPT-5.6
