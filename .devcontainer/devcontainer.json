@@ -38,7 +38,13 @@
 		"source": "${localEnv:HOME}/.claude.json",                                                                                                                
 		"target": "/home/devcontainer/.claude.json",                                                                                                                
 		"type": "bind"                                                                                                                                     
-	}    
+	}
+	,{                                                                                                                                                    
+		"source": "${localEnv:HOME}/.vibe",                                                                                                                
+		"target": "/home/devcontainer/.vibe",                                                                                                                
+		"type": "bind"                                                                                                                                     
+	}
+
 ],
 
 	// See https://code.visualstudio.com/remote/advancedcontainers/environment-variables

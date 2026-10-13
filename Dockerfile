@@ -13,8 +13,10 @@ ARG PI_CODING_AGENT_VERSION=0.83.0
 ARG CLAUDE_CODE_VERSION=2.1.251
 ARG COPILOT_VERSION=1.0.81
 ARG OPEN_SPEC_VERSION=1.11.0
+ENV RTK_VERSION="v0.43.0"
 # https://www.npmjs.com/package/@openai/codex
 ARG CODEX_VERSION="0.154.0"
+ARG MISTRAL_VIBE_VERSION="2.26.1"
 RUN pip install --upgrade pip
 
 # Ensure basic pi.dev is installed
@@ -40,7 +42,7 @@ RUN npm install -g --ignore-scripts "@earendil-works/pi-coding-agent@${PI_CODING
 # Install the RTK command to reduce token usage (install system-wide)
 COPY ./etc/rtk-installer.sh /tmp/
 ENV RTK_INSTALL_DIR="/usr/local/bin"
-ENV RTK_VERSION="v0.43.0"
+
 RUN /tmp/rtk-installer.sh
 
 # NOTE: claude-code and copilot require postinstall scripts to download
@@ -48,6 +50,9 @@ RUN /tmp/rtk-installer.sh
 RUN npm install -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"
 RUN npm install -g "@github/copilot@${COPILOT_VERSION}"
 RUN npm install -g "@openai/codex@${CODEX_VERSION}"
+
+# Mistral support
+RUN pip install "mistral-vibe==${MISTRAL_VIBE_VERSION}"
 
 # Addons for skills
 COPY ./.agents/skills/convert-with-markitdown/requirements.txt /tmp/markitdown-requirements.txt

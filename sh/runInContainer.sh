@@ -23,6 +23,7 @@ docker run -ti --rm -v "$PWD":"${WORKSPACE}" \
     -v "$HOME/.claude:/home/devcontainer/.claude" \
     -v "$HOME/.claude.json:/home/devcontainer/.claude.json" \
     -v "$HOME/.codex:/home/devcontainer/.codex" \
+    -v "$HOME/.vibe:/home/devcontainer/.vibe" \
     --workdir "${WORKSPACE}" \
     --env-file .devcontainer/devcontainer.env \
     "${PROJECT}:latest" bash
