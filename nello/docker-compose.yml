@@ -32,6 +32,7 @@ services:
     depends_on:
       - backend
   backup:
+    image: nello-jj-backup:latest
     cpus: 0.10
     mem_limit: 6m
     build:
