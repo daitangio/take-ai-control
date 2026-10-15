@@ -513,6 +513,13 @@ Model: GPT-5.2 (Axet Plugin) [2026-09-09]
 - Remaining: none for this archive operation.
 - Model: Codex / GPT-5.6
 
+## Card link floating preview (planning ready)
+
+- 2026-10-15: Created OpenSpec change `add-card-link-preview` with proposal, design, tasks, and a new `card-link-preview` capability.
+- Scope: a single accessible, responsive floating iframe preview for card links, sandboxed content, protected external-open fallback, and explicit handling of remote sites that block framing.
+- No implementation code changed. Remaining: review the artifacts, then apply with `/openspec-apply-change add-card-link-preview`.
+- Model: Codex / GPT-5.6
+
 ## Add card link — extraction correction
 
 - 2026-10-15: Changed description link extraction to the space-delimited HTTPS regular expression `https:\/\/[^ ]+(?= |$)`, retaining complete path, query, and fragment content until the next space.
