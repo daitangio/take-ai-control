@@ -541,3 +541,10 @@ Model: GPT-5.2 (Axet Plugin) [2026-09-09]
 - Frontend targeted tests and production build pass; backend TypeScript build passes. Backend route tests remain blocked before execution by the existing `db-init/002-limits-tier.sql` migration error (`no such column: %-03.0i`).
 - Remaining: resolve the existing backend test migration issue, then complete backend verification and the two human verification tasks.
 - Model: Codex / GPT-5.6
+
+## events.test.ts failures — root cause diagnosed
+
+- 2026-10-15: Diagnosed why `npm run test -- tests/events.test.ts` fails 14/23: `src/events.ts` reads `NELLO_EVENTS_ENABLED` once at module load (`== "true"`), but nothing sets it in the vitest environment (only `nello/devNello.sh` and docker-compose do). So `EVENTS_ENABLED` is false in tests: `subscribe`/`emitBoardChange`/`startEventTimers` no-op and `app.ts` never registers the event routes → 404s instead of 200/401/429, and the two "passing" route tests pass for the wrong reason (route missing). Capacity failures cascade from the first failed test leaking 3 claims.
+- Fix applied: `nello/backend/vitest.config.ts` now sets `test.env.NELLO_EVENTS_ENABLED = "true"` (events-disabled.test.ts overrides it itself via vi.hoisted). `events.test.ts` passes 23/23; full backend suite 151/151.
+- Remaining: none.
+- Model: DeepSeek V4 Pro
