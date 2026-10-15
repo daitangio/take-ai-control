@@ -6,7 +6,9 @@ COPY package.json package-lock.json ./
 RUN npm ci
 COPY tsconfig.json ./
 COPY src src
-RUN npm run build
+COPY tests tests
+RUN npm run build && npm run test
+RUN rm -rf tests
 
 FROM node:26-trixie-slim
 
