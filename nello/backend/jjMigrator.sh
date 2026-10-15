@@ -3,7 +3,7 @@
 set -euo pipefail
 
 nextId(){
-    sqlite3 -batch -init ./db-init/next-id.sql ./nello.db .quit
+    sqlite3 -batch  ./nello.db 'select format("%-03.0i",coalesce(max(id)+1,1)) from stone_base ;'
 }
 
 ## Execute the first migrator 
