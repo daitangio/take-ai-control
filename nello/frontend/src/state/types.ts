@@ -27,6 +27,7 @@ export interface Card {
   description: string;
   dueDate?: string | null;
   color?: string | null;
+  link?: string | null;
   members?: Member[];
   modifiedBy?: string;
   modifiedByEmail?: string | null;
@@ -73,8 +74,8 @@ export type Action =
   | { type: 'list/archive'; listId: ListId }
   | { type: 'list/reorder'; boardId: BoardId; listIds: ListId[] }
   // Card
-  | { type: 'card/create'; cardId: CardId; listId: ListId; title: string; description?: string; dueDate?: string | null; color?: string | null; members?: Member[]; modifiedBy?: string; modifiedByEmail?: string | null; isModifiedByCurrentUser?: boolean | null }
-  | { type: 'card/edit'; cardId: CardId; title: string; description: string; dueDate?: string | null; color?: string | null; members?: Member[]; modifiedBy?: string; modifiedByEmail?: string | null; isModifiedByCurrentUser?: boolean | null }
+  | { type: 'card/create'; cardId: CardId; listId: ListId; title: string; description?: string; dueDate?: string | null; color?: string | null; link?: string | null; members?: Member[]; modifiedBy?: string; modifiedByEmail?: string | null; isModifiedByCurrentUser?: boolean | null }
+  | { type: 'card/edit'; cardId: CardId; title: string; description: string; dueDate?: string | null; color?: string | null; link?: string | null; members?: Member[]; modifiedBy?: string; modifiedByEmail?: string | null; isModifiedByCurrentUser?: boolean | null }
   | { type: 'card/delete'; cardId: CardId }
   | { type: 'card/archive'; cardId: CardId }
   | { type: 'card/member/add'; cardId: CardId; member: Member }

@@ -217,6 +217,18 @@
   overflow-wrap: anywhere;
 }
 
+.card-tile__link {
+  align-self: flex-start;
+  color: var(--color-text-secondary);
+  padding: 4px;
+  text-decoration: none;
+}
+
+.card-tile__link:hover,
+.card-tile__link:focus-visible {
+  color: var(--color-primary);
+}
+
 .card-tile__editor-icon {
   flex-shrink: 0;
   font-size: 12px;

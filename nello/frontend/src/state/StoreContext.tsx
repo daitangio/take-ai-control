@@ -49,7 +49,7 @@ function actionToApiCall(action: Action): Promise<unknown> {
     case 'card/create':
       return api.createCard(action.cardId, action.listId, action.title);
     case 'card/edit':
-      return api.updateCard(action.cardId, action.title, action.description, action.dueDate, action.color);
+      return api.updateCard(action.cardId, action.title, action.description, action.dueDate, action.color, action.link);
     case 'card/delete':
       return api.deleteCard(action.cardId);
     case 'card/archive':
@@ -100,6 +100,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           description: card.description,
           dueDate: card.dueDate,
           color: card.color,
+          link: card.link,
           members: card.members,
           modifiedBy: card.modifiedBy ?? undefined,
           modifiedByEmail: card.modifiedByEmail,
@@ -206,6 +207,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           description: card.description,
           dueDate: card.dueDate,
           color: card.color,
+          link: card.link,
           members: card.members,
           modifiedBy: card.modifiedBy ?? undefined,
           modifiedByEmail: card.modifiedByEmail,

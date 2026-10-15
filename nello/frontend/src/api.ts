@@ -143,6 +143,7 @@ export interface CardBrief {
   description: string;
   dueDate: string | null;
   color: string | null;
+  link: string | null;
   members: MemberResponse[];
   modifiedBy: string | null;
   modifiedByEmail: string | null;
@@ -245,6 +246,7 @@ export interface CardResponse {
   description: string;
   dueDate: string | null;
   color: string | null;
+  link?: string | null;
   members: MemberResponse[];
   modifiedBy: string | null;
   modifiedByEmail: string | null;
@@ -265,10 +267,12 @@ export function updateCard(
   description: string,
   dueDate?: string | null,
   color?: string | null,
+  link?: string | null,
 ) {
-  const body: { title: string; description: string; dueDate?: string | null; color?: string | null } = { title, description };
+  const body: { title: string; description: string; dueDate?: string | null; color?: string | null; link?: string | null } = { title, description };
   if (dueDate !== undefined) body.dueDate = dueDate;
   if (color !== undefined) body.color = color;
+  if (link !== undefined) body.link = link;
   return fetchWithAuth<CardResponse>(`/cards/${cardId}`, {
     method: "PATCH",
     body: JSON.stringify(body),

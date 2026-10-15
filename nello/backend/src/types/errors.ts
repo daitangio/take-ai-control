@@ -34,6 +34,7 @@ export const ErrorCode = {
   cardListNotFound: "CARD_LIST_NOT_FOUND",
   cardMemberOutsideBoard: "CARD_MEMBER_OUTSIDE_BOARD",
   cardLimitReached: "CARD_LIMIT_REACHED",
+  cardLinkInvalid: "CARD_LINK_INVALID",
 
   memberUserNotFound: "MEMBER_USER_NOT_FOUND",
   memberSelfAddForbidden: "MEMBER_SELF_ADD_FORBIDDEN",

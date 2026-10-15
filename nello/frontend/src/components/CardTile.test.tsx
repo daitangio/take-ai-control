@@ -9,7 +9,7 @@ const mockApiDispatch = vi.fn().mockResolvedValue(undefined);
 const mockState = {
   boards: {},
   lists: {},
-  cards: {} as Record<string, { id: string; title: string; description: string; dueDate?: string | null; members?: { id: string; email: string }[]; modifiedBy?: string; modifiedByEmail?: string | null; isModifiedByCurrentUser?: boolean | null }>,
+  cards: {} as Record<string, { id: string; title: string; description: string; dueDate?: string | null; link?: string | null; members?: { id: string; email: string }[]; modifiedBy?: string; modifiedByEmail?: string | null; isModifiedByCurrentUser?: boolean | null }>,
   activeBoardId: null,
 };
 
@@ -236,5 +236,20 @@ describe('CardTile turbo menu', () => {
 
     expect(screen.queryByRole('menu', { name: 'Actions for Task A' })).toBeNull();
     expect(screen.getByRole('menu', { name: 'Actions for Task B' })).toBeDefined();
+  });
+});
+
+describe('CardTile link', () => {
+  it('renders a safe external link without opening card details', async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+    mockState.cards['c-link'] = { id: 'c-link', title: 'Linked', description: '', link: 'https://example.com' };
+    render(<CardTile cardId="c-link" listId="l-1" onClick={onClick} />);
+    const link = screen.getByRole('link', { name: 'Open link for Linked' });
+    expect(link.getAttribute('href')).toBe('https://example.com');
+    expect(link.getAttribute('target')).toBe('_blank');
+    expect(link.getAttribute('rel')).toBe('noopener noreferrer');
+    await user.click(link);
+    expect(onClick).not.toHaveBeenCalled();
   });
 });

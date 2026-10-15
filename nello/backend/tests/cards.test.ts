@@ -431,3 +431,31 @@ describe("EditorMetadata", () => {
     expect(card.modifiedByEmail).toBeNull();
   });
 });
+
+describe("Card links", () => {
+  let env: TestApp;
+  let auth: Record<string, string>;
+
+  beforeEach(async () => {
+    env = await buildTestApp();
+    auth = await authHeadersFor(env.app, env.db, "test@example.com", "secret123");
+    await _setupBoardAndList(env, auth);
+    await env.app.inject({ method: "POST", url: "/api/cards", headers: auth, payload: { id: "card-link", listId: "l-1", title: "Linked" } });
+  });
+
+  it("sets, replaces, clears, and returns a link without changing it when omitted", async () => {
+    const patch = (link?: string | null) => env.app.inject({ method: "PATCH", url: "/api/cards/card-link", headers: auth, payload: { title: "Linked", description: "", ...(link === undefined ? {} : { link }) } });
+    expect(asJson(await patch("https://example.com/one")).link).toBe("https://example.com/one");
+    expect(asJson(await patch("http://example.com/two")).link).toBe("http://example.com/two");
+    expect(asJson(await patch()).link).toBe("http://example.com/two");
+    expect(asJson(await patch(null)).link).toBeNull();
+  });
+
+  it("rejects unsafe link schemes and preserves the stored link", async () => {
+    await env.app.inject({ method: "PATCH", url: "/api/cards/card-link", headers: auth, payload: { title: "Linked", description: "", link: "https://safe.example" } });
+    const invalid = await env.app.inject({ method: "PATCH", url: "/api/cards/card-link", headers: auth, payload: { title: "Linked", description: "", link: "javascript:alert(1)" } });
+    expect(invalid.statusCode).toBe(422);
+    const board = asJson(await env.app.inject({ method: "GET", url: "/api/boards/b-1", headers: auth }));
+    expect(board.lists[0].cards[0].link).toBe("https://safe.example");
+  });
+});

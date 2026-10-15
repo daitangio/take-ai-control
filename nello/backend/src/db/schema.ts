@@ -45,6 +45,7 @@ export const cards = sqliteTable("card", {
   modifiedBy: text("modified_by"),
   dueDate: text("due_date"),
   color: text("color"),
+  link: text("link"),
 });
 
 export const cardArchive = sqliteTable("card_archive", {

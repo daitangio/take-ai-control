@@ -177,6 +177,7 @@ export default async function boardRoutes(app: FastifyInstance) {
           description: cr.card.description,
           dueDate: cr.card.dueDate,
           color: cr.card.color,
+          link: cr.card.link,
           members: memberRows,
           modifiedBy: cr.card.modifiedBy,
           modifiedByEmail,

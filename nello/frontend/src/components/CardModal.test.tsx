@@ -8,7 +8,7 @@ const mockDispatch = vi.fn();
 const mockState = {
   boards: {},
   lists: {},
-  cards: {} as Record<string, { id: string; title: string; description: string; dueDate?: string | null }>,
+  cards: {} as Record<string, { id: string; title: string; description: string; dueDate?: string | null; link?: string | null }>,
   activeBoardId: null,
 };
 
@@ -95,5 +95,30 @@ describe('CardModal dirty check', () => {
         dueDate: '2026-08-15',
       }),
     );
+  });
+
+  it('saves and clears a link', () => {
+    const { rerender } = render(<CardModal cardId="c-1" onClose={vi.fn()} />);
+    fireEvent.change(screen.getByLabelText('Link'), { target: { value: 'https://example.com' } });
+    fireEvent.click(screen.getByText('Close'));
+    expect(mockApiDispatch).toHaveBeenLastCalledWith(expect.objectContaining({ link: 'https://example.com' }));
+
+    mockApiDispatch.mockClear();
+    mockState.cards['c-1'].link = 'https://example.com';
+    rerender(<CardModal cardId="c-1" onClose={vi.fn()} />);
+    fireEvent.change(screen.getByLabelText('Link'), { target: { value: '' } });
+    fireEvent.click(screen.getByText('Close'));
+    expect(mockApiDispatch).toHaveBeenLastCalledWith(expect.objectContaining({ link: null }));
+  });
+
+  it('auto-fills the first HTTPS URL without replacing an existing link', () => {
+    render(<CardModal cardId="c-1" onClose={vi.fn()} />);
+    fireEvent.change(screen.getByPlaceholderText('Add a description...'), { target: { value: 'First https://one.example/path?one=1&two=2#section and https://two.example' } });
+    expect((screen.getByLabelText('Link') as HTMLInputElement).value).toBe('https://one.example/path?one=1&two=2#section');
+    expect(screen.getByRole('status').textContent).toBe('Link added from the description.');
+    fireEvent.change(screen.getByLabelText('Link'), { target: { value: 'https://chosen.example' } });
+    fireEvent.change(screen.getByPlaceholderText('Add a description...'), { target: { value: 'Now https://third.example' } });
+    expect((screen.getByLabelText('Link') as HTMLInputElement).value).toBe('https://chosen.example');
+    expect(screen.queryByRole('status')).toBeNull();
   });
 });

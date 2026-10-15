@@ -27,7 +27,7 @@ describe('apiDispatch card/move', () => {
           id: 'l1',
           name: 'To Do',
           cards: [
-            { id: 'c0', title: 'Card 0', description: '', dueDate: null, color: null, members: [], modifiedBy: null, modifiedByEmail: null, isModifiedByCurrentUser: null },
+            { id: 'c0', title: 'Card 0', description: '', dueDate: null, color: null, link: null, members: [], modifiedBy: null, modifiedByEmail: null, isModifiedByCurrentUser: null },
           ],
         },
         { id: 'l0', name: 'Doing', cards: [] },
@@ -265,7 +265,7 @@ describe('apiDispatch failure recovery', () => {
       id: 'b0', name: 'Board 0', lists: [
         {
           id: 'l0', name: 'To Do', cards: [
-            { id: 'c0', title: 'Card 0', description: '', dueDate: null, color: null, members: [], modifiedBy: null, modifiedByEmail: null, isModifiedByCurrentUser: null },
+            { id: 'c0', title: 'Card 0', description: '', dueDate: null, color: null, link: null, members: [], modifiedBy: null, modifiedByEmail: null, isModifiedByCurrentUser: null },
           ],
         },
       ],

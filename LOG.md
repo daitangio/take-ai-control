@@ -512,3 +512,25 @@ Model: GPT-5.2 (Axet Plugin) [2026-09-09]
 - Validated all main specs (29/29) and the strict change specification, then archived the completed change at `openspec/changes/archive/2026-10-06-add-board-events/`.
 - Remaining: none for this archive operation.
 - Model: Codex / GPT-5.6
+
+## Add card link — extraction correction
+
+- 2026-10-15: Changed description link extraction to the space-delimited HTTPS regular expression `https:\/\/[^ ]+(?= |$)`, retaining complete path, query, and fragment content until the next space.
+- Extended modal coverage for complete URL extraction.
+- Remaining: human verification tasks 3.2 and 3.3.
+- Model: Codex / GPT-5.6
+
+## Add card link (verification resumed)
+
+- 2026-10-15: The repaired backend test setup now runs card-link coverage successfully: `tests/cards.test.ts` passes 26/26 and backend TypeScript build passes.
+- Frontend link API/modal/tile coverage passes 27/27 and production build passes. The complete backend suite has 119 passing tests and 32 unrelated existing event-stream failures; card-link code paths pass.
+- OpenSpec progress: 8/10 tasks complete. Remaining: the two explicitly human verification tasks (3.2 and 3.3).
+- Model: Codex / GPT-5.6
+
+## Add card link (implementation in progress)
+
+- 2026-10-15: Implemented nullable card links end-to-end: backend schema and PATCH validation accept only HTTP(S) URLs or null, responses and board detail include the link, and the frontend carries it through API/state/reloads.
+- Added translated link editing with HTTPS extraction from descriptions, confirmation feedback, and an isolated accessible new-tab tile link control.
+- Frontend targeted tests and production build pass; backend TypeScript build passes. Backend route tests remain blocked before execution by the existing `db-init/002-limits-tier.sql` migration error (`no such column: %-03.0i`).
+- Remaining: resolve the existing backend test migration issue, then complete backend verification and the two human verification tasks.
+- Model: Codex / GPT-5.6

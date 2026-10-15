@@ -19,6 +19,7 @@ interface CardUpdateBody {
   description?: string;
   dueDate?: string | null;
   color?: string | null;
+  link?: string | null;
 }
 
 interface CardMoveBody {
@@ -93,6 +94,7 @@ async function _cardResponse(requesterId: string, card: typeof cards.$inferSelec
     description: card.description,
     dueDate: card.dueDate,
     color: card.color,
+    link: card.link,
     members: await _cardMembers(card.id),
     modifiedBy: card.modifiedBy,
     modifiedByEmail,
@@ -148,13 +150,23 @@ export default async function cardRoutes(app: FastifyInstance) {
         return sendError(reply, 404, ErrorCode.cardNotFound, "Card not found");
       }
 
-      const { title, description = "", dueDate, color } = request.body;
+      const { title, description = "", dueDate, color, link } = request.body;
       if (!title || !title.trim()) {
         return sendError(reply, 422, ErrorCode.cardTitleRequired, "Card title is required");
       }
       const hasBody = request.body as any;
       const hasDueDate = "dueDate" in hasBody;
       const hasColor = "color" in hasBody;
+      const hasLink = "link" in hasBody;
+
+      if (hasLink && typeof link === "string") {
+        try {
+          const url = new URL(link);
+          if (url.protocol !== "http:" && url.protocol !== "https:") throw new Error("unsafe scheme");
+        } catch {
+          return sendError(reply, 422, ErrorCode.cardLinkInvalid, "Card link must be an HTTP or HTTPS URL");
+        }
+      }
 
       const updateData: Record<string, any> = {
         title: title.trim(),
@@ -163,6 +175,7 @@ export default async function cardRoutes(app: FastifyInstance) {
       };
       if (hasDueDate) updateData.dueDate = dueDate;
       if (hasColor) updateData.color = color;
+      if (hasLink) updateData.link = link;
 
       await db.update(cards).set(updateData).where(eq(cards.id, cardId));
       emitBoardChange(boardId, user.id);

@@ -86,6 +86,16 @@ describe('card API', () => {
     });
   });
 
+  it('sends an explicit link update', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({}), { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+    setToken('test-token');
+
+    await updateCard('card-1', 'Task', '', undefined, undefined, 'https://example.com');
+
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({ title: 'Task', description: '', link: 'https://example.com' });
+  });
+
   it('adds and removes card members through card endpoints', async () => {
     const fetchMock = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify({ id: 'u-2', email: 'other@example.com' }), { status: 201 }))

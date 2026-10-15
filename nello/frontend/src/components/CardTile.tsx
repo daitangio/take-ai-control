@@ -127,6 +127,15 @@ export function CardTile({ cardId, listId, onClick, onMembersClick, onArchived, 
     card.isModifiedByCurrentUser === false && !!card.modifiedByEmail;
   const dueDateLabel = card.dueDate ? t('card.dueDateShort', { date: card.dueDate }) : null;
   const memberCount = card.members?.length ?? 0;
+  const hasSafeLink = (() => {
+    if (!card.link) return false;
+    try {
+      const url = new URL(card.link);
+      return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  })();
 
   const updateDueDate = (dueDate: string | null) => {
     apiDispatch({
@@ -135,6 +144,7 @@ export function CardTile({ cardId, listId, onClick, onMembersClick, onArchived, 
       title: card.title,
       description: card.description,
       dueDate,
+      link: card.link,
     });
   };
 
@@ -154,6 +164,7 @@ export function CardTile({ cardId, listId, onClick, onMembersClick, onArchived, 
       description: card.description,
       dueDate: card.dueDate,
       color,
+      link: card.link,
     });
   };
 
@@ -281,6 +292,20 @@ export function CardTile({ cardId, listId, onClick, onMembersClick, onArchived, 
           </span>
         )}
       </button>
+      {hasSafeLink && (
+        <a
+          className="card-tile__link"
+          href={card.link!}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={t('card.openLink', { title: card.title })}
+          title={t('card.openLink', { title: card.title })}
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
+        >
+          ↗
+        </a>
+      )}
       {showEditorIcon && (
         <span
           className="card-tile__editor-icon"

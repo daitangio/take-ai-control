@@ -58,7 +58,7 @@ export async function ensureSchema(): Promise<void> {
 
   const paths = await fs.promises.readdir("./db-init", { withFileTypes: true});
   for(const p of paths) {
-      console.debug(`Path ${p.name} Dir:${p.isDirectory()}`);  
+      console.info(`Path ${p.name} Dir:${p.isDirectory()}`);  
       var ddl=await fs.promises.readFile(path.join(p.parentPath,p.name),'utf-8')
       /// console.log(ddl)
       for(const  statement of ddl.split(";")) {
@@ -67,6 +67,7 @@ export async function ensureSchema(): Promise<void> {
           // error... no comment
           continue
         }
+        console.info("")
         await client.execute(statement);
       }
   }
