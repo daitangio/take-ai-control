@@ -548,3 +548,10 @@ Model: GPT-5.2 (Axet Plugin) [2026-09-09]
 - Fix applied: `nello/backend/vitest.config.ts` now sets `test.env.NELLO_EVENTS_ENABLED = "true"` (events-disabled.test.ts overrides it itself via vi.hoisted). `events.test.ts` passes 23/23; full backend suite 151/151.
 - Remaining: none.
 - Model: DeepSeek V4 Pro
+
+## Code review fixes - remove unused code and DELETE request bodies
+
+- 2026-10-17: Implemented OpenSpec change `fix-code-review-issues` addressing two critical findings from frontend code review. Removed ~164 lines of unused code: deleted `src/state/usePersistedReducer.ts`, `src/state/storage.ts`, and `src/state/storage.test.ts`. Fixed HTTP semantics by removing redundant request bodies from DELETE requests in `src/api.ts`: `deleteBoard`, `deleteList`, `deleteCard`, `archiveCard` (POST with redundant body), and `removeMember`. Updated test expectations in `src/api.test.ts`. 
+- Verification: All 157 frontend tests pass, build succeeds, no TypeScript errors, no import errors.
+- Remaining: none. Manual UI verification optional.
+- Model: Mistral Vibe
