@@ -55,7 +55,6 @@ describe('card API', () => {
     expect(fetchMock).toHaveBeenCalledWith('/api/cards/card-1/archive', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         Authorization: 'Bearer test-token',
       },
     });

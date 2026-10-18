@@ -555,3 +555,10 @@ Model: GPT-5.2 (Axet Plugin) [2026-09-09]
 - Verification: All 157 frontend tests pass, build succeeds, no TypeScript errors, no import errors.
 - Remaining: none. Manual UI verification optional.
 - Model: Mistral Vibe
+
+## Fix bodyless requests sending Content-Type: application/json
+
+- 2026-10-18: The removal of redundant DELETE/POST bodies (previous change) exposed a Fastify 400: `fetchWithAuth` always set `Content-Type: application/json`, and Fastify rejects an empty body with that content-type set. Fix: `src/api.ts` now sets `Content-Type` only when a request has a body. Updated `src/api.test.ts` archive-card expectation accordingly.
+- Verification: all 157 frontend tests pass, production build succeeds.
+- Remaining: none.
+- Model: DeepSeek V4 Pro

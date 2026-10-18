@@ -7,8 +7,10 @@ RUN npm ci
 COPY tsconfig.json ./
 COPY src src
 COPY tests tests
+COPY vitest.config.ts .
+COPY db-init db-init
 RUN npm run build && npm run test
-RUN rm -rf tests
+RUN rm -rf tests db-init vitest.config.ts
 
 FROM node:26-trixie-slim
 
