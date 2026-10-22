@@ -8,8 +8,8 @@ Project leverages [PI.dev] coding agent and an aggressive isolation done with Do
 Tested on Linux and MacOS, provide CLI for most used services and can be further tailored
 
 ## How to start
-Simple: use [cloneMe.sh](./sh/cloneMe.sh) script for installing the basic features on your project
-Smart:  use [cloneSync.sh](./sh/cloneSync.sh) which leverage on git submodules and to keep you up-to-date
+Simple: use [copyMe.sh](./sh/copyMe.sh) script for installing the basic features on your project
+Smart:  use [cloneAndLink.sh](./sh/cloneAndLink.sh) which leverage on git submodules and to keep you up-to-date
 
 ## Folder Structure:
 
@@ -65,7 +65,7 @@ There are a lot of tools, and we are testing them.
 
 ## Getting started
 
-- Use [cloneSynch.sh](./sh/cloneSync.sh) to install this project as a submodule of yours
+- Use [cloneAndLink.sh](./sh/cloneAndLink.sh) to install this project as a submodule of yours
 - Define a .devcontainer/devcontainer.env with all your API keys (i.e. DeepSeek, Claude etc) if you have already
   This file is common to all the containerized approaches
 - Three options:     
