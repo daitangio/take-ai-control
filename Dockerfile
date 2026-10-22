@@ -19,7 +19,7 @@ ARG CODEX_VERSION="0.154.0"
 ARG MISTRAL_VIBE_VERSION="2.26.1"
 RUN pip install --upgrade pip
 
-# Ensure basic pi.dev is installed
+# Ensure basic support is here
 RUN apt update && apt install -y git curl xz-utils sudo sqlite3 less
 
 ENV DEV_UID=${DEV_UID}
@@ -62,6 +62,9 @@ RUN pip install -r /tmp/markitdown-requirements.txt
 ENV OPENSPEC_TELEMETRY=0
 RUN npm install -g @fission-ai/openspec@${OPEN_SPEC_VERSION}
 
+# Copilot config editing my require an $EDITOR
+# Let's install it:
+RUN apt install -y vim-tiny
 # Switch to non-root user
 USER devcontainer
 

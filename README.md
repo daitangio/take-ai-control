@@ -5,9 +5,13 @@ A set of demo/* branches show real application developed with AI.
 
 Project leverages [PI.dev] coding agent and an aggressive isolation done with Docker + VS Code
 
-Tested on Linux and MacOS
+Tested on Linux and MacOS, provide CLI for most used services and can be further tailored
 
-Folder Structure:
+## How to start
+Simple: use [cloneMe.sh](./sh/cloneMe.sh) script for installing the basic features on your project
+Smart:  use [cloneSync.sh](./sh/cloneSync.sh) which leverage on git submodules and to keep you up-to-date
+
+## Folder Structure:
 
     .
     |-- .devcontainer            <- Visual studio code dev container
@@ -21,13 +25,13 @@ Folder Structure:
         └── pi-sessions          <- Contains pi.dev session
 
 
-Basic principles:
+## Basic principles:
 
 - Liquid Models: ability to switch between models and model providers. 
   Easier to do with pi.dev. See also [liquid-models.md](./doc/liquid-models.md)
 - [A set of basic skills](#provided-skills) 
 - Isolated Dev container for stronger security
-- Experimental SDLC feature/* branches (see below) 
+- Experimental OpenSpec demo *nello*, see below
 
 ## Liquid Models
 - Agents skills can be used on every major harnesses (codex, claude, copilot, [pi.dev])
@@ -61,7 +65,7 @@ There are a lot of tools, and we are testing them.
 
 ## Getting started
 
-- Clone or fork this project and use as template
+- Use [cloneSynch.sh](./sh/cloneSync.sh) to install this project as a submodule of yours
 - Define a .devcontainer/devcontainer.env with all your API keys (i.e. DeepSeek, Claude etc) if you have already
   This file is common to all the containerized approaches
 - Three options:     
