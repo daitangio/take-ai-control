@@ -16,7 +16,7 @@ ARG OPEN_SPEC_VERSION=1.11.0
 ENV RTK_VERSION="v0.43.0"
 # https://www.npmjs.com/package/@openai/codex
 ARG CODEX_VERSION="0.154.0"
-ARG MISTRAL_VIBE_VERSION="2.26.1"
+ARG MISTRAL_VIBE_VERSION="3.0.2"
 RUN pip install --upgrade pip
 
 # Ensure basic support is here
