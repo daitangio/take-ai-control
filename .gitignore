@@ -54,3 +54,7 @@ resume.sh
 headroom/zscaler-root-ca.pem
 
 n*.code-workspace
+nello-backend.log
+*/*/dist
+.graphify
+*.log

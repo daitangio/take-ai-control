@@ -5,21 +5,21 @@ FROM ${NODE_BASE_IMAGE} AS node-donor
 
 
 FROM ${PYTHON_BASE_IMAGE}
-# ARGS MUST BE DELCARED AFTER FROM!
+# ARGS MUST BE DECLARED AFTER FROM!
 ARG TAKE_PROJECT_NAME
 ARG DEV_UID=501
 ARG DEV_GID=20
-ARG PI_CODING_AGENT_VERSION=0.83.0
-ARG CLAUDE_CODE_VERSION=2.1.251
+ARG PI_CODING_AGENT_VERSION=1.4.0
+ARG CLAUDE_CODE_VERSION=2.1.312
 ARG COPILOT_VERSION=1.0.81
 ARG OPEN_SPEC_VERSION=1.11.0
 ENV RTK_VERSION="v0.43.0"
 # https://www.npmjs.com/package/@openai/codex
-ARG CODEX_VERSION="0.154.0"
-ARG MISTRAL_VIBE_VERSION="2.26.1"
+ARG CODEX_VERSION="0.165.0"
+ARG MISTRAL_VIBE_VERSION="3.0.2"
 RUN pip install --upgrade pip
 
-# Ensure basic pi.dev is installed
+# Ensure basic support is here
 RUN apt update && apt install -y git curl xz-utils sudo sqlite3 less
 
 ENV DEV_UID=${DEV_UID}
@@ -62,6 +62,9 @@ RUN pip install -r /tmp/markitdown-requirements.txt
 ENV OPENSPEC_TELEMETRY=0
 RUN npm install -g @fission-ai/openspec@${OPEN_SPEC_VERSION}
 
+# Copilot config editing my require an $EDITOR
+# Let's install it:
+RUN apt install -y vim-tiny
 # Switch to non-root user
 USER devcontainer
 
@@ -74,6 +77,7 @@ USER devcontainer
 # API Key is provided by https://platform.deepseek.com/
 ENV PI_TELEMETRY=no
 # PI_CODING_AGENT_DIR	Override config directory; default is ~/.pi/agent
+# Valutare....rimozione e modifica del runner
 ENV PI_CODING_AGENT_DIR=/workspaces/${TAKE_PROJECT_NAME}/var/pi-agent
 # Ensure Sessions are not lost and keep them in a separate directory instead of under pi-agent
 ENV PI_CODING_AGENT_SESSION_DIR=/workspaces/${TAKE_PROJECT_NAME}/var/pi-sessions/
