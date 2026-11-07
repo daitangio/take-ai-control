@@ -16,11 +16,11 @@ ARG OPEN_SPEC_VERSION=1.11.0
 ENV RTK_VERSION="v0.43.0"
 # https://www.npmjs.com/package/@openai/codex
 ARG CODEX_VERSION="0.165.0"
-ARG MISTRAL_VIBE_VERSION="3.0.2"
+ARG MISTRAL_VIBE_VERSION="3.0.4"
 RUN pip install --upgrade pip
 
 # Ensure basic support is here
-RUN apt update && apt install -y git curl xz-utils sudo sqlite3 less
+RUN apt update && apt install -y git git-lfs curl xz-utils sudo sqlite3 less
 
 ENV DEV_UID=${DEV_UID}
 ENV DEV_GID=${DEV_GID}
