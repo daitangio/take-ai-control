@@ -562,3 +562,9 @@ Model: GPT-5.2 (Axet Plugin) [2026-09-09]
 - Verification: all 157 frontend tests pass, production build succeeds.
 - Remaining: none.
 - Model: DeepSeek V4 Pro
+
+## Add card link (archived)
+
+- 2026-11-10: Archived OpenSpec change `add-card-link` to `openspec/changes/archive/2026-11-10-add-card-link/`. Synced its delta into `openspec/specs/card-management/spec.md` (added requirements "Card link" and "Card link access").
+- Remaining: none.
+- Model: GitHub Copilot CLI (Auto mode; underlying model not disclosed)
